@@ -1,0 +1,15 @@
+{
+  "name": "@repolens/cli",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Command line interface for RepoLens.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "repolens": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}
