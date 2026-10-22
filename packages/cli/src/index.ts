@@ -1,4 +1,11 @@
 #!/usr/bin/env node
-import { getBanner } from "./banner.js";
+import { runCli } from "./main.js";
 
-console.log(getBanner());
+const code = await runCli(process.argv.slice(2), {
+  out: (s) => process.stdout.write(s),
+  err: (s) => process.stderr.write(s),
+  cwd: process.cwd(),
+  env: process.env,
+  isTty: process.stderr.isTTY === true,
+});
+process.exitCode = code;
