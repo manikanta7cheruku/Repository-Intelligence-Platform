@@ -19,7 +19,7 @@
     "eval": "node dist/eval/run.js"
   },
   "dependencies": {
-    "typescript": "^6.0.0"
+    "typescript": "^7.0.2"
   },
   "files": [
     "dist",
