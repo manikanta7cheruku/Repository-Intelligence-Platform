@@ -1,4 +1,4 @@
-# Scoring methodology (draft, frozen during Phase 1 task P1-13)
+# Scoring methodology (implemented in Phase 1, thresholds provisional)
 
 No score is shown without its inputs, formula, coverage, and confidence. Weights live in a profile
 file, not in code. Scores that cannot be computed are "Not assessed" with a reason.
@@ -60,3 +60,81 @@ Mapped to High (at least 0.85), Medium (0.6 to 0.85), Low (under 0.6). Threshold
 - Show the score, the coverage badge, the confidence label, and a "How this is calculated" link.
 - Never show a gauge or color for Not assessed. Use a neutral state with the reason.
 - Color is never the only signal. Pair with text and icon.
+
+## Implemented profile: default version 1.0.0
+
+Generated from `packages/core/src/scoring/profile.ts` (profile hash 0fdffd04761968b9). A dimension is **not assessed** when less than 50 percent of its weight is available. Origin says whether a threshold is a widely used convention or a provisional choice that Phase 3 must calibrate on real repositories.
+
+### architecture
+
+| Sub-metric | Weight | Curve (raw value to score) | Origin | Meaning |
+|---|---|---|---|---|
+| file-cycle-ratio | 0.35 | 0 to 100, 0.02 to 85, 0.1 to 50, 0.3 to 0 | provisional | Share of source files that sit in a runtime import cycle |
+| module-cycle-ratio | 0.15 | 0 to 100, 0.1 to 70, 0.4 to 0 | provisional | Share of modules that sit in a module cycle |
+| rule-violations-per-100-edges | 0.25 | 0 to 100, 1 to 80, 5 to 40, 15 to 0 | provisional | Architecture rule violations per 100 dependency edges (needs a rules file) |
+| unresolved-import-ratio | 0.15 | 0 to 100, 0.02 to 90, 0.1 to 60, 0.3 to 0 | provisional | Internal imports that could not be resolved |
+| high-fan-out-share | 0.1 | 0 to 100, 0.02 to 80, 0.1 to 30 | convention | Share of files importing more than 20 files |
+
+### maintainability
+
+| Sub-metric | Weight | Curve (raw value to score) | Origin | Meaning |
+|---|---|---|---|---|
+| high-complexity-function-share | 0.35 | 0 to 100, 0.02 to 80, 0.1 to 40, 0.25 to 0 | convention | Share of functions above the high complexity threshold |
+| duplication-ratio | 0.3 | 0 to 100, 0.03 to 85, 0.1 to 50, 0.25 to 0 | provisional | Duplicated normalized lines divided by all normalized lines |
+| oversized-file-share | 0.2 | 0 to 100, 0.05 to 80, 0.2 to 30 | convention | Share of source files above 500 code lines |
+| hotspot-share | 0.15 | 0 to 100, 0.02 to 70, 0.1 to 20 | provisional | Share of files that are both frequently changed and complex (needs Git history) |
+
+### security-hygiene
+
+| Sub-metric | Weight | Curve (raw value to score) | Origin | Meaning |
+|---|---|---|---|---|
+| vulnerable-dependency-weight | 0.4 | 0 to 100, 2 to 80, 10 to 40, 30 to 0 | provisional | Known vulnerabilities weighted by severity (critical 10, high 5, medium 2, low 1) |
+| secret-findings | 0.25 | 0 to 100, 1 to 50, 3 to 10, 5 to 0 | provisional | Possible committed secrets |
+| workflow-risk-weight | 0.2 | 0 to 100, 2 to 80, 8 to 30, 15 to 0 | provisional | GitHub Actions risk findings weighted by severity |
+| lockfile-present | 0.15 | 0 to 30, 1 to 100 | convention | A dependency lockfile exists |
+
+### testing-ci
+
+| Sub-metric | Weight | Curve (raw value to score) | Origin | Meaning |
+|---|---|---|---|---|
+| test-to-source-file-ratio | 0.35 | 0 to 0, 0.1 to 50, 0.3 to 90, 0.6 to 100 | provisional | Test files per source file. File presence is not test effectiveness |
+| ci-present | 0.25 | 0 to 0, 1 to 100 | convention | A CI configuration exists |
+| lint-or-format | 0.2 | 0 to 0, 1 to 70, 2 to 100 | convention | Linter and formatter configuration present |
+| type-checking | 0.2 | 0 to 0, 1 to 100 | convention | A type checker is configured |
+
+### documentation
+
+| Sub-metric | Weight | Curve (raw value to score) | Origin | Meaning |
+|---|---|---|---|---|
+| readme-completeness | 0.35 | 0 to 0, 100 to 100 | provisional | README exists (50), has setup section (25), has usage section (25) |
+| community-files | 0.25 | 0 to 0, 5 to 100 | convention | Count of license, contributing, code of conduct, security policy, changelog |
+| docs-and-decisions | 0.2 | 0 to 0, 2 to 100 | provisional | A docs directory (1) and architecture decision records (1) |
+| setup-aids | 0.2 | 0 to 30, 1 to 70, 2 to 100 | provisional | Dockerfile, env example, Makefile, devcontainer |
+
+### maintenance-activity
+
+| Sub-metric | Weight | Curve (raw value to score) | Origin | Meaning |
+|---|---|---|---|---|
+| author-concentration | 0.5 | 0.3 to 100, 0.6 to 70, 0.9 to 30, 1 to 10 | provisional | Share of commits by the top author (continuity signal) |
+| commits-per-month | 0.5 | 0 to 0, 1 to 30, 4 to 70, 10 to 100 | provisional | Commit density over the analyzed window (activity signal) |
+
+### Coverage and confidence as implemented
+
+| Dimension | Coverage used for confidence |
+|---|---|
+| architecture | minimum of structural coverage (analyzed source files divided by source files) and the import resolution ratio |
+| maintainability | structural coverage |
+| security-hygiene | share of the three checks (OSV, secrets, workflows) that ran |
+| testing-ci, documentation | 1, or 0.8 when the analysis was truncated (these are file presence facts) |
+| maintenance-activity | 0.5 for shallow clones, 0.8 when the commit limit was reached, otherwise 1 |
+
+Confidence: high at 0.85 or more, medium at 0.6 or more, otherwise low. Thresholds are provisional.
+
+### Known weaknesses of these scores
+
+- Curves are provisional. They rank repositories sensibly on the fixtures but have not been calibrated on a large sample.
+- Test presence is not test quality. Coverage reports are not ingested yet.
+- Python complexity is approximate and lowers confidence in maintainability for Python-heavy repositories only through the finding confidence, not the score.
+- Security hygiene is a set of signals. A high score does not mean a repository is secure.
+- No overall score exists on purpose.
+

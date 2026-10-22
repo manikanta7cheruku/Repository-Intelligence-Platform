@@ -10,10 +10,10 @@ An item can be Confirmed without being Validated (approved, validation still pen
 |---|---|---|---|---|---|
 | D-01 | Local-first TypeScript monorepo (ADR 0001, 0002) | Confirmed 2026-10-19 | Pending P1 and P2 | Scaffold, V-01 to V-03 | Owner |
 | D-02 | Safe acquisition via archives, hardened Git for history (ADR 0003) | Confirmed | Pending P1-04, P3-02 | Threat model | Owner |
-| D-03 | TypeScript compiler API plus Tree-sitter (ADR 0004) | Confirmed | Under investigation, gate P1-01 | n/a | Owner |
-| D-04 | Zod schema, semver (ADR 0005) | Confirmed | Pending P1-02 | n/a | Owner |
+| D-03 | TypeScript compiler API plus Tree-sitter (ADR 0004) | Confirmed | Partially validated (fixtures 1.0). Gate P1-01 on real repositories open | docs/evaluation/results/phase-1.md | Owner |
+| D-04 | Versioned schema with semver (ADR 0005, Zod part amended by ADR 0015) | Confirmed | Validated (schema file, drift test) | packages/core/schema | Owner |
 | D-05 | Postgres only, pg-boss (ADR 0006) | Confirmed | Pending P2 | n/a | Owner |
-| D-06 | Transparent multi-dimension scoring, no LLM (ADR 0007) | Confirmed | Pending P1-13 | scoring-methodology.md | Owner |
+| D-06 | Transparent multi-dimension scoring, no LLM (ADR 0007) | Confirmed | Implemented, tested. Calibration on real repositories in Phase 3 | scoring-methodology.md | Owner |
 | D-07 | Integrate OSV and Gitleaks, no custom SAST (ADR 0008) | Confirmed | Pending C-05, C-06, P1-11 | n/a | Owner |
 | D-08 | Next.js, Radix, custom tokens (ADR 0009) | Confirmed | Pending P2-02 | docs/ux | Owner |
 | D-09 | Apache-2.0 (ADR 0010) | Confirmed | Pending C-19, P3-11 | LICENSE | Owner |
@@ -22,6 +22,9 @@ An item can be Confirmed without being Validated (approved, validation still pen
 | D-12 | Account analysis deferred (ADR 0013) | Confirmed | n/a | Deferred | Owner |
 | D-13 | Testing and tooling (ADR 0014) | Confirmed | Validated by CI in P0-03 once green | CI run | Owner |
 | D-14 | Four-phase delivery for a sole developer, academic docs last | Confirmed 2026-10-19 | n/a | docs/phases | Owner |
+| D-15 | Dependency-light core: hand-written schema validator and YAML subset instead of Zod and a YAML library (ADR 0015, amends ADR 0005) | Pending explicit owner confirmation (built with Phase 1) | Validated by 165 tests | docs/evaluation/results/phase-1.md | Owner |
+| D-16 | Module inference rule and production-only graph (ADR 0016) | Pending explicit owner confirmation | Validated on fixtures and self-analysis, usability check in Phase 3 | fixtures, ADR 0016 | Owner |
+| D-17 | Python analyzer is a lexical Level 2 parser, not Tree-sitter (deviation from ADR 0004 note) | Pending explicit owner confirmation | Validated on 2 fixtures | fixtures/py-* | Owner |
 
 ## Requirements traceability
 
@@ -43,7 +46,7 @@ satisfies when its GitHub issue is created.
 | ID | Risk | Likelihood | Impact | Mitigation | Status |
 |---|---|---|---|---|---|
 | R-01 | Solo scope overload | High | High | Cut list, gates, timeboxes | Open |
-| R-02 | Import resolution inaccuracy | Medium | High | Gate P1-01, report unresolved ratio, lower confidence | Open |
+| R-02 | Import resolution inaccuracy | Medium | High | Gate P1-01, report unresolved ratio, lower confidence. Fixtures 1.0, real repositories not yet measured | Open |
 | R-03 | Free worker host unreliable | High | Medium | Fallback recording and local worker | Open |
 | R-04 | Security flaw in hosted analysis | Medium | High | Threat model, acceptance tests, no code execution | Open |
 | R-05 | Graph UI unusable at scale | Medium | High | Gate P2-01, default aggregation | Open |
@@ -56,3 +59,6 @@ satisfies when its GitHub issue is created.
 | ID | Evidence | Location |
 |---|---|---|
 | E-01 | Vercel limits verified from vendor docs | research/verified-facts.md |
+| E-02 | Fixture accuracy, 11 fixtures, precision and recall 1.0 | evaluation/results/phase-1.md |
+| E-03 | 165 tests passing, TypeScript 6.0.3 strict typecheck | evaluation/results (this delivery), run `pnpm check` to reproduce |
+| E-04 | Sandbox smoke benchmark | evaluation/results/sandbox-smoke.md |

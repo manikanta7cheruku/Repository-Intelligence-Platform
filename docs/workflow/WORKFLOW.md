@@ -33,6 +33,7 @@ The MVP is complete only when Phase 3 exit criteria pass. After Phase 3, academi
 5. Open a pull request even though you work alone (CI runs, history stays clean). Squash merge.
 6. Update `docs/PROJECT_STATE.md`, the decision register, and ADRs if anything changed.
 7. Close the backlog item only when its acceptance criteria are met.
+8. At the end of each phase update `docs/learning/phase-<n>-*.md` (what, why, where, mistakes, gaps, question bank).
 
 ### Short session prompt (use inside a phase)
 
@@ -43,7 +44,13 @@ Follow CLAUDE.md rules. Plan first in a few lines, then implement in small steps
 Run pnpm check. At the end, update docs/PROJECT_STATE.md and list what I must verify manually.
 ```
 
-## 4. Git rules
+## 4. Git rules (professional flow)
+
+- Branch per backlog item: `feat/p1-06-analyzers`, `fix/...`, `docs/...`, `chore/...`.
+- For a phase delivered as many pieces, an **integration branch** `phase/<n>-<name>` collects the feature branches (merged with `--no-ff` so history shows each piece), then one pull request goes to `main` and is merged with Rebase and merge (history kept).
+- For ordinary single-item work: branch from `main`, pull request, squash merge.
+- Phase 1 was applied with this flow, see `docs/workflow/git-flow-phase-1.md`.
+
 
 - `main` is always releasable. Protect it: require pull requests and a passing CI check.
 - Branches: `feat/`, `fix/`, `docs/`, `chore/`. Short lived (under 3 days).

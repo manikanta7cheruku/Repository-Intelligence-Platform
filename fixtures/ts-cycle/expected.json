@@ -1,0 +1,65 @@
+{
+  "description": "A three file runtime cycle, a type-only two file cycle, and a module cycle without a file cycle.",
+  "edges": [
+    [
+      "src/a.ts",
+      "src/b.ts"
+    ],
+    [
+      "src/b.ts",
+      "src/c.ts"
+    ],
+    [
+      "src/c.ts",
+      "src/a.ts"
+    ],
+    [
+      "src/d.ts",
+      "src/a.ts"
+    ],
+    [
+      "src/t1.ts",
+      "src/t2.ts"
+    ],
+    [
+      "src/t2.ts",
+      "src/t1.ts"
+    ],
+    [
+      "src/x/one.ts",
+      "src/y/two.ts"
+    ],
+    [
+      "src/y/two.ts",
+      "src/x/three.ts"
+    ]
+  ],
+  "externals": [],
+  "unresolved": [],
+  "fileCycles": [
+    [
+      "src/a.ts",
+      "src/b.ts",
+      "src/c.ts"
+    ],
+    [
+      "src/t1.ts",
+      "src/t2.ts"
+    ]
+  ],
+  "moduleCycles": [
+    [
+      "src/x",
+      "src/y"
+    ]
+  ],
+  "typeOnlyFileCycles": [
+    [
+      "src/t1.ts",
+      "src/t2.ts"
+    ]
+  ],
+  "ruleViolations": {},
+  "entrypoints": [],
+  "unsupportedLanguages": []
+}

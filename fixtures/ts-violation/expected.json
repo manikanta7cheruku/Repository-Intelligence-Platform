@@ -1,0 +1,32 @@
+{
+  "description": "Domain imports UI and React, which creates a module cycle. Three seeded rule violations.",
+  "edges": [
+    [
+      "src/domain/order.ts",
+      "src/ui/widget.ts"
+    ],
+    [
+      "src/ui/widget.ts",
+      "src/domain/pricing.ts"
+    ]
+  ],
+  "externals": [
+    "react"
+  ],
+  "unresolved": [],
+  "fileCycles": [],
+  "moduleCycles": [
+    [
+      "src/domain",
+      "src/ui"
+    ]
+  ],
+  "typeOnlyFileCycles": [],
+  "ruleViolations": {
+    "rule.ui-in-domain": 1,
+    "rule.no-react-in-domain": 1,
+    "rule.no-module-cycles": 1
+  },
+  "entrypoints": [],
+  "unsupportedLanguages": []
+}

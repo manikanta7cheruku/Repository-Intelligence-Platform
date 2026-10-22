@@ -1,7 +1,9 @@
-# Intermediate representation and report schema (draft v0)
+# Intermediate representation and report schema (v0.1.0, implemented)
 
-Frozen at the end of week 1 of Phase 1 (task P1-02). Implemented with Zod, JSON Schema generated.
-Changes after the freeze follow semver.
+Implemented in `packages/core/src/ir/types.ts` (types) and `packages/core/src/ir/schema.ts` (JSON Schema and
+validator, see ADR 0015). The published schema is `packages/core/schema/report.schema.json` and `repolens schema`
+prints it. The sections below describe the design. For exact fields read the types file. Changes follow semver:
+additive within `0.1.x`, any breaking change bumps the minor version while the project is below 1.0.
 
 ## 1. Identifiers
 

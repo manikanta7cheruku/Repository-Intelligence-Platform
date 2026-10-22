@@ -1,6 +1,6 @@
 {
   "name": "@repolens/cli",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Command line interface for RepoLens.",
   "license": "Apache-2.0",
@@ -11,5 +11,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@repolens/core": "workspace:*"
   }
 }

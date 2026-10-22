@@ -14,14 +14,18 @@
     "typecheck": "pnpm -r --if-present typecheck",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "biome check .",
-    "format": "biome format --write .",
-    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+    "lint": "biome check packages scripts vitest.config.ts",
+    "format": "biome format --write packages scripts vitest.config.ts",
+    "check": "pnpm lint && pnpm build && pnpm typecheck && pnpm test",
+    "eval": "pnpm --filter @repolens/core run eval",
+    "repolens": "node packages/cli/dist/index.js",
+    "analyze:self": "node packages/cli/dist/index.js analyze . --offline --no-history -o repolens-report -f json,markdown,html",
+    "schema": "node packages/cli/dist/index.js schema > packages/core/schema/report.schema.json"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.0",
     "@types/node": "^22.0.0",
-    "typescript": "^5.9.0",
+    "typescript": "^6.0.0",
     "vitest": "^3.2.0"
   }
 }

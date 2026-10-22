@@ -1,0 +1,1 @@
+{ "compilerOptions": { "baseUrl": ".", "resolveJsonModule": true, "paths": { "@app/*": ["src/app/*"], "@lib": ["src/lib/index.ts"] } } }
