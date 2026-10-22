@@ -1,0 +1,43 @@
+{
+  "description": "Clean three layer application with a barrel entry, a .js specifier mapped to .ts, a type-only import and builtin and third-party externals.",
+  "edges": [
+    [
+      "src/index.ts",
+      "src/ui/app.ts"
+    ],
+    [
+      "src/index.ts",
+      "src/domain/service.ts"
+    ],
+    [
+      "src/ui/app.ts",
+      "src/domain/service.ts"
+    ],
+    [
+      "src/ui/app.ts",
+      "src/ui/format.ts"
+    ],
+    [
+      "src/domain/service.ts",
+      "src/data/repo.ts"
+    ],
+    [
+      "src/domain/service.ts",
+      "src/domain/model.ts"
+    ]
+  ],
+  "externals": [
+    "fs",
+    "path",
+    "zod"
+  ],
+  "unresolved": [],
+  "fileCycles": [],
+  "moduleCycles": [],
+  "typeOnlyFileCycles": [],
+  "ruleViolations": {},
+  "entrypoints": [
+    "src/index.ts"
+  ],
+  "unsupportedLanguages": []
+}

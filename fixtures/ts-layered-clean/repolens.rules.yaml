@@ -1,0 +1,18 @@
+version: 1
+layers:
+  - name: ui
+    paths: ["src/ui/**"]
+  - name: domain
+    paths: ["src/domain/**"]
+  - name: data
+    paths: ["src/data/**"]
+rules:
+  - id: domain-not-ui
+    description: Domain must not depend on UI
+    severity: high
+    forbid:
+      from: domain
+      to: ui
+  - id: no-module-cycles
+    forbid: cycles
+    scope: modules

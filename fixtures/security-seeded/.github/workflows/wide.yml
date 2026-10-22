@@ -1,0 +1,8 @@
+name: Wide
+on: push
+permissions: write-all
+jobs:
+  y:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo hi

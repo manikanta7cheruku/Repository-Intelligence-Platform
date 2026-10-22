@@ -1,0 +1,20 @@
+version: 1
+layers:
+  - name: ui
+    paths: ["src/ui/**"]
+  - name: domain
+    paths: ["src/domain/**"]
+rules:
+  - id: ui-in-domain
+    severity: high
+    forbid:
+      from: domain
+      to: ui
+  - id: no-react-in-domain
+    severity: medium
+    forbid:
+      from: domain
+      external: ["react", "react-dom"]
+  - id: no-module-cycles
+    forbid: cycles
+    scope: modules
