@@ -25,6 +25,15 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
+      - run: pnpm build
       - run: pnpm typecheck
       - run: pnpm test
-      - run: pnpm build
+      - name: Fixture accuracy evaluation
+        run: pnpm --filter @repolens/core run eval
+      - name: Analyze this repository with its own architecture rules
+        run: pnpm analyze:self
+      - uses: actions/upload-artifact@v4
+        with:
+          name: repolens-self-report
+          path: repolens-report/
+          retention-days: 14

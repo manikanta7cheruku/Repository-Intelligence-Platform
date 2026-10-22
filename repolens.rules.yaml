@@ -1,0 +1,64 @@
+# RepoLens analyzes itself in CI with these architecture rules.
+version: 1
+layers:
+  - name: util
+    paths: ["packages/core/src/util/**"]
+  - name: ir
+    paths: ["packages/core/src/ir/**"]
+  - name: config
+    paths: ["packages/core/src/config/**"]
+  - name: acquire
+    paths: ["packages/core/src/acquire/**"]
+  - name: detect
+    paths: ["packages/core/src/detect/**"]
+  - name: report
+    paths: ["packages/core/src/report/**"]
+rules:
+  - id: util-is-a-leaf
+    description: Utilities must not depend on other layers
+    severity: high
+    allowOnly:
+      from: util
+      to: []
+  - id: ir-depends-on-util-only
+    description: The intermediate representation is the stable core and may only use utilities
+    severity: high
+    allowOnly:
+      from: ir
+      to: [util]
+  - id: config-depends-on-util-only
+    severity: high
+    allowOnly:
+      from: config
+      to: [util]
+  - id: detect-below-analysis
+    description: Detection may use utilities, the IR and acquisition types only
+    severity: medium
+    allowOnly:
+      from: detect
+      to: [util, ir, acquire]
+  - id: report-reads-the-model-only
+    description: Report builders consume the report model and nothing else
+    severity: high
+    allowOnly:
+      from: report
+      to: [ir]
+  - id: ir-has-no-third-party-imports
+    severity: high
+    forbid:
+      from: ir
+      external: ["*"]
+  - id: no-module-cycles
+    severity: high
+    forbid: cycles
+    scope: modules
+  - id: no-file-cycles
+    severity: medium
+    forbid: cycles
+    scope: files
+  - id: file-size
+    description: Keep files reviewable
+    severity: low
+    limit:
+      metric: file-code-lines
+      max: 700
