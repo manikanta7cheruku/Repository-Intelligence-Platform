@@ -1,5 +1,5 @@
-import type { DetectionSummary } from "../ir/types.js";
 import type { Workspace } from "../acquire/types.js";
+import type { DetectionSummary } from "../ir/types.js";
 import { basename, dirname } from "../util/paths.js";
 
 const LOCKFILES: Record<string, string> = {

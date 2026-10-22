@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { GraphModel } from "../ir/types.js";
 import { fileIdFor } from "../util/hash.js";
-import { RulesError, applyBaseline, evaluateRules, parseBaseline, parseRules } from "./engine.js";
+import { applyBaseline, evaluateRules, parseBaseline, parseRules, RulesError } from "./engine.js";
 
 const RULES = `
 version: 1
@@ -36,7 +36,7 @@ rules:
 `;
 
 const graph = (edges: [string, string, number?][]): GraphModel => {
-  const paths = [...new Set(edges.flatMap(([a, b]) => [a, b]))];
+  const paths = [...new Set(edges.flatMap((edge) => [edge[0], edge[1]]))];
   return {
     nodes: paths.map((p) => ({ id: fileIdFor(p), path: p, moduleId: "m", fanIn: 0, fanOut: 0 })),
     edges: edges.map(([a, b, line]) => ({

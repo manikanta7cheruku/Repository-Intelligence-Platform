@@ -1,5 +1,6 @@
-import type { AnalysisConfig } from "../config/config.js";
 import type { Workspace } from "../acquire/types.js";
+import type { AnalysisConfig } from "../config/config.js";
+// biome-ignore lint/suspicious/noShadowRestrictedNames: Symbol is the domain model type.
 import type { Dependency, FunctionMetric, SupportLevel, Symbol } from "../ir/types.js";
 
 export interface EligibleFile {

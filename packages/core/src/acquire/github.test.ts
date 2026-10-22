@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
-  GitHubUrlError,
   commitFromRootDir,
-  fetchGitHubArchive,
-  parseGitHubUrl,
   type FetchLike,
+  fetchGitHubArchive,
+  GitHubUrlError,
+  parseGitHubUrl,
 } from "./github.js";
 
 const rejects = (url: string) => {

@@ -1,3 +1,4 @@
+import { THRESHOLDS } from "../findings/generate.js";
 import type {
   Confidence,
   DetectionSummary,
@@ -11,7 +12,6 @@ import type {
   SecuritySummary,
   SubMetricInput,
 } from "../ir/types.js";
-import { THRESHOLDS } from "../findings/generate.js";
 import { applyCurve, type ScoringProfile } from "./profile.js";
 
 export interface ScoreInputs {
@@ -287,7 +287,7 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
     const defs = i.profile.dimensions[dimension] ?? [];
     const total = defs.reduce((s, x) => s + x.weight, 0);
     const inputs: SubMetricInput[] = defs.map((def) => {
-      const r = (raws[dimension] ?? {})[def.name] ?? { raw: null, note: "Not computed" };
+      const r = raws[dimension]?.[def.name] ?? { raw: null, note: "Not computed" };
       const available = r.raw !== null;
       return {
         name: def.name,

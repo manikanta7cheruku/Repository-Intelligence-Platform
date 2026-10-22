@@ -1,27 +1,27 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
+import type { AnalysisConfig, Report, Severity, Stage } from "@repolens/core";
 import {
-  ConfigError,
-  GitHubUrlError,
-  ArchiveError,
   AcquisitionError,
-  RulesError,
-  SEVERITY_RANK,
-  TOOL_VERSION,
+  ArchiveError,
   acquireTarget,
   analyze,
+  ConfigError,
   diffReports,
   diffToMarkdown,
+  GitHubUrlError,
   isGitHubTarget,
   parseGitHubUrl,
+  RulesError,
   reportSchema,
   resolveConfig,
+  SEVERITY_RANK,
+  TOOL_VERSION,
   toHtml,
   toMarkdown,
   validateReport,
 } from "@repolens/core";
-import type { AnalysisConfig, Report, Severity, Stage } from "@repolens/core";
 import { parseYamlConfig } from "./yaml-config.js";
 
 export const EXIT = { OK: 0, POLICY: 1, USAGE: 2, ERROR: 3, PARTIAL: 4 } as const;
@@ -222,7 +222,7 @@ async function cmdAnalyze(argv: string[], io: Io): Promise<number> {
     if (io.isTty && !quiet) io.err(`  ${stage}${detail ? ` (${detail})` : ""}\n`);
   };
 
-  let acquired;
+  let acquired: Awaited<ReturnType<typeof acquireTarget>>;
   try {
     log(remote ? `Fetching ${target}` : `Reading ${resolve(io.cwd, target)}`);
     acquired = await acquireTarget(target, {

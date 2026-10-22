@@ -1,4 +1,4 @@
-import { lstatSync, readFileSync, readdirSync } from "node:fs";
+import { lstatSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import type { AnalysisConfig } from "../config/config.js";
 import { GlobSet } from "../util/glob.js";

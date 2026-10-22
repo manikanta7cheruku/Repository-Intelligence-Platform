@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { resolveConfig } from "../config/config.js";
 import type { Workspace } from "../acquire/types.js";
-import { JsResolver, analyzeJsTsFile, packageNameOf } from "./js-ts.js";
+import { resolveConfig } from "../config/config.js";
+import { analyzeJsTsFile, JsResolver, packageNameOf } from "./js-ts.js";
 
 function fakeWs(files: Record<string, string>): { ws: Workspace; all: Set<string> } {
   const all = new Set(Object.keys(files));

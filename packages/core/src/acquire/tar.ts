@@ -1,6 +1,6 @@
-import { gunzipSync } from "node:zlib";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { gunzipSync } from "node:zlib";
 import { isSafeRelativePath } from "../util/paths.js";
 
 export class ArchiveError extends Error {}

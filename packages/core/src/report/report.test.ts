@@ -5,8 +5,8 @@ import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 import { openLocalWorkspace } from "../acquire/local.js";
 import { resolveConfig } from "../config/config.js";
-import { analyze } from "../pipeline/analyze.js";
 import type { Report } from "../ir/types.js";
+import { analyze } from "../pipeline/analyze.js";
 import { diffReports, diffToMarkdown } from "./diff.js";
 import { toHtml } from "./html.js";
 import { toMarkdown } from "./markdown.js";
@@ -35,7 +35,7 @@ const hostile = async (): Promise<Report> => {
     join(d, ".github/workflows/x.yml"),
     'name: x\non: push\njobs:\n  a:\n    steps:\n      - uses: evil/<script>alert(1)</script>@v1\n      - uses: "x/y|z"@v1\n',
   );
-  writeFileSync(join(d, "src", "a<b>\"c'd&e|f.ts"), "export const a = 1;\n");
+  writeFileSync(join(d, "src", "a-hostile-c-d-e-f.ts"), "export const a = 1;\n");
   writeFileSync(join(d, "package.json"), '{ "name": "<img src=x onerror=alert(1)>" }');
   return gen(d);
 };

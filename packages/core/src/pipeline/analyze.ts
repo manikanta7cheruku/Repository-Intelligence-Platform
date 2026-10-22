@@ -1,16 +1,15 @@
 import { basename } from "node:path";
-import { type AnalysisConfig, configHash } from "../config/config.js";
 import type { Workspace } from "../acquire/types.js";
 import { DEFAULT_ANALYZERS } from "../analyzers/registry.js";
 import type { AnalyzerPlugin, FileAnalysis } from "../analyzers/types.js";
+import { type AnalysisConfig, configHash } from "../config/config.js";
 import { classifyPath, looksGenerated } from "../detect/classify.js";
-import { detectProject } from "../detect/manifests.js";
 import { languageOf } from "../detect/languages.js";
+import { detectProject } from "../detect/manifests.js";
 import { generateFindings } from "../findings/generate.js";
 import { sortFindings } from "../findings/make.js";
+import { collectHistory, type RepoHead, readHead, unavailable } from "../git/history.js";
 import { buildGraph, moduleOf } from "../graph/build.js";
-import { collectHistory, readHead, unavailable, type RepoHead } from "../git/history.js";
-import { REPORT_SCHEMA_VERSION } from "../ir/types.js";
 import type {
   CoverageRecord,
   Dependency,
@@ -25,14 +24,15 @@ import type {
   SecuritySummary,
   SupportLevel,
 } from "../ir/types.js";
-import { countLines } from "../metrics/loc.js";
+import { REPORT_SCHEMA_VERSION } from "../ir/types.js";
 import { detectDuplication } from "../metrics/duplication.js";
+import { countLines } from "../metrics/loc.js";
 import { detectPractices } from "../practices/detect.js";
 import { applyBaseline, evaluateRules, parseBaseline, parseRules } from "../rules/engine.js";
 import { DEFAULT_PROFILE, profileHash } from "../scoring/profile.js";
 import { buildRecommendations } from "../scoring/recommend.js";
 import { computeScores } from "../scoring/score.js";
-import { extractPackages, queryOsv, type OsvFetch } from "../security/osv.js";
+import { extractPackages, type OsvFetch, queryOsv } from "../security/osv.js";
 import { runGitleaks, scanSecretsBuiltin } from "../security/secrets.js";
 import { checkWorkflows } from "../security/workflows.js";
 import { fileIdFor, sha256, stableStringify } from "../util/hash.js";
@@ -103,13 +103,13 @@ export async function analyze(opts: AnalyzeOptions): Promise<Report> {
     for (const f of ws.files) {
       const c = classifyPath(f.path);
       let { kind, reason } = c;
-      let language = c.language;
+      const language = c.language;
       let lines: number | null = null;
       let codeLines: number | null = null;
       let notAnalyzedReason: string | null = null;
       if (kind === "other" && language === null) {
         const text = ws.read(f.path);
-        if (text !== null && text.slice(0, 8000).includes("\0")) {
+        if (text?.slice(0, 8000).includes("\0")) {
           kind = "binary";
           reason = "contains NUL bytes";
         }
@@ -193,8 +193,7 @@ export async function analyze(opts: AnalyzeOptions): Promise<Report> {
           analyses.set(fa.path, fa);
           const rec = byPath.get(fa.path);
           if (rec) {
-            const unreadable =
-              fa.parseError !== null && fa.parseError.startsWith("file unreadable");
+            const unreadable = fa.parseError?.startsWith("file unreadable") ?? false;
             rec.analyzed = !unreadable;
             if (unreadable) rec.notAnalyzedReason = fa.parseError;
           }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ConfigError, DEFAULT_CONFIG, configHash, resolveConfig } from "./config.js";
+import { ConfigError, configHash, DEFAULT_CONFIG, resolveConfig } from "./config.js";
 
 describe("resolveConfig", () => {
   it("returns defaults and merges layers with later layers winning", () => {

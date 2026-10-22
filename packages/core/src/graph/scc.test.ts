@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { findCycles, stronglyConnectedComponents, buildAdjacency } from "./scc.js";
+import { buildAdjacency, findCycles, stronglyConnectedComponents } from "./scc.js";
 
 const edges = (pairs: [string, string][]) => pairs.map(([from, to]) => ({ from, to }));
 

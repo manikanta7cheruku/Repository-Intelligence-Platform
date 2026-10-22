@@ -1,15 +1,16 @@
 import { builtinModules } from "node:module";
 import ts from "typescript";
-import { basename, dirname, joinPosix } from "../util/paths.js";
-import { readPackageJson, type PackageJson } from "../detect/manifests.js";
 import type { Workspace } from "../acquire/types.js";
+import { type PackageJson, readPackageJson } from "../detect/manifests.js";
+// biome-ignore lint/suspicious/noShadowRestrictedNames: Symbol is the domain model type.
 import type { Dependency, DependencyKind, Symbol } from "../ir/types.js";
+import { basename, dirname, joinPosix } from "../util/paths.js";
 import {
-  throwIfAborted,
   type AnalyzerContext,
   type AnalyzerPlugin,
   type AnalyzerResult,
   type FileAnalysis,
+  throwIfAborted,
 } from "./types.js";
 
 const VROOT = "/r";

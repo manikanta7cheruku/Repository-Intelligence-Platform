@@ -1,7 +1,7 @@
 import { writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createRequire } from "node:module";
 import { aggregate, evaluateAll, resultsMarkdown } from "./harness.js";
 
 const here = dirname(fileURLToPath(import.meta.url));

@@ -1,11 +1,11 @@
-import { dirname } from "../util/paths.js";
 import type { Dependency } from "../ir/types.js";
+import { dirname } from "../util/paths.js";
 import {
-  throwIfAborted,
   type AnalyzerContext,
   type AnalyzerPlugin,
   type AnalyzerResult,
   type FileAnalysis,
+  throwIfAborted,
 } from "./types.js";
 
 const STDLIB = new Set(

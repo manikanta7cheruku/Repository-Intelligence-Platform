@@ -199,13 +199,11 @@ export async function collectHistory(
     ranked.map(([name], i) => [name, opts.authors === "anonymous" ? `Author ${i + 1}` : name]),
   );
   const total = commits.length;
-  const contributors = ranked
-    .slice(0, 20)
-    .map(([name, n]) => ({
-      name: label.get(name) as string,
-      commits: n,
-      share: Math.round((n / total) * 1000) / 1000,
-    }));
+  const contributors = ranked.slice(0, 20).map(([name, n]) => ({
+    name: label.get(name) as string,
+    commits: n,
+    share: Math.round((n / total) * 1000) / 1000,
+  }));
 
   const candidates = [...stats.entries()].filter(([p]) => inputs.files.has(p));
   const commitCounts = candidates.map(([, s]) => s.commits).sort((a, b) => a - b);

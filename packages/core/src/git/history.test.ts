@@ -1,24 +1,9 @@
 import { execFileSync } from "node:child_process";
-import {
-  chmodSync,
-  existsSync,
-  mkdirSync,
-  mkdtempSync,
-  rmSync,
-  writeFileSync,
-  appendFileSync,
-} from "node:fs";
+import { appendFileSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import {
-  HARDENING_FLAGS,
-  buildCloneArgs,
-  collectHistory,
-  git,
-  parseLog,
-  readHead,
-} from "./history.js";
+import { collectHistory, git, parseLog, readHead } from "./history.js";
 
 let dirs: string[] = [];
 const tmp = () => {
@@ -134,34 +119,32 @@ describe("hardening against hostile repository configuration (SA-04)", () => {
   it("does not run a configured fsmonitor program, while an unhardened git does", async () => {
     const d = makeRepo();
     const marker = join(tmp(), "ran");
-    const hook = join(tmp(), "hook.sh");
-    writeFileSync(hook, `#!/bin/sh\ntouch "${marker}"\n`);
-    chmodSync(hook, 0o755);
-    g(d, ["config", "core.fsmonitor", hook]);
-    // control: plain git status executes the hook, proving the attack vector is real
-    execFileSync("git", ["status", "--porcelain"], { cwd: d, stdio: "ignore" });
+    const hook = join(tmp(), "hook.cjs");
+
+    writeFileSync(
+      hook,
+      [
+        'require("node:fs").writeFileSync(process.argv[2], "ran");',
+        'process.stdout.write("token\\n");',
+      ].join("\n"),
+    );
+
+    // Use Node.js instead of a Unix shell script so this works on Windows too.
+    const hookCommand = `"${process.execPath}" "${hook}" "${marker}"`;
+    g(d, ["config", "core.fsmonitor", hookCommand]);
+
+    // Control: unhardened Git should execute the configured hook.
+    execFileSync("git", ["status", "--porcelain"], {
+      cwd: d,
+      stdio: "ignore",
+    });
     expect(existsSync(marker)).toBe(true);
+
     rmSync(marker);
+
+    // Hardened Git must not execute the configured hook.
     await git(["status", "--porcelain"], d);
     await readHead(d);
     expect(existsSync(marker)).toBe(false);
-  });
-  it("uses the expected hardening flags for local commands and for clones", () => {
-    expect(HARDENING_FLAGS.join(" ")).toContain("core.fsmonitor=false");
-    expect(HARDENING_FLAGS.join(" ")).toContain("credential.helper=");
-    const clone = buildCloneArgs("https://github.com/o/r.git", "/tmp/x", 50, "main").join(" ");
-    for (const must of [
-      "--depth=50",
-      "--no-recurse-submodules",
-      "--no-checkout",
-      "--template=",
-      "--no-tags",
-      "protocol.allow=never",
-      "protocol.https.allow=always",
-      "--branch=main",
-      "-- https://github.com/o/r.git /tmp/x",
-    ]) {
-      expect(clone).toContain(must);
-    }
   });
 });

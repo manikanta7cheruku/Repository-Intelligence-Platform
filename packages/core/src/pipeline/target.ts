@@ -1,17 +1,17 @@
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import type { AnalysisConfig } from "../config/config.js";
-import { AcquisitionError, openLocalWorkspace } from "../acquire/local.js";
 import {
   commitFromRootDir,
+  type FetchLike,
   fetchGitHubArchive,
   parseGitHubUrl,
-  type FetchLike,
 } from "../acquire/github.js";
+import { AcquisitionError, openLocalWorkspace } from "../acquire/local.js";
 import { extractTarGz } from "../acquire/tar.js";
-import { cloneForHistory } from "../git/history.js";
 import type { Workspace } from "../acquire/types.js";
+import type { AnalysisConfig } from "../config/config.js";
+import { cloneForHistory } from "../git/history.js";
 
 export interface AcquiredTarget {
   workspace: Workspace;

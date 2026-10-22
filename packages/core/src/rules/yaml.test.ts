@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { YamlSubsetError, parseYamlSubset } from "./yaml.js";
+import { parseYamlSubset, YamlSubsetError } from "./yaml.js";
 
 describe("parseYamlSubset", () => {
   it("parses maps, lists of maps, inline lists, scalars and comments", () => {

@@ -1,8 +1,8 @@
 import type { Workspace } from "../acquire/types.js";
-import type { DependencySecuritySummary, Finding, Severity } from "../ir/types.js";
 import { parseJsonSafe } from "../detect/manifests.js";
-import { basename } from "../util/paths.js";
+import type { DependencySecuritySummary, Finding, Severity } from "../ir/types.js";
 import { shortHash } from "../util/hash.js";
+import { basename } from "../util/paths.js";
 
 export interface PackageRef {
   ecosystem: "npm" | "PyPI";
