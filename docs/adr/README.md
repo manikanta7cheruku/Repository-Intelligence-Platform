@@ -18,5 +18,7 @@ Status words: Proposed, Accepted, Rejected, Deferred, Superseded. Accepted means
 | [0012](0012-graph-library.md) | Graph rendering library | Proposed |
 | [0013](0013-account-analysis-deferred.md) | Account and organization analysis deferred | Deferred |
 | [0014](0014-testing-tooling.md) | Testing and tooling strategy | Accepted |
+| [0015](0015-dependency-light-core.md) | Dependency-light core (schema validator and YAML subset) | Accepted |
+| [0016](0016-module-inference-and-graph-scope.md) | Module inference rule and graph scope | Accepted |
 
 Template: [0000-template.md](0000-template.md)

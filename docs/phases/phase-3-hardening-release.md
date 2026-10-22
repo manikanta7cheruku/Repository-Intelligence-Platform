@@ -50,7 +50,7 @@ security and rules, web application and design system, CLI and infrastructure an
 Read docs/ fully, especially product, research, architecture, ADRs, security, evaluation results,
 and docs/PROJECT_STATE.md.
 
-Create the college major project documents in docs/academic/ in Markdown, using only facts that exist
+Create the college major project documents in docs/academic/ in Markdown (reuse docs/learning, docs/product/PRD.md and docs/product/use-cases.md), using only facts that exist
 in the repository and results we actually measured (no invented numbers):
 1. Abstract (250 words) and keywords
 2. Introduction, problem statement, objectives, scope and limitations

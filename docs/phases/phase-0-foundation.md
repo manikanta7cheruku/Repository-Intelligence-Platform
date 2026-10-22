@@ -1,6 +1,6 @@
 # Phase 0: Foundation
 
-Status: scaffold delivered, owner checklist open.
+Status: **complete** (owner confirmed on 2026-10-21).
 Estimated owner effort: 15 to 25 hours.
 
 ## Goal

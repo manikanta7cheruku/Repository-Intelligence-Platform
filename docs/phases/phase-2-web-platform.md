@@ -73,5 +73,6 @@ results, usability test, accessibility audit, final documentation, release v0.1.
 preparation. Start with P3-01 and report any threat-model gap as a finding before fixing it.
 Do not write the academic documents until I confirm the exit criteria are met.
 
+Also finish docs/learning/phase-2-web-platform.md (what, why, where, mistakes, gaps, 30 college questions with answers), and create docs/learning/phase-3-hardening-release.md as you build.
 Plan briefly, implement, test, run pnpm check, update PROJECT_STATE, and tell me exactly what to run.
 ```
