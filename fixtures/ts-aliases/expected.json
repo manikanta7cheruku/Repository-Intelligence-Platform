@@ -1,0 +1,44 @@
+{
+  "description": "tsconfig paths, index resolution, re-export, dynamic import with a literal, require of a CommonJS file, JSON import, and one non-literal dynamic import that must not be resolved.",
+  "edges": [
+    [
+      "src/main.ts",
+      "src/app/feature/a.ts"
+    ],
+    [
+      "src/main.ts",
+      "src/lib/index.ts"
+    ],
+    [
+      "src/main.ts",
+      "src/utils/index.ts"
+    ],
+    [
+      "src/main.ts",
+      "src/legacy.cjs"
+    ],
+    [
+      "src/main.ts",
+      "src/lazy.ts"
+    ],
+    [
+      "src/app/feature/a.ts",
+      "src/utils/index.ts"
+    ],
+    [
+      "src/lib/index.ts",
+      "src/lib/helpers.ts"
+    ]
+  ],
+  "externals": [],
+  "unresolved": [],
+  "fileCycles": [],
+  "moduleCycles": [],
+  "typeOnlyFileCycles": [],
+  "ruleViolations": {},
+  "entrypoints": [
+    "src/main.ts"
+  ],
+  "unsupportedLanguages": [],
+  "dynamicUnresolvedAtLeast": 1
+}

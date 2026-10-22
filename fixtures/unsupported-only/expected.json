@@ -1,0 +1,21 @@
+{
+  "description": "Only languages without analyzers. The report must be honest: no graph and architecture and maintainability not assessed.",
+  "edges": [],
+  "externals": [],
+  "unresolved": [],
+  "fileCycles": [],
+  "moduleCycles": [],
+  "typeOnlyFileCycles": [],
+  "ruleViolations": {},
+  "entrypoints": [
+    "main.go"
+  ],
+  "unsupportedLanguages": [
+    "go",
+    "rust"
+  ],
+  "notAssessed": [
+    "architecture",
+    "maintainability"
+  ]
+}

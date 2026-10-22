@@ -1,0 +1,21 @@
+{
+  "description": "Seeded GitHub Actions risks: 2 unpinned actions, 1 script injection, 1 pull_request_target checkout of PR code, 1 workflow without permissions, 1 write-all.",
+  "edges": [],
+  "externals": [],
+  "unresolved": [],
+  "fileCycles": [],
+  "moduleCycles": [],
+  "typeOnlyFileCycles": [],
+  "ruleViolations": {},
+  "entrypoints": [
+    "src/index.ts"
+  ],
+  "unsupportedLanguages": [],
+  "workflowFindings": {
+    "security.workflow.unpinned-action": 2,
+    "security.workflow.script-injection": 1,
+    "security.workflow.pr-target-checkout": 1,
+    "security.workflow.no-permissions": 1,
+    "security.workflow.write-all": 1
+  }
+}

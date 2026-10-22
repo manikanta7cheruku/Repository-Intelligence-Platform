@@ -1,0 +1,40 @@
+{
+  "description": "Relative import cycle across three modules, a parent-relative import, and a relative import of a module that does not exist.",
+  "edges": [
+    [
+      "pkg/a.py",
+      "pkg/b.py"
+    ],
+    [
+      "pkg/b.py",
+      "pkg/c.py"
+    ],
+    [
+      "pkg/c.py",
+      "pkg/a.py"
+    ],
+    [
+      "pkg/sub/m.py",
+      "pkg/a.py"
+    ]
+  ],
+  "externals": [],
+  "unresolved": [
+    [
+      "pkg/sub/m.py",
+      "from .nothing import z"
+    ]
+  ],
+  "fileCycles": [
+    [
+      "pkg/a.py",
+      "pkg/b.py",
+      "pkg/c.py"
+    ]
+  ],
+  "moduleCycles": [],
+  "typeOnlyFileCycles": [],
+  "ruleViolations": {},
+  "entrypoints": [],
+  "unsupportedLanguages": []
+}

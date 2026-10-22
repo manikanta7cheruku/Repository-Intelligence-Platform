@@ -1,0 +1,32 @@
+{
+  "description": "Missing relative import, alias whose target is missing, third-party and builtin externals, and a file with a syntax error.",
+  "edges": [
+    [
+      "src/a.ts",
+      "src/b.ts"
+    ]
+  ],
+  "externals": [
+    "fs",
+    "lodash"
+  ],
+  "unresolved": [
+    [
+      "src/a.ts",
+      "./missing"
+    ],
+    [
+      "src/a.ts",
+      "@/ghost"
+    ]
+  ],
+  "fileCycles": [],
+  "moduleCycles": [],
+  "typeOnlyFileCycles": [],
+  "ruleViolations": {},
+  "entrypoints": [],
+  "unsupportedLanguages": [],
+  "syntaxErrorFiles": [
+    "src/broken.ts"
+  ]
+}

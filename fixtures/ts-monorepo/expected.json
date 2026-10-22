@@ -1,0 +1,27 @@
+{
+  "description": "Workspace packages resolved by name and by subpath without node_modules, and a scoped package that is not in the repository (external).",
+  "edges": [
+    [
+      "packages/app/src/main.ts",
+      "packages/core/src/index.ts"
+    ],
+    [
+      "packages/app/src/main.ts",
+      "packages/core/src/math.ts"
+    ],
+    [
+      "packages/core/src/index.ts",
+      "packages/core/src/math.ts"
+    ]
+  ],
+  "externals": [
+    "@acme/missing"
+  ],
+  "unresolved": [],
+  "fileCycles": [],
+  "moduleCycles": [],
+  "typeOnlyFileCycles": [],
+  "ruleViolations": {},
+  "entrypoints": [],
+  "unsupportedLanguages": []
+}

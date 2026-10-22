@@ -1,0 +1,39 @@
+{
+  "description": "Absolute, relative and from-package imports, stdlib and third-party externals, a TYPE_CHECKING import, and an import inside a docstring that must be ignored.",
+  "edges": [
+    [
+      "app/main.py",
+      "app/utils.py"
+    ],
+    [
+      "app/main.py",
+      "app/models.py"
+    ],
+    [
+      "app/main.py",
+      "app/helpers.py"
+    ],
+    [
+      "app/main.py",
+      "app/sub/deep.py"
+    ],
+    [
+      "app/main.py",
+      "app/types.py"
+    ]
+  ],
+  "externals": [
+    "os",
+    "requests",
+    "typing"
+  ],
+  "unresolved": [],
+  "fileCycles": [],
+  "moduleCycles": [],
+  "typeOnlyFileCycles": [],
+  "ruleViolations": {},
+  "entrypoints": [
+    "app/main.py"
+  ],
+  "unsupportedLanguages": []
+}

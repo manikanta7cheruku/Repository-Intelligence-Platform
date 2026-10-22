@@ -1,0 +1,25 @@
+{
+  "description": "TypeScript and Python are analyzed. Go and Rust receive detection and line counts only and must be reported as support level 1.",
+  "edges": [
+    [
+      "src/index.ts",
+      "src/util.ts"
+    ]
+  ],
+  "externals": [
+    "json"
+  ],
+  "unresolved": [],
+  "fileCycles": [],
+  "moduleCycles": [],
+  "typeOnlyFileCycles": [],
+  "ruleViolations": {},
+  "entrypoints": [
+    "cmd/main.go",
+    "src/index.ts"
+  ],
+  "unsupportedLanguages": [
+    "go",
+    "rust"
+  ]
+}
