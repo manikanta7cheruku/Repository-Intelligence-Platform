@@ -5,7 +5,10 @@
  * multi-line block scalars, multiple documents, flow maps.
  */
 export class YamlSubsetError extends Error {
-  constructor(message: string, readonly line: number) {
+  constructor(
+    message: string,
+    readonly line: number,
+  ) {
     super(`YAML line ${line}: ${message}`);
   }
 }
@@ -54,8 +57,12 @@ function parseScalar(raw: string, no: number): unknown {
     return items.map((i) => parseScalar(i, no));
   }
   if (s.startsWith("{")) throw new YamlSubsetError("flow maps are not supported", no);
-  if (/^[&*!|>]/.test(s)) throw new YamlSubsetError("anchors, tags and block scalars are not supported", no);
-  if ((s.startsWith('"') && s.endsWith('"') && s.length >= 2) || (s.startsWith("'") && s.endsWith("'") && s.length >= 2)) {
+  if (/^[&*!|>]/.test(s))
+    throw new YamlSubsetError("anchors, tags and block scalars are not supported", no);
+  if (
+    (s.startsWith('"') && s.endsWith('"') && s.length >= 2) ||
+    (s.startsWith("'") && s.endsWith("'") && s.length >= 2)
+  ) {
     return s.slice(1, -1);
   }
   if (s === "true") return true;
@@ -68,10 +75,15 @@ function parseScalar(raw: string, no: number): unknown {
 export function parseYamlSubset(text: string): unknown {
   const lines: Line[] = [];
   text.split(/\r\n|\r|\n/).forEach((raw, i) => {
-    if (raw.includes("\t") && /^\s*\t/.test(raw)) throw new YamlSubsetError("tabs are not allowed for indentation", i + 1);
+    if (raw.includes("\t") && /^\s*\t/.test(raw))
+      throw new YamlSubsetError("tabs are not allowed for indentation", i + 1);
     const noComment = stripComment(raw).replace(/\s+$/, "");
     if (noComment.trim() === "" || noComment.trim() === "---") return;
-    lines.push({ indent: noComment.length - noComment.trimStart().length, text: noComment.trim(), no: i + 1 });
+    lines.push({
+      indent: noComment.length - noComment.trimStart().length,
+      text: noComment.trim(),
+      no: i + 1,
+    });
   });
   if (lines.length === 0) return {};
   let pos = 0;
@@ -86,7 +98,8 @@ export function parseYamlSubset(text: string): unknown {
     const m = /^("[^"]*"|'[^']*'|[^:]+?)\s*:(?:\s+(.*)|$)/.exec(text);
     if (!m) throw new YamlSubsetError(`expected "key: value", got "${text}"`, no);
     let key = m[1] as string;
-    if ((key.startsWith('"') && key.endsWith('"')) || (key.startsWith("'") && key.endsWith("'"))) key = key.slice(1, -1);
+    if ((key.startsWith('"') && key.endsWith('"')) || (key.startsWith("'") && key.endsWith("'")))
+      key = key.slice(1, -1);
     return [key, m[2] ?? ""];
   };
 
@@ -103,7 +116,11 @@ export function parseYamlSubset(text: string): unknown {
       if (rest !== "") out[key] = parseScalar(rest, l.no);
       else {
         const next = lines[pos];
-        if (next && (next.indent > indent || (next.indent === indent && next.text.startsWith("- ")))) out[key] = parseBlock(next.indent);
+        if (
+          next &&
+          (next.indent > indent || (next.indent === indent && next.text.startsWith("- ")))
+        )
+          out[key] = parseBlock(next.indent);
         else out[key] = null;
       }
     }

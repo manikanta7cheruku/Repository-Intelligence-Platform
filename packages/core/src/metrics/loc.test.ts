@@ -3,8 +3,23 @@ import { countLines } from "./loc.js";
 
 describe("countLines", () => {
   it("separates code, comment and blank lines for TypeScript", () => {
-    const text = ['const a = "http://x"; // trailing', "/* block", " more */", "", "let t = `a", "// inside template", "`;", ""].join("\n");
-    expect(countLines(text, "typescript")).toEqual({ lines: 7, code: 4, comment: 2, blank: 1, commentAware: true });
+    const text = [
+      'const a = "http://x"; // trailing',
+      "/* block",
+      " more */",
+      "",
+      "let t = `a",
+      "// inside template",
+      "`;",
+      "",
+    ].join("\n");
+    expect(countLines(text, "typescript")).toEqual({
+      lines: 7,
+      code: 4,
+      comment: 2,
+      blank: 1,
+      commentAware: true,
+    });
   });
   it("treats python docstrings as code and hash lines as comments", () => {
     const text = ['"""doc', "still doc", '"""', "# note", "x = 1  # trailing", ""].join("\n");

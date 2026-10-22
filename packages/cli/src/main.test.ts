@@ -19,7 +19,17 @@ afterEach(() => {
 async function cli(args: string[], cwd = tmp()) {
   let out = "";
   let err = "";
-  const io: Io = { out: (s) => { out += s; }, err: (s) => { err += s; }, cwd, env: {}, isTty: false };
+  const io: Io = {
+    out: (s) => {
+      out += s;
+    },
+    err: (s) => {
+      err += s;
+    },
+    cwd,
+    env: {},
+    isTty: false,
+  };
   const code = await runCli(args, io);
   return { code, out, err, cwd };
 }
@@ -40,35 +50,122 @@ describe("repolens CLI", () => {
     expect(r.out).toContain("RepoLens");
   });
   it("writes only the requested formats and supports --stdout for pipes", async () => {
-    const r = await cli(["analyze", join(FIXTURES, "ts-cycle"), "--offline", "-f", "html", "-o", "o"]);
+    const r = await cli([
+      "analyze",
+      join(FIXTURES, "ts-cycle"),
+      "--offline",
+      "-f",
+      "html",
+      "-o",
+      "o",
+    ]);
     expect(existsSync(join(r.cwd, "o", "report.html"))).toBe(true);
     expect(existsSync(join(r.cwd, "o", "report.json"))).toBe(false);
-    const s = await cli(["analyze", join(FIXTURES, "ts-cycle"), "--offline", "--stdout", "--no-history"]);
+    const s = await cli([
+      "analyze",
+      join(FIXTURES, "ts-cycle"),
+      "--offline",
+      "--stdout",
+      "--no-history",
+    ]);
     expect(JSON.parse(s.out).status).toBe("complete");
     expect(s.err).toContain("RepoLens");
   });
   it("exits 1 when architecture rules are violated and 0 after the violations are baselined", async () => {
     const cwd = tmp();
-    const bad = await cli(["analyze", join(FIXTURES, "ts-violation"), "--offline", "-o", "o", "--write-baseline", "base.json"], cwd);
+    const bad = await cli(
+      [
+        "analyze",
+        join(FIXTURES, "ts-violation"),
+        "--offline",
+        "-o",
+        "o",
+        "--write-baseline",
+        "base.json",
+      ],
+      cwd,
+    );
     expect(bad.code).toBe(EXIT.OK);
     const ids = JSON.parse(readFileSync(join(cwd, "base.json"), "utf8")).accepted as string[];
     expect(ids.length).toBeGreaterThan(0);
-    expect((await cli(["analyze", join(FIXTURES, "ts-violation"), "--offline", "-o", "o"], cwd)).code).toBe(EXIT.POLICY);
-    expect((await cli(["analyze", join(FIXTURES, "ts-violation"), "--offline", "-o", "o", "--baseline", "base.json"], cwd)).code).toBe(EXIT.OK);
+    expect(
+      (await cli(["analyze", join(FIXTURES, "ts-violation"), "--offline", "-o", "o"], cwd)).code,
+    ).toBe(EXIT.POLICY);
+    expect(
+      (
+        await cli(
+          [
+            "analyze",
+            join(FIXTURES, "ts-violation"),
+            "--offline",
+            "-o",
+            "o",
+            "--baseline",
+            "base.json",
+          ],
+          cwd,
+        )
+      ).code,
+    ).toBe(EXIT.OK);
   });
   it("supports --fail-on thresholds", async () => {
-    expect((await cli(["analyze", join(FIXTURES, "ts-cycle"), "--offline", "-q", "-o", "o", "--fail-on", "medium"])).code).toBe(EXIT.POLICY);
-    expect((await cli(["analyze", join(FIXTURES, "ts-cycle"), "--offline", "-q", "-o", "o", "--fail-on", "critical"])).code).toBe(EXIT.OK);
+    expect(
+      (
+        await cli([
+          "analyze",
+          join(FIXTURES, "ts-cycle"),
+          "--offline",
+          "-q",
+          "-o",
+          "o",
+          "--fail-on",
+          "medium",
+        ])
+      ).code,
+    ).toBe(EXIT.POLICY);
+    expect(
+      (
+        await cli([
+          "analyze",
+          join(FIXTURES, "ts-cycle"),
+          "--offline",
+          "-q",
+          "-o",
+          "o",
+          "--fail-on",
+          "critical",
+        ])
+      ).code,
+    ).toBe(EXIT.OK);
   });
   it("returns 4 for partial results only when asked", async () => {
-    const args = ["analyze", join(FIXTURES, "ts-layered-clean"), "--offline", "-q", "-o", "o", "--config", "cfg.json"];
+    const args = [
+      "analyze",
+      join(FIXTURES, "ts-layered-clean"),
+      "--offline",
+      "-q",
+      "-o",
+      "o",
+      "--config",
+      "cfg.json",
+    ];
     const cwd = tmp();
     writeFileSync(join(cwd, "cfg.json"), JSON.stringify({ budgets: { maxFiles: 3 } }));
     expect((await cli(args, cwd)).code).toBe(EXIT.OK);
     expect((await cli([...args, "--fail-on-partial"], cwd)).code).toBe(EXIT.PARTIAL);
   });
   it("returns usage errors (2) for bad input without a stack trace", async () => {
-    for (const args of [["analyze"], ["analyze", "a", "b"], ["analyze", ".", "--bogus"], ["analyze", ".", "-f", "pdf"], ["analyze", ".", "--fail-on", "urgent"], ["analyze", "https://evil.com/x/y"], ["nope"], ["report"], ["diff", "a"]]) {
+    for (const args of [
+      ["analyze"],
+      ["analyze", "a", "b"],
+      ["analyze", ".", "--bogus"],
+      ["analyze", ".", "-f", "pdf"],
+      ["analyze", ".", "--fail-on", "urgent"],
+      ["analyze", "https://evil.com/x/y"],
+      ["nope"],
+      ["report"],
+      ["diff", "a"],
+    ]) {
       const r = await cli(args);
       expect(r.code).toBe(EXIT.USAGE);
       expect(r.err).not.toMatch(/\n\s+at /);
@@ -79,7 +176,9 @@ describe("repolens CLI", () => {
     writeFileSync(join(cwd, "cfg.json"), '{ "nope": 1 }');
     writeFileSync(join(cwd, "rules.yaml"), "version: 9");
     const target = join(FIXTURES, "ts-cycle");
-    expect((await cli(["analyze", target, "--offline", "--config", "cfg.json"], cwd)).code).toBe(EXIT.USAGE);
+    expect((await cli(["analyze", target, "--offline", "--config", "cfg.json"], cwd)).code).toBe(
+      EXIT.USAGE,
+    );
     const r = await cli(["analyze", target, "--offline", "--rules", "rules.yaml"], cwd);
     expect(r.code).toBe(EXIT.USAGE);
     expect(r.err).toMatch(/version: 1/);
@@ -98,7 +197,10 @@ describe("repolens CLI", () => {
     expect(html.out).toContain("<!doctype html>");
     const diff = await cli(["diff", "a/report.json", "b/report.json"], cwd);
     expect(diff.out).toContain("# RepoLens comparison");
-    expect(JSON.parse((await cli(["diff", "a/report.json", "b/report.json", "-f", "json"], cwd)).out).edges.added.length).toBeGreaterThan(0);
+    expect(
+      JSON.parse((await cli(["diff", "a/report.json", "b/report.json", "-f", "json"], cwd)).out)
+        .edges.added.length,
+    ).toBeGreaterThan(0);
     mkdirSync(join(cwd, "bad"));
     writeFileSync(join(cwd, "bad", "r.json"), "{}");
     expect((await cli(["report", "bad/r.json"], cwd)).code).toBe(EXIT.USAGE);

@@ -5,7 +5,15 @@ import { describe, expect, it } from "vitest";
 import { validateAgainst, validateReport, reportSchema } from "./schema.js";
 
 describe("validateAgainst", () => {
-  const schema = { type: "object", required: ["a"], additionalProperties: false, properties: { a: { type: "integer", minimum: 0 }, b: { type: ["string", "null"], enum: ["x", null] } } };
+  const schema = {
+    type: "object",
+    required: ["a"],
+    additionalProperties: false,
+    properties: {
+      a: { type: "integer", minimum: 0 },
+      b: { type: ["string", "null"], enum: ["x", null] },
+    },
+  };
   it("accepts valid data", () => {
     expect(validateAgainst(schema, { a: 1, b: null })).toEqual([]);
     expect(validateAgainst(schema, { a: 0 })).toEqual([]);
@@ -24,14 +32,24 @@ describe("validateAgainst", () => {
     expect(validateAgainst({ type: "number" }, Number.POSITIVE_INFINITY)).toHaveLength(1);
   });
   it("validates array items", () => {
-    expect(validateAgainst({ type: "array", items: { type: "string" } }, ["a", 1]).map((i) => i.path)).toEqual(["$[1]"]);
+    expect(
+      validateAgainst({ type: "array", items: { type: "string" } }, ["a", 1]).map((i) => i.path),
+    ).toEqual(["$[1]"]);
   });
 });
 
 describe("published JSON Schema file", () => {
   it("matches the schema used for validation", () => {
-    const file = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "schema", "report.schema.json");
-    expect(JSON.parse(readFileSync(file, "utf8"))).toEqual(JSON.parse(JSON.stringify(reportSchema)));
+    const file = join(
+      dirname(fileURLToPath(import.meta.url)),
+      "..",
+      "..",
+      "schema",
+      "report.schema.json",
+    );
+    expect(JSON.parse(readFileSync(file, "utf8"))).toEqual(
+      JSON.parse(JSON.stringify(reportSchema)),
+    );
   });
 });
 

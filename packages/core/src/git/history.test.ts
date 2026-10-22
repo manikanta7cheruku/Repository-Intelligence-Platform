@@ -1,9 +1,24 @@
 import { execFileSync } from "node:child_process";
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync, appendFileSync } from "node:fs";
+import {
+  chmodSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  rmSync,
+  writeFileSync,
+  appendFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { HARDENING_FLAGS, buildCloneArgs, collectHistory, git, parseLog, readHead } from "./history.js";
+import {
+  HARDENING_FLAGS,
+  buildCloneArgs,
+  collectHistory,
+  git,
+  parseLog,
+  readHead,
+} from "./history.js";
 
 let dirs: string[] = [];
 const tmp = () => {
@@ -17,8 +32,17 @@ afterEach(() => {
 });
 const g = (cwd: string, args: string[], who = "Alice", day = 1) =>
   execFileSync("git", args, {
-    cwd, encoding: "utf8",
-    env: { ...process.env, GIT_AUTHOR_NAME: who, GIT_AUTHOR_EMAIL: `${who}@x.test`, GIT_COMMITTER_NAME: who, GIT_COMMITTER_EMAIL: `${who}@x.test`, GIT_AUTHOR_DATE: `2024-01-${String(day).padStart(2, "0")}T10:00:00Z`, GIT_COMMITTER_DATE: `2024-01-${String(day).padStart(2, "0")}T10:00:00Z` },
+    cwd,
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      GIT_AUTHOR_NAME: who,
+      GIT_AUTHOR_EMAIL: `${who}@x.test`,
+      GIT_COMMITTER_NAME: who,
+      GIT_COMMITTER_EMAIL: `${who}@x.test`,
+      GIT_AUTHOR_DATE: `2024-01-${String(day).padStart(2, "0")}T10:00:00Z`,
+      GIT_COMMITTER_DATE: `2024-01-${String(day).padStart(2, "0")}T10:00:00Z`,
+    },
   });
 
 function makeRepo(): string {
@@ -38,10 +62,14 @@ function makeRepo(): string {
 
 describe("parseLog", () => {
   it("parses commits with numstat and binary files", () => {
-    const out = "\x1eabc\x1fAlice\x1f2024-01-01T00:00:00Z\n\n3\t1\tsrc/a.ts\n-\t-\timg.png\n\x1edef\x1fBob\x1f2024-01-02T00:00:00Z\n\n";
+    const out =
+      "\x1eabc\x1fAlice\x1f2024-01-01T00:00:00Z\n\n3\t1\tsrc/a.ts\n-\t-\timg.png\n\x1edef\x1fBob\x1f2024-01-02T00:00:00Z\n\n";
     const c = parseLog(out);
     expect(c).toHaveLength(2);
-    expect(c[0]?.files).toEqual([{ path: "src/a.ts", churn: 4 }, { path: "img.png", churn: 0 }]);
+    expect(c[0]?.files).toEqual([
+      { path: "src/a.ts", churn: 4 },
+      { path: "img.png", churn: 0 },
+    ]);
     expect(c[1]?.files).toEqual([]);
   });
 });
@@ -53,8 +81,16 @@ describe("collectHistory", () => {
     expect(head?.commitSha).toMatch(/^[0-9a-f]{40}$/);
     expect(head?.branch).toBe("main");
     expect(head?.shallow).toBe(false);
-    const files = new Map<string, number | null>([["src/hot.ts", 12], ["src/cold.ts", 1]]);
-    const h = await collectHistory(d, head as NonNullable<typeof head>, { maxCommits: 100, authors: "names", hotspotLimit: 5 }, { files, moduleOf: () => ({ id: "m_src", path: "src" }) });
+    const files = new Map<string, number | null>([
+      ["src/hot.ts", 12],
+      ["src/cold.ts", 1],
+    ]);
+    const h = await collectHistory(
+      d,
+      head as NonNullable<typeof head>,
+      { maxCommits: 100, authors: "names", hotspotLimit: 5 },
+      { files, moduleOf: () => ({ id: "m_src", path: "src" }) },
+    );
     expect(h.available).toBe(true);
     expect(h.commitsAnalyzed).toBe(6);
     expect(h.contributors.map((c) => `${c.name}:${c.commits}`)).toEqual(["Alice:4", "Bob:2"]);
@@ -69,13 +105,23 @@ describe("collectHistory", () => {
   it("can anonymize authors", async () => {
     const d = makeRepo();
     const head = await readHead(d);
-    const h = await collectHistory(d, head as NonNullable<typeof head>, { maxCommits: 100, authors: "anonymous", hotspotLimit: 5 }, { files: new Map(), moduleOf: () => null });
+    const h = await collectHistory(
+      d,
+      head as NonNullable<typeof head>,
+      { maxCommits: 100, authors: "anonymous", hotspotLimit: 5 },
+      { files: new Map(), moduleOf: () => null },
+    );
     expect(h.contributors.map((c) => c.name)).toEqual(["Author 1", "Author 2"]);
   });
   it("states that history is limited when maxCommits is reached", async () => {
     const d = makeRepo();
     const head = await readHead(d);
-    const h = await collectHistory(d, head as NonNullable<typeof head>, { maxCommits: 3, authors: "names", hotspotLimit: 5 }, { files: new Map(), moduleOf: () => null });
+    const h = await collectHistory(
+      d,
+      head as NonNullable<typeof head>,
+      { maxCommits: 3, authors: "names", hotspotLimit: 5 },
+      { files: new Map(), moduleOf: () => null },
+    );
     expect(h.commitsAnalyzed).toBe(3);
     expect(h.limitations[0]).toMatch(/limited to the most recent 3/);
   });
@@ -104,7 +150,17 @@ describe("hardening against hostile repository configuration (SA-04)", () => {
     expect(HARDENING_FLAGS.join(" ")).toContain("core.fsmonitor=false");
     expect(HARDENING_FLAGS.join(" ")).toContain("credential.helper=");
     const clone = buildCloneArgs("https://github.com/o/r.git", "/tmp/x", 50, "main").join(" ");
-    for (const must of ["--depth=50", "--no-recurse-submodules", "--no-checkout", "--template=", "--no-tags", "protocol.allow=never", "protocol.https.allow=always", "--branch=main", "-- https://github.com/o/r.git /tmp/x"]) {
+    for (const must of [
+      "--depth=50",
+      "--no-recurse-submodules",
+      "--no-checkout",
+      "--template=",
+      "--no-tags",
+      "protocol.allow=never",
+      "protocol.https.allow=always",
+      "--branch=main",
+      "-- https://github.com/o/r.git /tmp/x",
+    ]) {
       expect(clone).toContain(must);
     }
   });

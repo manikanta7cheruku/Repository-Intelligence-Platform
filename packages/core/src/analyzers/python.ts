@@ -1,9 +1,17 @@
 import { dirname } from "../util/paths.js";
 import type { Dependency } from "../ir/types.js";
-import { throwIfAborted, type AnalyzerContext, type AnalyzerPlugin, type AnalyzerResult, type FileAnalysis } from "./types.js";
+import {
+  throwIfAborted,
+  type AnalyzerContext,
+  type AnalyzerPlugin,
+  type AnalyzerResult,
+  type FileAnalysis,
+} from "./types.js";
 
 const STDLIB = new Set(
-  ("abc argparse array ast asyncio atexit base64 binascii bisect builtins bz2 calendar cmath collections colorsys concurrent configparser contextlib copy copyreg csv ctypes dataclasses datetime decimal difflib dis doctest email enum errno faulthandler fcntl filecmp fnmatch fractions ftplib functools gc getopt getpass gettext glob graphlib gzip hashlib heapq hmac html http imaplib importlib inspect io ipaddress itertools json keyword linecache locale logging lzma mailbox math mimetypes mmap multiprocessing numbers operator os pathlib pickle pkgutil platform plistlib poplib pprint profile pstats pty pwd queue random re readline reprlib resource runpy sched secrets select selectors shelve shlex shutil signal site smtplib socket socketserver sqlite3 ssl stat statistics string stringprep struct subprocess sys sysconfig syslog tarfile tempfile termios textwrap threading time timeit tkinter token tokenize tomllib trace traceback tracemalloc types typing unicodedata unittest urllib uuid venv warnings wave weakref webbrowser xml xmlrpc zipapp zipfile zipimport zlib zoneinfo __future__ _thread").split(" "),
+  "abc argparse array ast asyncio atexit base64 binascii bisect builtins bz2 calendar cmath collections colorsys concurrent configparser contextlib copy copyreg csv ctypes dataclasses datetime decimal difflib dis doctest email enum errno faulthandler fcntl filecmp fnmatch fractions ftplib functools gc getopt getpass gettext glob graphlib gzip hashlib heapq hmac html http imaplib importlib inspect io ipaddress itertools json keyword linecache locale logging lzma mailbox math mimetypes mmap multiprocessing numbers operator os pathlib pickle pkgutil platform plistlib poplib pprint profile pstats pty pwd queue random re readline reprlib resource runpy sched secrets select selectors shelve shlex shutil signal site smtplib socket socketserver sqlite3 ssl stat statistics string stringprep struct subprocess sys sysconfig syslog tarfile tempfile termios textwrap threading time timeit tkinter token tokenize tomllib trace traceback tracemalloc types typing unicodedata unittest urllib uuid venv warnings wave weakref webbrowser xml xmlrpc zipapp zipfile zipimport zlib zoneinfo __future__ _thread".split(
+    " ",
+  ),
 );
 
 /** Replaces string contents and comments with spaces, keeping line structure so positions stay valid. */
@@ -130,7 +138,8 @@ function logicalLines(lines: string[]): { text: string; line: number; indent: nu
       buf = "";
     }
   }
-  if (buf !== "") out.push({ text: buf, line: start + 1, indent: indentOf(lines[start] as string) });
+  if (buf !== "")
+    out.push({ text: buf, line: start + 1, indent: indentOf(lines[start] as string) });
   return out;
 }
 
@@ -149,8 +158,19 @@ export function parseImports(lines: string[]): ImportStatement[] {
     let m = /^import\s+(.+)$/.exec(t);
     if (m) {
       for (const part of (m[1] as string).split(",")) {
-        const name = part.trim().split(/\s+as\s+/)[0]?.trim();
-        if (name && /^[\w.]+$/.test(name)) result.push({ line: ll.line, dots: 0, module: name, names: [], typeOnly, raw: `import ${name}` });
+        const name = part
+          .trim()
+          .split(/\s+as\s+/)[0]
+          ?.trim();
+        if (name && /^[\w.]+$/.test(name))
+          result.push({
+            line: ll.line,
+            dots: 0,
+            module: name,
+            names: [],
+            typeOnly,
+            raw: `import ${name}`,
+          });
       }
       continue;
     }
@@ -159,9 +179,22 @@ export function parseImports(lines: string[]): ImportStatement[] {
       const names = (m[3] as string)
         .replace(/[()]/g, " ")
         .split(",")
-        .map((s) => s.trim().split(/\s+as\s+/)[0]?.trim() ?? "")
+        .map(
+          (s) =>
+            s
+              .trim()
+              .split(/\s+as\s+/)[0]
+              ?.trim() ?? "",
+        )
         .filter((s) => /^(\w+|\*)$/.test(s));
-      result.push({ line: ll.line, dots: (m[1] as string).length, module: m[2] as string, names, typeOnly, raw: `from ${m[1]}${m[2]} import ${names.join(", ")}` });
+      result.push({
+        line: ll.line,
+        dots: (m[1] as string).length,
+        module: m[2] as string,
+        names,
+        typeOnly,
+        raw: `from ${m[1]}${m[2]} import ${names.join(", ")}`,
+      });
     }
   }
   return result;
@@ -170,9 +203,19 @@ export function parseImports(lines: string[]): ImportStatement[] {
 export function analyzePythonFile(path: string, text: string, ctx: PyContext): FileAnalysis {
   const lines = stripPython(text);
   const deps: Dependency[] = [];
-  const make = (st: ImportStatement, over: Partial<Dependency> & Pick<Dependency, "resolution">): Dependency => ({
-    fromPath: path, specifier: st.raw, kind: st.typeOnly ? "type-only" : "import", line: st.line,
-    toPath: null, externalPackage: null, builtin: false, reason: null, ...over,
+  const make = (
+    st: ImportStatement,
+    over: Partial<Dependency> & Pick<Dependency, "resolution">,
+  ): Dependency => ({
+    fromPath: path,
+    specifier: st.raw,
+    kind: st.typeOnly ? "type-only" : "import",
+    line: st.line,
+    toPath: null,
+    externalPackage: null,
+    builtin: false,
+    reason: null,
+    ...over,
   });
 
   for (const st of parseImports(lines)) {
@@ -187,9 +230,14 @@ export function analyzePythonFile(path: string, text: string, ctx: PyContext): F
         const sub = moduleFile(ctx, base, [...modParts, n]);
         if (sub && sub !== target) subs.push(sub);
       }
-      if (subs.length > 0) for (const s of [...new Set(subs)]) deps.push(make(st, { resolution: "resolved", toPath: s }));
+      if (subs.length > 0)
+        for (const s of [...new Set(subs)])
+          deps.push(make(st, { resolution: "resolved", toPath: s }));
       else if (target) deps.push(make(st, { resolution: "resolved", toPath: target }));
-      else deps.push(make(st, { resolution: "unresolved", reason: "relative module not found in repository" }));
+      else
+        deps.push(
+          make(st, { resolution: "unresolved", reason: "relative module not found in repository" }),
+        );
       continue;
     }
     const top = modParts[0] as string;
@@ -205,10 +253,14 @@ export function analyzePythonFile(path: string, text: string, ctx: PyContext): F
         const sub = resolveAbsolute(ctx, [...modParts, n]);
         if (sub && sub !== target) subs.push(sub);
       }
-      if (subs.length > 0) for (const s of [...new Set(subs)]) deps.push(make(st, { resolution: "resolved", toPath: s }));
+      if (subs.length > 0)
+        for (const s of [...new Set(subs)])
+          deps.push(make(st, { resolution: "resolved", toPath: s }));
       else deps.push(make(st, { resolution: "resolved", toPath: target }));
     } else if (ctx.topLevelNames.has(top)) {
-      deps.push(make(st, { resolution: "unresolved", reason: "submodule not found in repository package" }));
+      deps.push(
+        make(st, { resolution: "unresolved", reason: "submodule not found in repository package" }),
+      );
     } else {
       deps.push(make(st, { resolution: "external", externalPackage: top }));
     }
@@ -224,13 +276,28 @@ export function analyzePythonFile(path: string, text: string, ctx: PyContext): F
     const m = /^\s*(?:async\s+)?def\s+(\w+)\s*\(/.exec(l);
     const c = /^\s*class\s+(\w+)/.exec(l);
     if (c) {
-      if (ind === 0) symbols.push({ name: c[1] as string, kind: "class", exported: !(c[1] as string).startsWith("_"), line: i + 1, endLine: i + 1 });
+      if (ind === 0)
+        symbols.push({
+          name: c[1] as string,
+          kind: "class",
+          exported: !(c[1] as string).startsWith("_"),
+          line: i + 1,
+          endLine: i + 1,
+        });
       currentClass = { name: c[1] as string, indent: ind };
     }
     if (m) {
-      const cls: string | null = currentClass && ind > currentClass.indent ? currentClass.name : null;
+      const cls: string | null =
+        currentClass && ind > currentClass.indent ? currentClass.name : null;
       defs.push({ name: m[1] as string, line: i + 1, indent: ind, cls });
-      if (ind === 0) symbols.push({ name: m[1] as string, kind: "function", exported: !(m[1] as string).startsWith("_"), line: i + 1, endLine: i + 1 });
+      if (ind === 0)
+        symbols.push({
+          name: m[1] as string,
+          kind: "function",
+          exported: !(m[1] as string).startsWith("_"),
+          line: i + 1,
+          endLine: i + 1,
+        });
     }
   });
   const lastNonBlank = (from: number, indent: number): number => {
@@ -247,14 +314,22 @@ export function analyzePythonFile(path: string, text: string, ctx: PyContext): F
 
   const functions: FileAnalysis["functions"] = defs.map((d) => {
     const end = lastNonBlank(d.line, d.indent);
-    const nested = defs.filter((o) => o !== d && o.line > d.line && o.line <= end && o.indent > d.indent);
+    const nested = defs.filter(
+      (o) => o !== d && o.line > d.line && o.line <= end && o.indent > d.indent,
+    );
     let count = 1;
     for (let ln = d.line + 1; ln <= end; ln++) {
       if (nested.some((o) => ln >= o.line && ln <= lastNonBlank(o.line, o.indent))) continue;
       const l = lines[ln - 1] as string;
       count += (l.match(/\b(if|elif|for|while|except|case|and|or)\b/g) ?? []).length;
     }
-    return { name: d.cls ? `${d.cls}.${d.name}` : d.name, line: d.line, endLine: Math.max(end, d.line), complexity: count, approximate: true };
+    return {
+      name: d.cls ? `${d.cls}.${d.name}` : d.name,
+      line: d.line,
+      endLine: Math.max(end, d.line),
+      complexity: count,
+      approximate: true,
+    };
   });
   return { path, dependencies: deps, symbols, functions, dynamicUnresolved: 0, parseError: null };
 }
@@ -280,7 +355,18 @@ export const pythonAnalyzer: AnalyzerPlugin = {
     for (const f of ctx.files) {
       if ((n++ & 63) === 0) throwIfAborted(ctx.signal);
       const text = ctx.ws.read(f.path);
-      files.push(text === null ? { path: f.path, dependencies: [], symbols: [], functions: [], dynamicUnresolved: 0, parseError: "file unreadable or over the per-file size budget" } : analyzePythonFile(f.path, text, py));
+      files.push(
+        text === null
+          ? {
+              path: f.path,
+              dependencies: [],
+              symbols: [],
+              functions: [],
+              dynamicUnresolved: 0,
+              parseError: "file unreadable or over the per-file size budget",
+            }
+          : analyzePythonFile(f.path, text, py),
+      );
     }
     return { files, limitations: pythonAnalyzer.limitations };
   },

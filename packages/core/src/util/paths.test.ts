@@ -7,7 +7,8 @@ describe("isSafeRelativePath", () => {
     expect(isSafeRelativePath("a/..b/c")).toBe(true);
   });
   it("rejects traversal, absolute and odd paths", () => {
-    for (const bad of ["../x", "a/../../x", "/etc/passwd", "C:/x", "a\\b", "a\0b", ""]) expect(isSafeRelativePath(bad)).toBe(false);
+    for (const bad of ["../x", "a/../../x", "/etc/passwd", "C:/x", "a\\b", "a\0b", ""])
+      expect(isSafeRelativePath(bad)).toBe(false);
   });
 });
 

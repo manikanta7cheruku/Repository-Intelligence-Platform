@@ -23,10 +23,19 @@ const cfg = resolveConfig({});
 
 describe("openLocalWorkspace", () => {
   it("lists files in sorted order and skips node_modules and .git with a recorded reason", () => {
-    const d = make({ "b.ts": "1", "a.ts": "2", "node_modules/x/index.js": "3", ".git/config": "4", "src/c.ts": "5" });
+    const d = make({
+      "b.ts": "1",
+      "a.ts": "2",
+      "node_modules/x/index.js": "3",
+      ".git/config": "4",
+      "src/c.ts": "5",
+    });
     const ws = openLocalWorkspace(d, cfg);
     expect(ws.files.map((f) => f.path)).toEqual(["a.ts", "b.ts", "src/c.ts"]);
-    expect(ws.excluded.map((e) => e.reason)).toEqual(["directory excluded: dependency directory", "directory excluded: git metadata"]);
+    expect(ws.excluded.map((e) => e.reason)).toEqual([
+      "directory excluded: dependency directory",
+      "directory excluded: git metadata",
+    ]);
   });
   it("does not follow symbolic links", () => {
     const d = make({ "real.ts": "x" });

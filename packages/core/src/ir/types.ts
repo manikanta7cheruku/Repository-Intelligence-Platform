@@ -160,7 +160,11 @@ export interface GraphModel {
   moduleEdges: { from: string; to: string; weight: number }[];
   cycles: CycleRecord[];
   levels: { moduleId: string; level: number; origin: Origin; confidence: Confidence }[];
-  entrypointReachable: { analyzable: boolean; reachableFiles: number | null; unreachableFiles: number | null };
+  entrypointReachable: {
+    analyzable: boolean;
+    reachableFiles: number | null;
+    unreachableFiles: number | null;
+  };
   resolution: {
     internalImports: number;
     resolved: number;
@@ -231,10 +235,27 @@ export interface PracticesSummary {
     testToSourceFileRatio: number | null;
     coverageReport: "not-ingested";
   };
-  quality: { linters: string[]; formatters: string[]; typeCheckers: string[]; strictTypeScript: boolean | null };
+  quality: {
+    linters: string[];
+    formatters: string[];
+    typeCheckers: string[];
+    strictTypeScript: boolean | null;
+  };
   documentation: {
-    readme: { path: string | null; words: number | null; headings: string[]; hasInstall: boolean | null; hasUsage: boolean | null };
-    files: { contributing: boolean; codeOfConduct: boolean; security: boolean; changelog: boolean; license: boolean };
+    readme: {
+      path: string | null;
+      words: number | null;
+      headings: string[];
+      hasInstall: boolean | null;
+      hasUsage: boolean | null;
+    };
+    files: {
+      contributing: boolean;
+      codeOfConduct: boolean;
+      security: boolean;
+      changelog: boolean;
+      license: boolean;
+    };
     docsDirectory: boolean;
     adrDirectories: string[];
     adrCount: number;
@@ -259,7 +280,13 @@ export interface HistorySummary {
   contributors: { name: string; commits: number; share: number }[];
   topAuthorShare: number | null;
   hotspots: HistoryHotspot[];
-  moduleOwnership: { moduleId: string; path: string; topAuthor: string; share: number; commits: number }[];
+  moduleOwnership: {
+    moduleId: string;
+    path: string;
+    topAuthor: string;
+    share: number;
+    commits: number;
+  }[];
   limitations: string[];
 }
 
@@ -304,7 +331,10 @@ export interface Metrics {
     duplicatedLines: number | null;
     totalLines: number | null;
     ratio: number | null;
-    groups: { lines: number; occurrences: { path: string; startLine: number; endLine: number }[] }[];
+    groups: {
+      lines: number;
+      occurrences: { path: string; startLine: number; endLine: number }[];
+    }[];
   };
   totals: { codeLines: number; commentLines: number; blankLines: number };
 }
@@ -325,7 +355,13 @@ export interface Report {
   status: ReportStatus;
   repository: RepositoryInfo;
   scope: {
-    languages: { language: string; files: number; codeLines: number; supportLevel: SupportLevel; analyzerId: string | null }[];
+    languages: {
+      language: string;
+      files: number;
+      codeLines: number;
+      supportLevel: SupportLevel;
+      analyzerId: string | null;
+    }[];
     excluded: { reason: string; count: number }[];
     budgets: Record<string, number>;
   };

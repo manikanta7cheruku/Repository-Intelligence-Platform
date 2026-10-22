@@ -86,7 +86,10 @@ export function openLocalWorkspace(rootInput: string, config: AnalysisConfig): W
         bump("unreadable file");
         continue;
       }
-      if (files.length >= config.budgets.maxFiles || totalBytes + size > config.budgets.maxTotalBytes) {
+      if (
+        files.length >= config.budgets.maxFiles ||
+        totalBytes + size > config.budgets.maxTotalBytes
+      ) {
         truncated = true;
         limitations.push(
           `Analysis truncated: file or size budget reached after ${files.length} files. Raise budgets or add exclusions.`,
@@ -113,7 +116,9 @@ export function openLocalWorkspace(rootInput: string, config: AnalysisConfig): W
       }
     },
     has: (path) => index.has(path),
-    excluded: [...counts.entries()].map(([reason, count]) => ({ reason, count })).sort((a, b) => a.reason.localeCompare(b.reason)),
+    excluded: [...counts.entries()]
+      .map(([reason, count]) => ({ reason, count }))
+      .sort((a, b) => a.reason.localeCompare(b.reason)),
     truncated,
     limitations,
   };

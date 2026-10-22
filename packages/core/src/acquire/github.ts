@@ -25,14 +25,18 @@ export function parseGitHubUrl(input: string): GitHubRepoRef {
     throw new GitHubUrlError("Not a valid URL");
   }
   if (url.protocol !== "https:") throw new GitHubUrlError("Only https URLs are accepted");
-  if (url.username || url.password) throw new GitHubUrlError("URLs with credentials are not accepted");
+  if (url.username || url.password)
+    throw new GitHubUrlError("URLs with credentials are not accepted");
   if (url.port) throw new GitHubUrlError("URLs with ports are not accepted");
-  if (isIP(url.hostname) !== 0 || url.hostname.startsWith("[")) throw new GitHubUrlError("IP address hosts are not accepted");
-  if (!ALLOWED_HOSTS.has(url.hostname.toLowerCase())) throw new GitHubUrlError("Only github.com repositories are supported");
+  if (isIP(url.hostname) !== 0 || url.hostname.startsWith("["))
+    throw new GitHubUrlError("IP address hosts are not accepted");
+  if (!ALLOWED_HOSTS.has(url.hostname.toLowerCase()))
+    throw new GitHubUrlError("Only github.com repositories are supported");
   const parts = url.pathname.split("/").filter(Boolean);
   const owner = parts[0];
   const repoRaw = parts[1];
-  if (!owner || !repoRaw) throw new GitHubUrlError("URL must point to a repository: https://github.com/owner/repo");
+  if (!owner || !repoRaw)
+    throw new GitHubUrlError("URL must point to a repository: https://github.com/owner/repo");
   const repo = repoRaw.replace(/\.git$/, "");
   if (!OWNER_RE.test(owner) || !REPO_RE.test(repo) || repo === "." || repo === "..") {
     throw new GitHubUrlError("Invalid owner or repository name");
@@ -44,7 +48,12 @@ export function parseGitHubUrl(input: string): GitHubRepoRef {
 }
 
 export function isSafeRef(ref: string): boolean {
-  return /^[A-Za-z0-9._\-/]{1,200}$/.test(ref) && !ref.includes("..") && !ref.startsWith("-") && !ref.startsWith("/");
+  return (
+    /^[A-Za-z0-9._\-/]{1,200}$/.test(ref) &&
+    !ref.includes("..") &&
+    !ref.startsWith("-") &&
+    !ref.startsWith("/")
+  );
 }
 
 export interface FetchedArchive {
@@ -53,7 +62,10 @@ export interface FetchedArchive {
   ref: string | null;
 }
 
-export type FetchLike = (url: string, init: { headers: Record<string, string>; redirect: "manual"; signal?: AbortSignal }) => Promise<{
+export type FetchLike = (
+  url: string,
+  init: { headers: Record<string, string>; redirect: "manual"; signal?: AbortSignal },
+) => Promise<{
   status: number;
   headers: { get(name: string): string | null };
   arrayBuffer(): Promise<ArrayBuffer>;
@@ -68,8 +80,12 @@ export interface FetchOptions {
 }
 
 /** Downloads a repository tarball through the GitHub API. Redirects are followed only to allow-listed hosts. */
-export async function fetchGitHubArchive(spec: GitHubRepoRef, opts: FetchOptions): Promise<FetchedArchive> {
-  const doFetch: FetchLike = opts.fetchImpl ?? ((url, init) => fetch(url, init) as ReturnType<FetchLike>);
+export async function fetchGitHubArchive(
+  spec: GitHubRepoRef,
+  opts: FetchOptions,
+): Promise<FetchedArchive> {
+  const doFetch: FetchLike =
+    opts.fetchImpl ?? ((url, init) => fetch(url, init) as ReturnType<FetchLike>);
   const refPart = spec.ref ? `/${spec.ref.split("/").map(encodeURIComponent).join("/")}` : "";
   let url = `https://api.github.com/repos/${encodeURIComponent(spec.owner)}/${encodeURIComponent(spec.repo)}/tarball${refPart}`;
   const headers: Record<string, string> = {
@@ -81,7 +97,11 @@ export async function fetchGitHubArchive(spec: GitHubRepoRef, opts: FetchOptions
 
   const maxRedirects = opts.maxRedirects ?? 3;
   for (let hop = 0; hop <= maxRedirects; hop++) {
-    const res = await doFetch(url, { headers, redirect: "manual", ...(opts.signal ? { signal: opts.signal } : {}) });
+    const res = await doFetch(url, {
+      headers,
+      redirect: "manual",
+      ...(opts.signal ? { signal: opts.signal } : {}),
+    });
     if (res.status >= 300 && res.status < 400) {
       const location = res.headers.get("location");
       if (!location) throw new GitHubUrlError("Redirect without location");
@@ -94,13 +114,19 @@ export async function fetchGitHubArchive(spec: GitHubRepoRef, opts: FetchOptions
       url = next.toString();
       continue;
     }
-    if (res.status === 404) throw new GitHubUrlError("Repository or ref not found, or it is private");
-    if (res.status === 403 || res.status === 429) throw new GitHubUrlError("GitHub rate limit or access restriction. Try again later or set GITHUB_TOKEN");
+    if (res.status === 404)
+      throw new GitHubUrlError("Repository or ref not found, or it is private");
+    if (res.status === 403 || res.status === 429)
+      throw new GitHubUrlError(
+        "GitHub rate limit or access restriction. Try again later or set GITHUB_TOKEN",
+      );
     if (res.status !== 200) throw new GitHubUrlError(`GitHub returned status ${res.status}`);
     const declared = Number(res.headers.get("content-length") ?? "0");
-    if (declared > opts.maxBytes) throw new GitHubUrlError("Repository archive exceeds the size budget");
+    if (declared > opts.maxBytes)
+      throw new GitHubUrlError("Repository archive exceeds the size budget");
     const data = Buffer.from(await res.arrayBuffer());
-    if (data.length > opts.maxBytes) throw new GitHubUrlError("Repository archive exceeds the size budget");
+    if (data.length > opts.maxBytes)
+      throw new GitHubUrlError("Repository archive exceeds the size budget");
     return { data, commitSha: null, ref: spec.ref };
   }
   throw new GitHubUrlError("Too many redirects");

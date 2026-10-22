@@ -2,8 +2,24 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import {
-  ConfigError, GitHubUrlError, ArchiveError, AcquisitionError, RulesError, SEVERITY_RANK, TOOL_VERSION,
-  acquireTarget, analyze, diffReports, diffToMarkdown, isGitHubTarget, parseGitHubUrl, reportSchema, resolveConfig, toHtml, toMarkdown, validateReport,
+  ConfigError,
+  GitHubUrlError,
+  ArchiveError,
+  AcquisitionError,
+  RulesError,
+  SEVERITY_RANK,
+  TOOL_VERSION,
+  acquireTarget,
+  analyze,
+  diffReports,
+  diffToMarkdown,
+  isGitHubTarget,
+  parseGitHubUrl,
+  reportSchema,
+  resolveConfig,
+  toHtml,
+  toMarkdown,
+  validateReport,
 } from "@repolens/core";
 import type { AnalysisConfig, Report, Severity, Stage } from "@repolens/core";
 import { parseYamlConfig } from "./yaml-config.js";
@@ -68,7 +84,9 @@ function loadConfigFile(path: string): Partial<AnalysisConfig> {
     throw new UsageError(`Cannot read config file ${path}`);
   }
   try {
-    return (path.endsWith(".json") ? JSON.parse(text) : parseYamlConfig(text)) as Partial<AnalysisConfig>;
+    return (
+      path.endsWith(".json") ? JSON.parse(text) : parseYamlConfig(text)
+    ) as Partial<AnalysisConfig>;
   } catch (e) {
     throw new UsageError(`Invalid config file ${path}: ${(e as Error).message}`);
   }
@@ -77,11 +95,18 @@ function loadConfigFile(path: string): Partial<AnalysisConfig> {
 function summarize(r: Report, files: string[]): string {
   const lines: string[] = [];
   lines.push(`RepoLens ${TOOL_VERSION}: ${r.repository.name} (${r.status})`);
-  lines.push(`Files: ${r.repository.analyzedFiles} analyzed of ${r.repository.totalFiles}. Graph: ${r.graph.nodes.length} files, ${r.graph.edges.length} edges, ${r.graph.cycles.length} cycles.`);
-  for (const s of r.scores) lines.push(`  ${s.dimension.padEnd(22)} ${s.state === "assessed" ? `${String(s.value).padStart(3)}  confidence ${s.confidence}` : "not assessed"}`);
+  lines.push(
+    `Files: ${r.repository.analyzedFiles} analyzed of ${r.repository.totalFiles}. Graph: ${r.graph.nodes.length} files, ${r.graph.edges.length} edges, ${r.graph.cycles.length} cycles.`,
+  );
+  for (const s of r.scores)
+    lines.push(
+      `  ${s.dimension.padEnd(22)} ${s.state === "assessed" ? `${String(s.value).padStart(3)}  confidence ${s.confidence}` : "not assessed"}`,
+    );
   const counts: Record<string, number> = {};
   for (const f of r.findings) counts[f.severity] = (counts[f.severity] ?? 0) + 1;
-  lines.push(`Findings: ${r.findings.length} (${(["critical", "high", "medium", "low", "info"] as Severity[]).map((s) => `${counts[s] ?? 0} ${s}`).join(", ")})`);
+  lines.push(
+    `Findings: ${r.findings.length} (${(["critical", "high", "medium", "low", "info"] as Severity[]).map((s) => `${counts[s] ?? 0} ${s}`).join(", ")})`,
+  );
   for (const rec of r.recommendations.slice(0, 5)) lines.push(`  ${rec.rank}. ${rec.title}`);
   if (r.status !== "complete") lines.push("This report is partial. See the limitations section.");
   for (const f of files) lines.push(`Wrote ${f}`);
@@ -90,13 +115,27 @@ function summarize(r: Report, files: string[]): string {
 
 async function cmdAnalyze(argv: string[], io: Io): Promise<number> {
   const { values, positionals } = parseArgs({
-    args: argv, allowPositionals: true, strict: true,
+    args: argv,
+    allowPositionals: true,
+    strict: true,
     options: {
-      format: { type: "string", short: "f", multiple: true }, out: { type: "string", short: "o" }, stdout: { type: "boolean" },
-      ref: { type: "string" }, rules: { type: "string" }, baseline: { type: "string" }, "write-baseline": { type: "string" },
-      config: { type: "string" }, exclude: { type: "string", multiple: true }, offline: { type: "boolean" }, "no-history": { type: "boolean" },
-      "with-history": { type: "boolean" }, "no-tests": { type: "boolean" }, "fail-on": { type: "string" }, "fail-on-partial": { type: "boolean" },
-      quiet: { type: "boolean", short: "q" }, help: { type: "boolean", short: "h" },
+      format: { type: "string", short: "f", multiple: true },
+      out: { type: "string", short: "o" },
+      stdout: { type: "boolean" },
+      ref: { type: "string" },
+      rules: { type: "string" },
+      baseline: { type: "string" },
+      "write-baseline": { type: "string" },
+      config: { type: "string" },
+      exclude: { type: "string", multiple: true },
+      offline: { type: "boolean" },
+      "no-history": { type: "boolean" },
+      "with-history": { type: "boolean" },
+      "no-tests": { type: "boolean" },
+      "fail-on": { type: "string" },
+      "fail-on-partial": { type: "boolean" },
+      quiet: { type: "boolean", short: "q" },
+      help: { type: "boolean", short: "h" },
     },
   });
   if (values.help) {
@@ -104,11 +143,20 @@ async function cmdAnalyze(argv: string[], io: Io): Promise<number> {
     return EXIT.OK;
   }
   const target = positionals[0];
-  if (!target || positionals.length > 1) throw new UsageError("analyze needs exactly one target: a local path or a GitHub URL");
-  const formats = new Set((values.format ?? ["json,markdown"]).flatMap((f) => f.split(",")).map((f) => f.trim()).filter(Boolean));
-  for (const f of formats) if (!["json", "markdown", "html"].includes(f)) throw new UsageError(`Unknown format ${f}. Use json, markdown or html.`);
+  if (!target || positionals.length > 1)
+    throw new UsageError("analyze needs exactly one target: a local path or a GitHub URL");
+  const formats = new Set(
+    (values.format ?? ["json,markdown"])
+      .flatMap((f) => f.split(","))
+      .map((f) => f.trim())
+      .filter(Boolean),
+  );
+  for (const f of formats)
+    if (!["json", "markdown", "html"].includes(f))
+      throw new UsageError(`Unknown format ${f}. Use json, markdown or html.`);
   const failOn = values["fail-on"] as Severity | undefined;
-  if (failOn !== undefined && !["critical", "high", "medium", "low"].includes(failOn)) throw new UsageError("--fail-on must be critical, high, medium or low");
+  if (failOn !== undefined && !["critical", "high", "medium", "low"].includes(failOn))
+    throw new UsageError("--fail-on must be critical, high, medium or low");
   const remote = isGitHubTarget(target);
   if (remote) {
     try {
@@ -119,7 +167,11 @@ async function cmdAnalyze(argv: string[], io: Io): Promise<number> {
   }
 
   const localRoot = remote ? null : resolve(io.cwd, target);
-  const autoConfig = localRoot ? ["repolens.config.json", "repolens.config.yaml", "repolens.config.yml"].map((n) => join(localRoot, n)).find((p) => existsSync(p)) : undefined;
+  const autoConfig = localRoot
+    ? ["repolens.config.json", "repolens.config.yaml", "repolens.config.yml"]
+        .map((n) => join(localRoot, n))
+        .find((p) => existsSync(p))
+    : undefined;
   const configPath = values.config ? resolve(io.cwd, values.config) : autoConfig;
   const fileLayer = configPath ? loadConfigFile(configPath) : {};
   let config: AnalysisConfig;
@@ -135,11 +187,20 @@ async function cmdAnalyze(argv: string[], io: Io): Promise<number> {
     throw e;
   }
 
-  const rulesPath = values.rules ? resolve(io.cwd, values.rules) : localRoot ? ["repolens.rules.yaml", "repolens.rules.yml", "repolens.rules.json"].map((n) => join(localRoot, n)).find((p) => existsSync(p)) : undefined;
+  const rulesPath = values.rules
+    ? resolve(io.cwd, values.rules)
+    : localRoot
+      ? ["repolens.rules.yaml", "repolens.rules.yml", "repolens.rules.json"]
+          .map((n) => join(localRoot, n))
+          .find((p) => existsSync(p))
+      : undefined;
   let rules: { text: string; name: string } | null = null;
   if (rulesPath) {
     try {
-      rules = { text: readFileSync(rulesPath, "utf8"), name: rulesPath.split(/[\\/]/).pop() as string };
+      rules = {
+        text: readFileSync(rulesPath, "utf8"),
+        name: rulesPath.split(/[\\/]/).pop() as string,
+      };
     } catch {
       throw new UsageError(`Cannot read rules file ${rulesPath}`);
     }
@@ -164,7 +225,12 @@ async function cmdAnalyze(argv: string[], io: Io): Promise<number> {
   let acquired;
   try {
     log(remote ? `Fetching ${target}` : `Reading ${resolve(io.cwd, target)}`);
-    acquired = await acquireTarget(target, { config, ref: values.ref ?? null, token: io.env.GITHUB_TOKEN, withHistory: values["with-history"] === true });
+    acquired = await acquireTarget(target, {
+      config,
+      ref: values.ref ?? null,
+      token: io.env.GITHUB_TOKEN,
+      withHistory: values["with-history"] === true,
+    });
   } catch (e) {
     if (e instanceof AcquisitionError || e instanceof GitHubUrlError || e instanceof ArchiveError) {
       io.err(`Error: ${e.message}\n`);
@@ -175,9 +241,20 @@ async function cmdAnalyze(argv: string[], io: Io): Promise<number> {
   let report: Report;
   try {
     report = await analyze({
-      config: { ...config, ...(config.baselineFile === null && values.baseline ? { baselineFile: values.baseline } : {}), ...(rulesPath ? { rulesFile: rulesPath } : {}) },
-      workspace: acquired.workspace, source: acquired.source, commitSha: acquired.commitSha, historyRoot: acquired.historyRoot,
-      rules, baseline, onProgress: progress,
+      config: {
+        ...config,
+        ...(config.baselineFile === null && values.baseline
+          ? { baselineFile: values.baseline }
+          : {}),
+        ...(rulesPath ? { rulesFile: rulesPath } : {}),
+      },
+      workspace: acquired.workspace,
+      source: acquired.source,
+      commitSha: acquired.commitSha,
+      historyRoot: acquired.historyRoot,
+      rules,
+      baseline,
+      onProgress: progress,
     });
   } catch (e) {
     if (e instanceof RulesError) throw new UsageError(e.message);
@@ -188,7 +265,9 @@ async function cmdAnalyze(argv: string[], io: Io): Promise<number> {
   }
   const check = validateReport(report);
   if (!check.valid) {
-    io.err(`Internal error: the generated report failed schema validation (${check.issues[0]?.path}: ${check.issues[0]?.message})\n`);
+    io.err(
+      `Internal error: the generated report failed schema validation (${check.issues[0]?.path}: ${check.issues[0]?.message})\n`,
+    );
     return EXIT.ERROR;
   }
 
@@ -209,7 +288,10 @@ async function cmdAnalyze(argv: string[], io: Io): Promise<number> {
   }
   if (values["write-baseline"]) {
     const p = resolve(io.cwd, values["write-baseline"]);
-    writeFileSync(p, `${JSON.stringify({ accepted: report.findings.map((f) => f.id).sort() }, null, 2)}\n`);
+    writeFileSync(
+      p,
+      `${JSON.stringify({ accepted: report.findings.map((f) => f.id).sort() }, null, 2)}\n`,
+    );
     written.push(p);
   }
   if (!quiet) (values.stdout ? io.err : io.out)(summarize(report, written));
@@ -217,7 +299,8 @@ async function cmdAnalyze(argv: string[], io: Io): Promise<number> {
 
   const violated = report.findings.some((f) => f.ruleId.startsWith("rule."));
   const threshold = failOn ? SEVERITY_RANK[failOn] : null;
-  const overThreshold = threshold !== null && report.findings.some((f) => SEVERITY_RANK[f.severity] <= threshold);
+  const overThreshold =
+    threshold !== null && report.findings.some((f) => SEVERITY_RANK[f.severity] <= threshold);
   if (violated || overThreshold) return EXIT.POLICY;
   if (values["fail-on-partial"] && report.status !== "complete") return EXIT.PARTIAL;
   return EXIT.OK;
@@ -226,15 +309,24 @@ async function cmdAnalyze(argv: string[], io: Io): Promise<number> {
 function loadReport(path: string, io: Io): Report {
   const report = readJsonFile<unknown>(resolve(io.cwd, path), "report");
   const v = validateReport(report);
-  if (!v.valid) throw new UsageError(`${path} is not a valid RepoLens report: ${v.issues[0]?.path} ${v.issues[0]?.message}`);
+  if (!v.valid)
+    throw new UsageError(
+      `${path} is not a valid RepoLens report: ${v.issues[0]?.path} ${v.issues[0]?.message}`,
+    );
   return report as Report;
 }
 
 function cmdReport(argv: string[], io: Io): number {
-  const { values, positionals } = parseArgs({ args: argv, allowPositionals: true, strict: true, options: { format: { type: "string", short: "f" }, out: { type: "string", short: "o" } } });
+  const { values, positionals } = parseArgs({
+    args: argv,
+    allowPositionals: true,
+    strict: true,
+    options: { format: { type: "string", short: "f" }, out: { type: "string", short: "o" } },
+  });
   if (positionals.length !== 1) throw new UsageError("report needs one report.json path");
   const format = values.format ?? "markdown";
-  if (format !== "markdown" && format !== "html") throw new UsageError("--format must be markdown or html");
+  if (format !== "markdown" && format !== "html")
+    throw new UsageError("--format must be markdown or html");
   const report = loadReport(positionals[0] as string, io);
   const text = format === "html" ? toHtml(report) : toMarkdown(report);
   if (values.out) writeFileSync(resolve(io.cwd, values.out), text);
@@ -243,9 +335,18 @@ function cmdReport(argv: string[], io: Io): number {
 }
 
 function cmdDiff(argv: string[], io: Io): number {
-  const { values, positionals } = parseArgs({ args: argv, allowPositionals: true, strict: true, options: { format: { type: "string", short: "f" } } });
-  if (positionals.length !== 2) throw new UsageError("diff needs two report.json paths: before and after");
-  const d = diffReports(loadReport(positionals[0] as string, io), loadReport(positionals[1] as string, io));
+  const { values, positionals } = parseArgs({
+    args: argv,
+    allowPositionals: true,
+    strict: true,
+    options: { format: { type: "string", short: "f" } },
+  });
+  if (positionals.length !== 2)
+    throw new UsageError("diff needs two report.json paths: before and after");
+  const d = diffReports(
+    loadReport(positionals[0] as string, io),
+    loadReport(positionals[1] as string, io),
+  );
   io.out(values.format === "json" ? `${JSON.stringify(d, null, 2)}\n` : diffToMarkdown(d));
   return EXIT.OK;
 }

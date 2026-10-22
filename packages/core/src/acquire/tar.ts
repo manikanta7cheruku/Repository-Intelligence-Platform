@@ -41,7 +41,8 @@ function parsePax(data: Buffer): Record<string, string> {
     const space = data.indexOf(0x20, pos);
     if (space === -1) break;
     const len = Number.parseInt(data.subarray(pos, space).toString("utf8"), 10);
-    if (!Number.isFinite(len) || len <= 0 || pos + len > data.length) throw new ArchiveError("Malformed pax header");
+    if (!Number.isFinite(len) || len <= 0 || pos + len > data.length)
+      throw new ArchiveError("Malformed pax header");
     const record = data.subarray(space + 1, pos + len - 1).toString("utf8");
     const eq = record.indexOf("=");
     if (eq > 0) out[record.slice(0, eq)] = record.slice(eq + 1);
@@ -55,14 +56,22 @@ function parsePax(data: Buffer): Record<string, string> {
  * Rejects traversal, absolute paths, links, devices, oversized and over-numerous entries.
  * Strips the single top-level directory that GitHub archives contain.
  */
-export function extractTarGz(archive: Buffer, destDir: string, limits: ExtractLimits): ExtractResult {
-  if (archive.length > limits.maxCompressedBytes) throw new ArchiveError("Archive exceeds the compressed size limit");
+export function extractTarGz(
+  archive: Buffer,
+  destDir: string,
+  limits: ExtractLimits,
+): ExtractResult {
+  if (archive.length > limits.maxCompressedBytes)
+    throw new ArchiveError("Archive exceeds the compressed size limit");
   let tar: Buffer;
   try {
     tar = gunzipSync(archive, { maxOutputLength: limits.maxExpandedBytes });
   } catch (e) {
     const code = (e as { code?: string }).code;
-    if (code === "ERR_BUFFER_TOO_LARGE") throw new ArchiveError("Archive exceeds the expanded size limit (possible decompression bomb)");
+    if (code === "ERR_BUFFER_TOO_LARGE")
+      throw new ArchiveError(
+        "Archive exceeds the expanded size limit (possible decompression bomb)",
+      );
     throw new ArchiveError("Archive is not a valid gzip stream");
   }
 
@@ -111,7 +120,8 @@ export function extractTarGz(archive: Buffer, destDir: string, limits: ExtractLi
       continue;
     }
     fullName = fullName.replace(/\/+$/, "");
-    if (!isSafeRelativePath(fullName)) throw new ArchiveError(`Unsafe path in archive: ${JSON.stringify(fullName.slice(0, 80))}`);
+    if (!isSafeRelativePath(fullName))
+      throw new ArchiveError(`Unsafe path in archive: ${JSON.stringify(fullName.slice(0, 80))}`);
     const segments = fullName.split("/");
     const top = segments[0] as string;
     if (rootDir === null) rootDir = top;
@@ -129,7 +139,8 @@ export function extractTarGz(archive: Buffer, destDir: string, limits: ExtractLi
     }
     if (files + 1 > limits.maxFiles) throw new ArchiveError("Archive exceeds the file count limit");
     bytes += size;
-    if (bytes > limits.maxExpandedBytes) throw new ArchiveError("Archive exceeds the expanded size limit");
+    if (bytes > limits.maxExpandedBytes)
+      throw new ArchiveError("Archive exceeds the expanded size limit");
     const target = join(destDir, ...rel.split("/"));
     mkdirSync(dirname(target), { recursive: true });
     writeFileSync(target, data, { flag: "wx" });
@@ -139,12 +150,16 @@ export function extractTarGz(archive: Buffer, destDir: string, limits: ExtractLi
     files,
     bytes,
     rootDir,
-    skipped: [...skipped.entries()].map(([reason, count]) => ({ reason, count })).sort((a, b) => a.reason.localeCompare(b.reason)),
+    skipped: [...skipped.entries()]
+      .map(([reason, count]) => ({ reason, count }))
+      .sort((a, b) => a.reason.localeCompare(b.reason)),
   };
 }
 
 /** Test helper and fixture builder: creates a minimal ustar archive. Not used on untrusted input paths. */
-export function buildTar(entries: { name: string; content?: string; type?: string; linkName?: string }[]): Buffer {
+export function buildTar(
+  entries: { name: string; content?: string; type?: string; linkName?: string }[],
+): Buffer {
   const blocks: Buffer[] = [];
   for (const e of entries) {
     const data = Buffer.from(e.content ?? "", "utf8");

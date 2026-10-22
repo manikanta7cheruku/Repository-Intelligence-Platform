@@ -18,8 +18,19 @@ export interface AnalysisConfig {
   moduleDepth: number;
   complexity: { moderate: number; high: number; veryHigh: number };
   duplication: { enabled: boolean; minLines: number; minChars: number; includeTests: boolean };
-  history: { enabled: boolean; maxCommits: number; authors: "names" | "anonymous"; hotspotLimit: number };
-  security: { offline: boolean; osv: boolean; secrets: boolean; workflows: boolean; gitleaksPath: string | null };
+  history: {
+    enabled: boolean;
+    maxCommits: number;
+    authors: "names" | "anonymous";
+    hotspotLimit: number;
+  };
+  security: {
+    offline: boolean;
+    osv: boolean;
+    secrets: boolean;
+    workflows: boolean;
+    gitleaksPath: string | null;
+  };
   rulesFile: string | null;
   baselineFile: string | null;
 }
@@ -45,14 +56,17 @@ export const DEFAULT_CONFIG: AnalysisConfig = {
   baselineFile: null,
 };
 
-type DeepPartial<T> = { [K in keyof T]?: T[K] extends object ? (T[K] extends unknown[] ? T[K] : DeepPartial<T[K]>) : T[K] };
+type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends object ? (T[K] extends unknown[] ? T[K] : DeepPartial<T[K]>) : T[K];
+};
 
 function isPlainObject(v: unknown): v is Record<string, unknown> {
   return v !== null && typeof v === "object" && !Array.isArray(v);
 }
 
 function merge<T>(base: T, override: unknown): T {
-  if (!isPlainObject(base) || !isPlainObject(override)) return (override === undefined ? base : override) as T;
+  if (!isPlainObject(base) || !isPlainObject(override))
+    return (override === undefined ? base : override) as T;
   const out: Record<string, unknown> = { ...base };
   for (const [k, v] of Object.entries(override)) {
     if (!(k in base)) throw new ConfigError(`Unknown configuration key: ${k}`);
@@ -83,7 +97,8 @@ export function validateConfig(c: AnalysisConfig): void {
   if (!(c.complexity.moderate < c.complexity.high && c.complexity.high < c.complexity.veryHigh)) {
     throw new ConfigError("complexity thresholds must increase: moderate < high < veryHigh");
   }
-  if (!["names", "anonymous"].includes(c.history.authors)) throw new ConfigError("history.authors must be names or anonymous");
+  if (!["names", "anonymous"].includes(c.history.authors))
+    throw new ConfigError("history.authors must be names or anonymous");
 }
 
 export function configHash(c: AnalysisConfig): string {

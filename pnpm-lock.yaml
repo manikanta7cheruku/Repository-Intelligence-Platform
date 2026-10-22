@@ -15,15 +15,23 @@ importers:
         specifier: ^22.0.0
         version: 22.20.5
       typescript:
-        specifier: ^5.9.0
-        version: 5.9.3
+        specifier: ^6.0.0
+        version: 6.0.3
       vitest:
         specifier: ^3.2.0
         version: 3.2.7(@types/node@22.20.5)
 
-  packages/cli: {}
+  packages/cli:
+    dependencies:
+      '@repolens/core':
+        specifier: workspace:*
+        version: link:../core
 
-  packages/core: {}
+  packages/core:
+    dependencies:
+      typescript:
+        specifier: ^6.0.0
+        version: 6.0.3
 
 packages:
 
@@ -547,8 +555,8 @@ packages:
     resolution: {integrity: sha512-u8KszXvGfU68hVcZpRHKG28T0krMuv2G5nDhiHaMLen/gIuFEgIJhaJuO69qjnXg5paSrbPMFfx3brNuN8eVSg==}
     engines: {node: '>=14.0.0'}
 
-  typescript@5.9.3:
-    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
+  typescript@6.0.3:
+    resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -1032,7 +1040,7 @@ snapshots:
 
   tinyspy@4.0.6: {}
 
-  typescript@5.9.3: {}
+  typescript@6.0.3: {}
 
   undici-types@6.21.0: {}
 

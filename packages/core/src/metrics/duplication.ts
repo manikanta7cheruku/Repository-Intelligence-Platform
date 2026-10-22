@@ -14,7 +14,8 @@ interface Norm {
 
 /** Normalizes code lines: drops blank, comment-only and punctuation-only lines, collapses whitespace. */
 function normalize(text: string, language: string | null): Norm[] {
-  const lineComment = language === "python" || language === "ruby" || language === "shell" ? "#" : "//";
+  const lineComment =
+    language === "python" || language === "ruby" || language === "shell" ? "#" : "//";
   const out: Norm[] = [];
   let inBlock = false;
   text.split(/\r\n|\r|\n/).forEach((raw, i) => {
@@ -39,12 +40,22 @@ function normalize(text: string, language: string | null): Norm[] {
  * Window-hash clone detection over normalized lines. A clone is at least `minLines` consecutive
  * normalized lines with at least `minChars` characters that appear in two or more places.
  */
-export function detectDuplication(files: DupInputFile[], config: AnalysisConfig): Metrics["duplication"] {
+export function detectDuplication(
+  files: DupInputFile[],
+  config: AnalysisConfig,
+): Metrics["duplication"] {
   const { minLines, minChars } = config.duplication;
   const norm = files.map((f) => ({ path: f.path, lines: normalize(f.text, f.language) }));
   const totalLines = norm.reduce((s, f) => s + f.lines.length, 0);
   if (totalLines === 0) {
-    return { assessed: false, reason: "No analyzable source lines", duplicatedLines: null, totalLines: null, ratio: null, groups: [] };
+    return {
+      assessed: false,
+      reason: "No analyzable source lines",
+      duplicatedLines: null,
+      totalLines: null,
+      ratio: null,
+      groups: [],
+    };
   }
   const buckets = new Map<string, { f: number; start: number }[]>();
   norm.forEach((f, fi) => {
@@ -64,17 +75,28 @@ export function detectDuplication(files: DupInputFile[], config: AnalysisConfig)
   });
 
   const dupMark = norm.map((f) => new Uint8Array(f.lines.length));
-  const groupMap = new Map<string, { lines: number; occ: { f: number; start: number; end: number }[] }>();
+  const groupMap = new Map<
+    string,
+    { lines: number; occ: { f: number; start: number; end: number }[] }
+  >();
   for (const [key, occs] of buckets) {
     if (occs.length < 2) continue;
-    for (const o of occs) for (let k = 0; k < minLines; k++) (dupMark[o.f] as Uint8Array)[o.start + k] = 1;
+    for (const o of occs)
+      for (let k = 0; k < minLines; k++) (dupMark[o.f] as Uint8Array)[o.start + k] = 1;
     const gk = key;
-    if (!groupMap.has(gk)) groupMap.set(gk, { lines: minLines, occ: occs.map((o) => ({ ...o, end: o.start + minLines - 1 })) });
+    if (!groupMap.has(gk))
+      groupMap.set(gk, {
+        lines: minLines,
+        occ: occs.map((o) => ({ ...o, end: o.start + minLines - 1 })),
+      });
   }
   const duplicated = dupMark.reduce((s, m) => s + m.reduce((a, b) => a + b, 0), 0);
 
   // Merge overlapping windows into maximal clone regions per group of identical starting file and offsets.
-  const merged: { lines: number; occurrences: { path: string; startLine: number; endLine: number }[] }[] = [];
+  const merged: {
+    lines: number;
+    occurrences: { path: string; startLine: number; endLine: number }[];
+  }[] = [];
   const claimed = new Set<string>();
   const sortedGroups = [...groupMap.values()].sort((a, b) => {
     const ak = `${norm[(a.occ[0] as { f: number }).f]?.path}:${(a.occ[0] as { start: number }).start}`;
@@ -97,11 +119,19 @@ export function detectDuplication(files: DupInputFile[], config: AnalysisConfig)
       lines: minLines + extra,
       occurrences: g.occ.map((o) => {
         const f = norm[o.f] as { path: string; lines: Norm[] };
-        return { path: f.path, startLine: (f.lines[o.start] as Norm).line, endLine: (f.lines[o.end + extra] as Norm).line };
+        return {
+          path: f.path,
+          startLine: (f.lines[o.start] as Norm).line,
+          endLine: (f.lines[o.end + extra] as Norm).line,
+        };
       }),
     });
   }
-  merged.sort((a, b) => b.lines * b.occurrences.length - a.lines * a.occurrences.length || (a.occurrences[0]?.path ?? "").localeCompare(b.occurrences[0]?.path ?? ""));
+  merged.sort(
+    (a, b) =>
+      b.lines * b.occurrences.length - a.lines * a.occurrences.length ||
+      (a.occurrences[0]?.path ?? "").localeCompare(b.occurrences[0]?.path ?? ""),
+  );
   return {
     assessed: true,
     reason: null,

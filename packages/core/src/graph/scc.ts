@@ -1,5 +1,8 @@
 /** Iterative Tarjan strongly connected components. Safe for deep graphs (no recursion). */
-export function stronglyConnectedComponents(nodes: readonly string[], adj: ReadonlyMap<string, readonly string[]>): string[][] {
+export function stronglyConnectedComponents(
+  nodes: readonly string[],
+  adj: ReadonlyMap<string, readonly string[]>,
+): string[][] {
   const index = new Map<string, number>();
   const low = new Map<string, number>();
   const onStack = new Set<string>();
@@ -53,7 +56,10 @@ export function stronglyConnectedComponents(nodes: readonly string[], adj: Reado
   return result;
 }
 
-export function buildAdjacency(nodes: readonly string[], edges: readonly { from: string; to: string }[]): Map<string, string[]> {
+export function buildAdjacency(
+  nodes: readonly string[],
+  edges: readonly { from: string; to: string }[],
+): Map<string, string[]> {
   const adj = new Map<string, string[]>(nodes.map((n) => [n, []]));
   for (const e of edges) adj.get(e.from)?.push(e.to);
   for (const list of adj.values()) list.sort();
@@ -61,7 +67,10 @@ export function buildAdjacency(nodes: readonly string[], edges: readonly { from:
 }
 
 /** Non-trivial components (size above 1), deterministically ordered. */
-export function findCycles(nodes: readonly string[], edges: readonly { from: string; to: string }[]): string[][] {
+export function findCycles(
+  nodes: readonly string[],
+  edges: readonly { from: string; to: string }[],
+): string[][] {
   const sortedNodes = [...nodes].sort();
   const comps = stronglyConnectedComponents(sortedNodes, buildAdjacency(sortedNodes, edges));
   return comps

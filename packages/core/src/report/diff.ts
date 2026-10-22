@@ -32,13 +32,22 @@ export function diffReports(a: Report, b: Report): ReportDiff {
   const result: ReportDiff = {
     from: { commit: a.repository.commitSha, hash: a.reproducibility.contentHash },
     to: { commit: b.repository.commitSha, hash: b.reproducibility.contentHash },
-    findings: { added: diff(fa, fb), resolved: diff(fb, fa), unchanged: [...fa].filter((id) => fb.has(id)).length },
+    findings: {
+      added: diff(fa, fb),
+      resolved: diff(fb, fa),
+      unchanged: [...fa].filter((id) => fb.has(id)).length,
+    },
     edges: { added: diff(ea, eb).map(split), removed: diff(eb, ea).map(split) },
     modules: { added: diff(ma, mb), removed: diff(mb, ma) },
     externalDependencies: { added: diff(xa, xb), removed: diff(xb, xa) },
     scores: b.scores.map((s) => {
       const from = sa.get(s.dimension) ?? null;
-      return { dimension: s.dimension, from, to: s.value, delta: from === null || s.value === null ? null : s.value - from };
+      return {
+        dimension: s.dimension,
+        from,
+        to: s.value,
+        delta: from === null || s.value === null ? null : s.value - from,
+      };
     }),
     summary: [],
   };
@@ -46,21 +55,47 @@ export function diffReports(a: Report, b: Report): ReportDiff {
     `${result.findings.added.length} new findings, ${result.findings.resolved.length} resolved, ${result.findings.unchanged} unchanged.`,
     `${result.edges.added.length} dependency edges added, ${result.edges.removed.length} removed.`,
     `${result.modules.added.length} modules added, ${result.modules.removed.length} removed.`,
-    ...result.scores.filter((s) => s.delta !== null && s.delta !== 0).map((s) => `${s.dimension}: ${s.from} to ${s.to} (${(s.delta as number) > 0 ? "+" : ""}${s.delta}).`),
+    ...result.scores
+      .filter((s) => s.delta !== null && s.delta !== 0)
+      .map(
+        (s) =>
+          `${s.dimension}: ${s.from} to ${s.to} (${(s.delta as number) > 0 ? "+" : ""}${s.delta}).`,
+      ),
   ];
   return result;
 }
 
 export function diffToMarkdown(d: ReportDiff): string {
-  const list = (title: string, items: string[]) => (items.length ? [`### ${title}`, "", ...items.map((i) => `- ${i}`), ""] : []);
+  const list = (title: string, items: string[]) =>
+    items.length ? [`### ${title}`, "", ...items.map((i) => `- ${i}`), ""] : [];
   return [
-    "# RepoLens comparison", "", `From ${d.from.commit ?? "unknown commit"} to ${d.to.commit ?? "unknown commit"}.`, "",
-    ...d.summary.map((s) => `- ${s}`), "",
-    ...list("New findings", d.findings.added), ...list("Resolved findings", d.findings.resolved),
-    ...list("Added dependency edges", d.edges.added.map(([x, y]) => `${x} -> ${y}`)), ...list("Removed dependency edges", d.edges.removed.map(([x, y]) => `${x} -> ${y}`)),
-    ...list("Added modules", d.modules.added), ...list("Removed modules", d.modules.removed),
-    ...list("New external packages", d.externalDependencies.added), ...list("Dropped external packages", d.externalDependencies.removed),
-    "### Scores", "", "| Dimension | From | To | Change |", "|---|---|---|---|",
-    ...d.scores.map((s) => `| ${s.dimension} | ${s.from ?? "n/a"} | ${s.to ?? "n/a"} | ${s.delta ?? "n/a"} |`), "",
+    "# RepoLens comparison",
+    "",
+    `From ${d.from.commit ?? "unknown commit"} to ${d.to.commit ?? "unknown commit"}.`,
+    "",
+    ...d.summary.map((s) => `- ${s}`),
+    "",
+    ...list("New findings", d.findings.added),
+    ...list("Resolved findings", d.findings.resolved),
+    ...list(
+      "Added dependency edges",
+      d.edges.added.map(([x, y]) => `${x} -> ${y}`),
+    ),
+    ...list(
+      "Removed dependency edges",
+      d.edges.removed.map(([x, y]) => `${x} -> ${y}`),
+    ),
+    ...list("Added modules", d.modules.added),
+    ...list("Removed modules", d.modules.removed),
+    ...list("New external packages", d.externalDependencies.added),
+    ...list("Dropped external packages", d.externalDependencies.removed),
+    "### Scores",
+    "",
+    "| Dimension | From | To | Change |",
+    "|---|---|---|---|",
+    ...d.scores.map(
+      (s) => `| ${s.dimension} | ${s.from ?? "n/a"} | ${s.to ?? "n/a"} | ${s.delta ?? "n/a"} |`,
+    ),
+    "",
   ].join("\n");
 }

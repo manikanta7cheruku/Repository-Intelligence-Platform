@@ -1,6 +1,12 @@
 import type { AnalysisConfig } from "../config/config.js";
 import type {
-  CycleRecord, Dependency, ExternalDependencyRecord, FileRecord, GraphEdge, GraphModel, ModuleRecord,
+  CycleRecord,
+  Dependency,
+  ExternalDependencyRecord,
+  FileRecord,
+  GraphEdge,
+  GraphModel,
+  ModuleRecord,
 } from "../ir/types.js";
 import { fileIdFor, moduleIdFor } from "../util/hash.js";
 import { dirname } from "../util/paths.js";
@@ -12,11 +18,23 @@ const SOURCE_BASES = new Set(["src", "lib", "app"]);
  * Module assignment rule (documented in docs/architecture): nearest package directory (a directory with a
  * package manifest) plus an optional `src`, `lib` or `app` base, plus `depth` further directory levels.
  */
-export function moduleOf(path: string, packageDirs: readonly string[], depth: number): { path: string; kind: "package" | "directory" } {
+export function moduleOf(
+  path: string,
+  packageDirs: readonly string[],
+  depth: number,
+): { path: string; kind: "package" | "directory" } {
   let pkg = "";
-  for (const d of packageDirs) if (d !== "" && (path === d || path.startsWith(`${d}/`)) && d.length > pkg.length) pkg = d;
+  for (const d of packageDirs)
+    if (d !== "" && (path === d || path.startsWith(`${d}/`)) && d.length > pkg.length) pkg = d;
   const dir = dirname(path);
-  const rest = pkg === "" ? dir : dir === pkg ? "" : dir.startsWith(`${pkg}/`) ? dir.slice(pkg.length + 1) : "";
+  const rest =
+    pkg === ""
+      ? dir
+      : dir === pkg
+        ? ""
+        : dir.startsWith(`${pkg}/`)
+          ? dir.slice(pkg.length + 1)
+          : "";
   const segs = rest === "" ? [] : rest.split("/");
   let used = 0;
   if (segs[0] !== undefined && SOURCE_BASES.has(segs[0])) used = 1;
@@ -34,11 +52,16 @@ export interface GraphInput {
   config: AnalysisConfig;
 }
 
-export function buildGraph(input: GraphInput): { graph: GraphModel; externals: ExternalDependencyRecord[]; unresolved: Dependency[] } {
+export function buildGraph(input: GraphInput): {
+  graph: GraphModel;
+  externals: ExternalDependencyRecord[];
+  unresolved: Dependency[];
+} {
   const { files, dependencies, config } = input;
   const nodePaths = new Set(files.map((f) => f.path));
   const moduleByPath = new Map<string, { path: string; kind: "package" | "directory" }>();
-  for (const f of files) moduleByPath.set(f.path, moduleOf(f.path, input.packageDirs, config.moduleDepth));
+  for (const f of files)
+    moduleByPath.set(f.path, moduleOf(f.path, input.packageDirs, config.moduleDepth));
 
   const edgeMap = new Map<string, GraphEdge & { runtime: boolean }>();
   const external = new Map<string, { builtin: boolean; files: Set<string>; count: number }>();
@@ -51,7 +74,11 @@ export function buildGraph(input: GraphInput): { graph: GraphModel; externals: E
     if (!nodePaths.has(d.fromPath)) continue;
     if (d.resolution === "external" && d.externalPackage) {
       externalCount++;
-      const rec = external.get(d.externalPackage) ?? { builtin: d.builtin, files: new Set<string>(), count: 0 };
+      const rec = external.get(d.externalPackage) ?? {
+        builtin: d.builtin,
+        files: new Set<string>(),
+        count: 0,
+      };
       rec.files.add(d.fromPath);
       rec.count++;
       external.set(d.externalPackage, rec);
@@ -69,13 +96,21 @@ export function buildGraph(input: GraphInput): { graph: GraphModel; externals: E
     const to = fileIdFor(d.toPath);
     const key = `${from}>${to}`;
     const typeOnly = d.kind === "type-only";
-    const edge = edgeMap.get(key) ?? { from, to, weight: 0, typeOnly: true, occurrences: [], runtime: false };
+    const edge = edgeMap.get(key) ?? {
+      from,
+      to,
+      weight: 0,
+      typeOnly: true,
+      occurrences: [],
+      runtime: false,
+    };
     edge.weight++;
     if (!typeOnly) {
       edge.typeOnly = false;
       edge.runtime = true;
     }
-    if (edge.occurrences.length < 10) edge.occurrences.push({ line: d.line, specifier: d.specifier, kind: d.kind });
+    if (edge.occurrences.length < 10)
+      edge.occurrences.push({ line: d.line, specifier: d.specifier, kind: d.kind });
     edgeMap.set(key, edge);
   }
 
@@ -93,7 +128,10 @@ export function buildGraph(input: GraphInput): { graph: GraphModel; externals: E
   const fileIds = sortedFiles.map((f) => f.id);
   const toPathCycle = (members: string[]) => members.map((m) => idToPath.get(m) ?? m).sort();
   const allCycles = findCycles(fileIds, edges);
-  const runtimeCycles = findCycles(fileIds, edges.filter((e) => e.runtime));
+  const runtimeCycles = findCycles(
+    fileIds,
+    edges.filter((e) => e.runtime),
+  );
   const runtimeSets = runtimeCycles.map((c) => new Set(c));
   const cycles: CycleRecord[] = allCycles.map((members) => ({
     scope: "file",
@@ -137,16 +175,26 @@ export function buildGraph(input: GraphInput): { graph: GraphModel; externals: E
       const ce = mFanOut.get(id)?.size ?? 0;
       const ca = mFanIn.get(id)?.size ?? 0;
       return {
-        id, path, kind: (moduleByPath.get((fs[0] as FileRecord).path) as { kind: "package" | "directory" }).kind,
-        fileCount: fs.length, loc: fs.reduce((s, f) => s + (f.codeLines ?? 0), 0),
-        fanIn: ca, fanOut: ce, instability: ca + ce === 0 ? null : Math.round((ce / (ca + ce)) * 1000) / 1000, origin: "observed" as const,
+        id,
+        path,
+        kind: (moduleByPath.get((fs[0] as FileRecord).path) as { kind: "package" | "directory" })
+          .kind,
+        fileCount: fs.length,
+        loc: fs.reduce((s, f) => s + (f.codeLines ?? 0), 0),
+        fanIn: ca,
+        fanOut: ce,
+        instability: ca + ce === 0 ? null : Math.round((ce / (ca + ce)) * 1000) / 1000,
+        origin: "observed" as const,
       };
     });
   const moduleIds = modules.map((m) => m.id);
   const idToModulePath = new Map(modules.map((m) => [m.id, m.path]));
   const mAll = findCycles(moduleIds, moduleEdges);
   const mCycles: CycleRecord[] = mAll.map((members) => ({
-    scope: "module", members: members.map((m) => idToModulePath.get(m) ?? m).sort(), size: members.length, typeOnly: false,
+    scope: "module",
+    members: members.map((m) => idToModulePath.get(m) ?? m).sort(),
+    size: members.length,
+    typeOnly: false,
   }));
 
   // Levels: 0 = depends on no other module. Cycles collapsed into one level.
@@ -170,7 +218,12 @@ export function buildGraph(input: GraphInput): { graph: GraphModel; externals: E
     return lvl;
   };
   const levelConfidence = modules.length >= 3 && mAll.length === 0 ? "medium" : "low";
-  const levels = modules.map((m) => ({ moduleId: m.id, level: levelOf(rep(m.id)), origin: "inferred" as const, confidence: levelConfidence as "medium" | "low" }));
+  const levels = modules.map((m) => ({
+    moduleId: m.id,
+    level: levelOf(rep(m.id)),
+    origin: "inferred" as const,
+    confidence: levelConfidence as "medium" | "low",
+  }));
 
   // Reachability from entrypoints over runtime and type edges.
   const entryIds = input.entrypoints.filter((p) => nodePaths.has(p)).map(fileIdFor);
@@ -183,7 +236,11 @@ export function buildGraph(input: GraphInput): { graph: GraphModel; externals: E
     const queue = [...entryIds];
     while (queue.length > 0) {
       const v = queue.pop() as string;
-      for (const w of adj.get(v) ?? []) if (!seen.has(w)) { seen.add(w); queue.push(w); }
+      for (const w of adj.get(v) ?? [])
+        if (!seen.has(w)) {
+          seen.add(w);
+          queue.push(w);
+        }
     }
     reachable = seen.size;
     unreachable = fileIds.length - seen.size;
@@ -192,20 +249,42 @@ export function buildGraph(input: GraphInput): { graph: GraphModel; externals: E
   const internal = resolved + unresolvedCount;
   const graph: GraphModel = {
     nodes: sortedFiles.map((f) => ({
-      id: f.id, path: f.path, moduleId: moduleIdFor((moduleByPath.get(f.path) as { path: string }).path),
-      fanIn: fanIn.get(f.id) ?? 0, fanOut: fanOut.get(f.id) ?? 0,
+      id: f.id,
+      path: f.path,
+      moduleId: moduleIdFor((moduleByPath.get(f.path) as { path: string }).path),
+      fanIn: fanIn.get(f.id) ?? 0,
+      fanOut: fanOut.get(f.id) ?? 0,
     })),
     edges: edges.map(({ runtime: _runtime, ...e }) => e),
     modules,
     moduleEdges: moduleEdges.map(({ from, to, weight }) => ({ from, to, weight })),
     cycles: [...cycles, ...mCycles],
     levels,
-    entrypointReachable: { analyzable: entryIds.length > 0, reachableFiles: reachable, unreachableFiles: unreachable },
-    resolution: { internalImports: internal, resolved, unresolved: unresolvedCount, external: externalCount, ratio: internal === 0 ? null : Math.round((resolved / internal) * 10000) / 10000 },
+    entrypointReachable: {
+      analyzable: entryIds.length > 0,
+      reachableFiles: reachable,
+      unreachableFiles: unreachable,
+    },
+    resolution: {
+      internalImports: internal,
+      resolved,
+      unresolved: unresolvedCount,
+      external: externalCount,
+      ratio: internal === 0 ? null : Math.round((resolved / internal) * 10000) / 10000,
+    },
   };
   const externals: ExternalDependencyRecord[] = [...external.entries()]
-    .map(([name, v]) => ({ name, builtin: v.builtin, importingFiles: v.files.size, importCount: v.count }))
+    .map(([name, v]) => ({
+      name,
+      builtin: v.builtin,
+      importingFiles: v.files.size,
+      importCount: v.count,
+    }))
     .sort((a, b) => b.importingFiles - a.importingFiles || a.name.localeCompare(b.name));
-  unresolved.sort((a, b) => (a.fromPath + String(a.line).padStart(8, "0")).localeCompare(b.fromPath + String(b.line).padStart(8, "0")));
+  unresolved.sort((a, b) =>
+    (a.fromPath + String(a.line).padStart(8, "0")).localeCompare(
+      b.fromPath + String(b.line).padStart(8, "0"),
+    ),
+  );
   return { graph, externals, unresolved };
 }

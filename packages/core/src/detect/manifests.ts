@@ -21,7 +21,7 @@ const MANIFESTS: Record<string, string> = {
   "package.json": "npm",
   "pyproject.toml": "python packaging",
   "requirements.txt": "pip",
-  "Pipfile": "pipenv",
+  Pipfile: "pipenv",
   "setup.py": "setuptools",
   "go.mod": "go modules",
   "Cargo.toml": "cargo",
@@ -32,18 +32,49 @@ const MANIFESTS: Record<string, string> = {
   "composer.json": "composer",
 };
 const BUILD_TOOLS: Record<string, string> = {
-  Makefile: "make", "vite.config.ts": "vite", "vite.config.js": "vite", "webpack.config.js": "webpack",
-  "rollup.config.js": "rollup", "turbo.json": "turborepo", "nx.json": "nx", Dockerfile: "docker",
-  "tsconfig.json": "tsc", "next.config.js": "next", "next.config.mjs": "next", "next.config.ts": "next",
+  Makefile: "make",
+  "vite.config.ts": "vite",
+  "vite.config.js": "vite",
+  "webpack.config.js": "webpack",
+  "rollup.config.js": "rollup",
+  "turbo.json": "turborepo",
+  "nx.json": "nx",
+  Dockerfile: "docker",
+  "tsconfig.json": "tsc",
+  "next.config.js": "next",
+  "next.config.mjs": "next",
+  "next.config.ts": "next",
 };
 const JS_FRAMEWORKS: Record<string, string> = {
-  next: "Next.js", react: "React", vue: "Vue", svelte: "Svelte", "@angular/core": "Angular", express: "Express",
-  fastify: "Fastify", "@nestjs/core": "NestJS", koa: "Koa", nuxt: "Nuxt", astro: "Astro", electron: "Electron",
-  vitest: "Vitest", jest: "Jest", mocha: "Mocha", "@playwright/test": "Playwright", cypress: "Cypress",
+  next: "Next.js",
+  react: "React",
+  vue: "Vue",
+  svelte: "Svelte",
+  "@angular/core": "Angular",
+  express: "Express",
+  fastify: "Fastify",
+  "@nestjs/core": "NestJS",
+  koa: "Koa",
+  nuxt: "Nuxt",
+  astro: "Astro",
+  electron: "Electron",
+  vitest: "Vitest",
+  jest: "Jest",
+  mocha: "Mocha",
+  "@playwright/test": "Playwright",
+  cypress: "Cypress",
 };
 const PY_FRAMEWORKS: Record<string, string> = {
-  django: "Django", flask: "Flask", fastapi: "FastAPI", pytest: "pytest", numpy: "NumPy", pandas: "pandas",
-  torch: "PyTorch", tensorflow: "TensorFlow", sqlalchemy: "SQLAlchemy", celery: "Celery",
+  django: "Django",
+  flask: "Flask",
+  fastapi: "FastAPI",
+  pytest: "pytest",
+  numpy: "NumPy",
+  pandas: "pandas",
+  torch: "PyTorch",
+  tensorflow: "TensorFlow",
+  sqlalchemy: "SQLAlchemy",
+  celery: "Celery",
 };
 
 export interface PackageJson {
@@ -108,7 +139,8 @@ export function detectProject(ws: Workspace): DetectionSummary {
       managers.add(LOCKFILES[name] as string);
     }
     if (BUILD_TOOLS[name]) buildTools.add(BUILD_TOOLS[name] as string);
-    if (dirname(f.path) === "" && /^(licen[sc]e|copying)(\.[a-z]+)?$/i.test(name)) licenseFile = f.path;
+    if (dirname(f.path) === "" && /^(licen[sc]e|copying)(\.[a-z]+)?$/i.test(name))
+      licenseFile = f.path;
   }
 
   for (const path of manifests.filter((m) => basename(m) === "package.json")) {
@@ -129,7 +161,8 @@ export function detectProject(ws: Workspace): DetectionSummary {
     addEntry(pkg.main, `main field of ${path}`);
     addEntry(pkg.module, `module field of ${path}`);
     if (typeof pkg.bin === "string") addEntry(pkg.bin, `bin field of ${path}`);
-    else if (pkg.bin && typeof pkg.bin === "object") for (const v of Object.values(pkg.bin)) addEntry(v, `bin field of ${path}`);
+    else if (pkg.bin && typeof pkg.bin === "object")
+      for (const v of Object.values(pkg.bin)) addEntry(v, `bin field of ${path}`);
     if (pkg.scripts) {
       const start = pkg.scripts.start ?? pkg.scripts.dev;
       const m = start ? /\b(?:node|tsx|ts-node)\s+([\w./-]+\.(?:[cm]?[jt]s))/.exec(start) : null;
@@ -142,20 +175,31 @@ export function detectProject(ws: Workspace): DetectionSummary {
       runtimes.add("python");
       const text = ws.read(f.path) ?? "";
       for (const [dep, label] of Object.entries(PY_FRAMEWORKS)) {
-        if (new RegExp(`(^|[\\s"'\\[,])${dep}([\\s=<>~!\\[;"',]|$)`, "im").test(text) && !frameworks.has(label)) {
+        if (
+          new RegExp(`(^|[\\s"'\\[,])${dep}([\\s=<>~!\\[;"',]|$)`, "im").test(text) &&
+          !frameworks.has(label)
+        ) {
           frameworks.set(label, `${dep} in ${f.path}`);
         }
       }
     }
     if (name === "__main__.py") entrypoints.set(f.path, "python package entry (__main__.py)");
     if (name === "manage.py") entrypoints.set(f.path, "Django management script");
-    if (/^(main|app|cli)\.py$/.test(name) && dirname(f.path).split("/").length <= 2) entrypoints.set(f.path, "conventional python entry file");
+    if (/^(main|app|cli)\.py$/.test(name) && dirname(f.path).split("/").length <= 2)
+      entrypoints.set(f.path, "conventional python entry file");
     if (name === "go.mod") runtimes.add("go");
     if (name === "Cargo.toml") runtimes.add("rust");
     if (name === "pom.xml" || name.startsWith("build.gradle")) runtimes.add("jvm");
     if (name === "main.go") entrypoints.set(f.path, "go main file");
   }
-  for (const idx of ["src/index.ts", "src/index.js", "src/main.ts", "src/main.js", "index.js", "index.ts"]) {
+  for (const idx of [
+    "src/index.ts",
+    "src/index.js",
+    "src/main.ts",
+    "src/main.js",
+    "index.js",
+    "index.ts",
+  ]) {
     if (ws.has(idx) && !entrypoints.has(idx)) entrypoints.set(idx, "conventional entry file name");
   }
 
@@ -169,8 +213,13 @@ export function detectProject(ws: Workspace): DetectionSummary {
     packageManagers: [...managers].sort(),
     manifests: manifests.sort(),
     lockfiles: lockfiles.sort(),
-    frameworks: [...frameworks.entries()].map(([name, evidence]) => ({ name, evidence })).sort((a, b) => a.name.localeCompare(b.name)),
-    entrypoints: [...entrypoints.entries()].filter(([p]) => ws.has(p)).map(([path, reason]) => ({ path, reason })).sort((a, b) => a.path.localeCompare(b.path)),
+    frameworks: [...frameworks.entries()]
+      .map(([name, evidence]) => ({ name, evidence }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
+    entrypoints: [...entrypoints.entries()]
+      .filter(([p]) => ws.has(p))
+      .map(([path, reason]) => ({ path, reason }))
+      .sort((a, b) => a.path.localeCompare(b.path)),
     buildTools: [...buildTools].sort(),
     runtimes: [...runtimes].sort(),
     license: { file: licenseFile, spdxGuess: spdx },

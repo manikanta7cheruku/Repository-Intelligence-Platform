@@ -6,8 +6,17 @@ import { JsResolver, analyzeJsTsFile, packageNameOf } from "./js-ts.js";
 function fakeWs(files: Record<string, string>): { ws: Workspace; all: Set<string> } {
   const all = new Set(Object.keys(files));
   const ws: Workspace = {
-    root: "/virtual", files: [...all].map((path) => ({ path, bytes: (files[path] as string).length, absPath: `/virtual/${path}` })),
-    read: (p) => files[p] ?? null, has: (p) => all.has(p), excluded: [], truncated: false, limitations: [],
+    root: "/virtual",
+    files: [...all].map((path) => ({
+      path,
+      bytes: (files[path] as string).length,
+      absPath: `/virtual/${path}`,
+    })),
+    read: (p) => files[p] ?? null,
+    has: (p) => all.has(p),
+    excluded: [],
+    truncated: false,
+    limitations: [],
   };
   return { ws, all };
 }
@@ -16,21 +25,42 @@ const analyze = (files: Record<string, string>, path: string) => {
   void resolveConfig({});
   return analyzeJsTsFile(path, files[path] as string, new JsResolver(ws, all));
 };
-const kinds = (r: ReturnType<typeof analyze>) => r.dependencies.map((d) => `${d.kind}:${d.specifier}:${d.resolution}`);
+const kinds = (r: ReturnType<typeof analyze>) =>
+  r.dependencies.map((d) => `${d.kind}:${d.specifier}:${d.resolution}`);
 
 describe("import extraction", () => {
   it("classifies every import form", () => {
-    const r = analyze({
-      "a.ts": [
-        'import x from "./b";', 'import type { T } from "./b";', 'import { type U } from "./b";', 'import { v, type W } from "./b";',
-        'export * from "./b";', 'export type { T } from "./b";', 'import fs = require("fs");', 'const r = require("./b");',
-        'const d = import("./b");', 'type Z = import("./b").T;', 'import "./b";',
-      ].join("\n"),
-      "b.ts": "export const v = 1; export type T = number;",
-    }, "a.ts");
+    const r = analyze(
+      {
+        "a.ts": [
+          'import x from "./b";',
+          'import type { T } from "./b";',
+          'import { type U } from "./b";',
+          'import { v, type W } from "./b";',
+          'export * from "./b";',
+          'export type { T } from "./b";',
+          'import fs = require("fs");',
+          'const r = require("./b");',
+          'const d = import("./b");',
+          'type Z = import("./b").T;',
+          'import "./b";',
+        ].join("\n"),
+        "b.ts": "export const v = 1; export type T = number;",
+      },
+      "a.ts",
+    );
     expect(kinds(r)).toEqual([
-      "import:./b:resolved", "type-only:./b:resolved", "type-only:./b:resolved", "import:./b:resolved", "reexport:./b:resolved",
-      "type-only:./b:resolved", "require:fs:external", "require:./b:resolved", "dynamic:./b:resolved", "type-only:./b:resolved", "import:./b:resolved",
+      "import:./b:resolved",
+      "type-only:./b:resolved",
+      "type-only:./b:resolved",
+      "import:./b:resolved",
+      "reexport:./b:resolved",
+      "type-only:./b:resolved",
+      "require:fs:external",
+      "require:./b:resolved",
+      "dynamic:./b:resolved",
+      "type-only:./b:resolved",
+      "import:./b:resolved",
     ]);
   });
   it("counts non-literal dynamic imports and requires instead of guessing", () => {
@@ -43,17 +73,38 @@ describe("import extraction", () => {
     expect(r.dependencies[0]?.line).toBe(3);
   });
   it("marks builtins and scoped packages as external with the right package name", () => {
-    const r = analyze({ "a.ts": 'import a from "node:fs/promises"; import b from "@scope/pkg/sub"; import c from "lodash/fp"; import d from "path";' }, "a.ts");
-    expect(r.dependencies.map((d) => `${d.externalPackage}:${d.builtin}`)).toEqual(["fs:true", "@scope/pkg:false", "lodash:false", "path:true"]);
+    const r = analyze(
+      {
+        "a.ts":
+          'import a from "node:fs/promises"; import b from "@scope/pkg/sub"; import c from "lodash/fp"; import d from "path";',
+      },
+      "a.ts",
+    );
+    expect(r.dependencies.map((d) => `${d.externalPackage}:${d.builtin}`)).toEqual([
+      "fs:true",
+      "@scope/pkg:false",
+      "lodash:false",
+      "path:true",
+    ]);
     expect(packageNameOf("@scope/pkg/sub")).toBe("@scope/pkg");
   });
   it("maps a .js specifier to the .ts source and resolves directory index files", () => {
-    const r = analyze({ "a.ts": 'import "./b.js"; import "./dir";', "b.ts": "export {};", "dir/index.ts": "export {};" }, "a.ts");
+    const r = analyze(
+      {
+        "a.ts": 'import "./b.js"; import "./dir";',
+        "b.ts": "export {};",
+        "dir/index.ts": "export {};",
+      },
+      "a.ts",
+    );
     expect(r.dependencies.map((d) => d.toPath)).toEqual(["b.ts", "dir/index.ts"]);
   });
   it("reports a missing relative module as unresolved with a reason", () => {
     const r = analyze({ "a.ts": 'import "./nope";' }, "a.ts");
-    expect(r.dependencies[0]).toMatchObject({ resolution: "unresolved", reason: "relative module not found in repository" });
+    expect(r.dependencies[0]).toMatchObject({
+      resolution: "unresolved",
+      reason: "relative module not found in repository",
+    });
   });
   it("ignores URL specifiers", () => {
     const r = analyze({ "a.ts": 'import "https://cdn.example.com/x.js";' }, "a.ts");
@@ -63,9 +114,32 @@ describe("import extraction", () => {
 
 describe("symbols and exports", () => {
   it("lists top level symbols with export status including export lists", () => {
-    const r = analyze({ "a.ts": ["export function f() {}", "class C {}", "interface I {}", "export type T = 1;", "enum E { A }", "export const g = () => 1;", "const h = 2;", "export { C };", "export default h;"].join("\n") }, "a.ts");
+    const r = analyze(
+      {
+        "a.ts": [
+          "export function f() {}",
+          "class C {}",
+          "interface I {}",
+          "export type T = 1;",
+          "enum E { A }",
+          "export const g = () => 1;",
+          "const h = 2;",
+          "export { C };",
+          "export default h;",
+        ].join("\n"),
+      },
+      "a.ts",
+    );
     const view = r.symbols.map((s) => `${s.name}:${s.kind}:${s.exported}`);
-    expect(view).toEqual(["f:function:true", "C:class:true", "I:interface:false", "T:type:true", "E:enum:false", "g:function:true", "h:variable:true"]);
+    expect(view).toEqual([
+      "f:function:true",
+      "C:class:true",
+      "I:interface:false",
+      "T:type:true",
+      "E:enum:false",
+      "g:function:true",
+      "h:variable:true",
+    ]);
   });
 });
 
@@ -87,11 +161,15 @@ describe("complexity", () => {
     expect(cx(code)[0]?.complexity).toBe(13);
   });
   it("does not add nested function complexity to the outer function", () => {
-    const fns = cx("function outer() { const inner = () => { if (1) { return 1; } return 2; }; return inner; }");
+    const fns = cx(
+      "function outer() { const inner = () => { if (1) { return 1; } return 2; }; return inner; }",
+    );
     expect(fns.map((f) => `${f.name}:${f.complexity}`).sort()).toEqual(["inner:2", "outer:1"]);
   });
   it("names methods with their class and handles anonymous functions", () => {
-    const fns = cx("class A { m() { return 1; } constructor() {} } export default function () { return 1; }");
+    const fns = cx(
+      "class A { m() { return 1; } constructor() {} } export default function () { return 1; }",
+    );
     expect(fns.map((f) => f.name).sort()).toEqual(["<anonymous>", "A.constructor", "A.m"]);
   });
 });
@@ -104,6 +182,9 @@ describe("robustness", () => {
   });
   it("handles an empty file and a JSX file", () => {
     expect(analyze({ "a.ts": "" }, "a.ts").dependencies).toEqual([]);
-    expect(analyze({ "a.tsx": 'import x from "react"; export const A = () => <div>{x}</div>;' }, "a.tsx").dependencies).toHaveLength(1);
+    expect(
+      analyze({ "a.tsx": 'import x from "react"; export const A = () => <div>{x}</div>;' }, "a.tsx")
+        .dependencies,
+    ).toHaveLength(1);
   });
 });

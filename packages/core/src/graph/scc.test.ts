@@ -5,12 +5,25 @@ const edges = (pairs: [string, string][]) => pairs.map(([from, to]) => ({ from, 
 
 describe("stronglyConnectedComponents", () => {
   it("finds a simple cycle and ignores the acyclic part", () => {
-    const e = edges([["a", "b"], ["b", "c"], ["c", "a"], ["d", "a"]]);
+    const e = edges([
+      ["a", "b"],
+      ["b", "c"],
+      ["c", "a"],
+      ["d", "a"],
+    ]);
     expect(findCycles(["a", "b", "c", "d"], e)).toEqual([["a", "b", "c"]]);
   });
   it("finds two separate cycles in a stable order", () => {
-    const e = edges([["x", "y"], ["y", "x"], ["a", "b"], ["b", "a"]]);
-    expect(findCycles(["x", "y", "a", "b"], e)).toEqual([["a", "b"], ["x", "y"]]);
+    const e = edges([
+      ["x", "y"],
+      ["y", "x"],
+      ["a", "b"],
+      ["b", "a"],
+    ]);
+    expect(findCycles(["x", "y", "a", "b"], e)).toEqual([
+      ["a", "b"],
+      ["x", "y"],
+    ]);
   });
   it("returns nothing for a DAG and for self loops only", () => {
     expect(findCycles(["a", "b"], edges([["a", "b"]]))).toEqual([]);
