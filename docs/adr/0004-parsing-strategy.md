@@ -3,7 +3,8 @@
 - Status: Accepted
 - Date: 2026-10-19
 - Owner approval: Approved 2026-10-19
-- Technical validation: Gate P1-01: measure TypeScript module resolution accuracy on 3 repositories
+- Technical validation: Partially validated in Phase 1: 100 percent edge precision and recall on 11 hand-built fixtures, and 100 percent of internal imports resolved on this repository. Gate P1-01 (comparison with dependency-cruiser and Madge on 3 real public repositories) still needs network access and is an owner task, see docs/phases/phase-1-engine-cli.md
+- Implementation note: Python uses a lexical import parser instead of Tree-sitter (support level 2). Tree-sitter remains the plan for additional languages.
 
 ## Context
 
