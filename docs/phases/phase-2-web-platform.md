@@ -10,7 +10,7 @@ compare analyses.
 
 ## Scope
 
-In: Next.js app on Vercel, Postgres (managed free tier), pg-boss queue, a Node worker container
+In (see the full list of 20 screens and features in docs/prompts/phase-2-prompt.md): Next.js app on Vercel, Postgres (managed free tier), pg-boss queue, a Node worker container
 running the same core, design system, all MVP screens, job budgets, cancellation, rate limiting
 basics, report storage in Postgres JSONB, export, history, repository comparison.
 
@@ -42,37 +42,19 @@ billing, teams, call-graph views.
 - [ ] Local `docker compose up` runs database and worker, documented in `docs/runbooks/local-dev.md`
 - [ ] `pnpm check` green in CI, end to end test of the main journey passes (Playwright)
 
+## Prompt: start Phase 2
+
+Use `docs/prompts/phase-2-prompt.md` (full prompt) and `docs/prompts/HANDOFF.md` (what to attach). Phase 1.5 must be merged and DOTEST sections 1 to 8 verified first.
+
 ## Prompt: resume Phase 2 in a new chat
 
 ```text
-Project: RepoLens. I am the sole developer. Read CLAUDE.md, docs/PROJECT_STATE.md,
-docs/phases/phase-2-web-platform.md, docs/roadmap/backlog.md, docs/ux/*, and the decision register.
-We are in Phase 2 (Web platform). PROJECT_STATE lists completed items. Continue with the next
-unfinished item following docs/ux strictly. Plan briefly, implement, test, run pnpm check, update
-PROJECT_STATE, and tell me exactly what to verify visually and with the keyboard.
+Project: RepoLens. I am the sole developer. Read CLAUDE.md, docs/PROJECT_STATE.md, docs/phases/phase-2-web-platform.md, docs/learning/phase-2-web-platform.md, docs/roadmap/backlog.md,
+docs/ux/*, docs/adr/* and the decision register. We are in Phase 2 (Web platform). PROJECT_STATE lists completed items. Continue with the next unfinished item following docs/ux strictly
+(no em dashes, not a template look, every term explained via the glossary). Plan briefly, implement, test, run pnpm check, update PROJECT_STATE, the phase file and the learning file,
+and tell me exactly what to verify visually and with the keyboard.
 ```
 
-## Prompt: start Phase 3 (paste when Phase 2 exit criteria are met)
+## Prompt: start Phase 3
 
-```text
-Project: RepoLens, open-source repository intelligence platform. I am the sole developer.
-Read first: CLAUDE.md, docs/PROJECT_STATE.md, docs/phases/phase-3-hardening-release.md,
-docs/security/*, docs/evaluation/evaluation-plan.md, docs/architecture/*, docs/registers/decision-register.md,
-all ADRs, and results in docs/evaluation/results.
-
-What we did before: Phase 0 built the repo, documentation, ADRs, threat model, and UX direction.
-Phase 1 built the engine and CLI with fixture-based accuracy results. Phase 2 built the web app,
-API, worker, database, design system, architecture explorer, findings, comparison, export, and
-accessibility checks. The graph library decision (ADR 0012) and worker hosting decision (ADR 0011)
-are made.
-
-What we do now (Phase 3, Hardening and release): make the MVP production grade. Work through
-P3-01 to P3-12: security verification against the threat model, abuse limits and retention,
-observability, deployment with runbooks and rollback, performance and accuracy evaluation with honest
-results, usability test, accessibility audit, final documentation, release v0.1.0 with SBOM, and demo
-preparation. Start with P3-01 and report any threat-model gap as a finding before fixing it.
-Do not write the academic documents until I confirm the exit criteria are met.
-
-Also finish docs/learning/phase-2-web-platform.md (what, why, where, mistakes, gaps, 30 college questions with answers), and create docs/learning/phase-3-hardening-release.md as you build.
-Plan briefly, implement, test, run pnpm check, update PROJECT_STATE, and tell me exactly what to run.
-```
+Use `docs/prompts/phase-3-prompt.md` (full prompt) after the Phase 2 exit criteria pass.

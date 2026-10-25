@@ -85,6 +85,14 @@ IDs match [product-spec.md](product-spec.md). Status: Done, Partial (explained),
 | FR-20 | Web: history and comparison | Planned | Phase 2. The comparison engine (`diff`) exists |
 | FR-21 | Template explanations | Done | Deterministic templates over structured evidence |
 | FR-22 | Reproducibility metadata | Done | Tool versions, schema, config hash, input digest, content hash |
+| FR-23 | Executive summary and glossary for every term | Done (Phase 1.5) | Hover help and glossary page in Phase 2 |
+| FR-24 | Cross-signal risk index | Done (Phase 1.5) | Ranks files, does not predict defects |
+| FR-25 | Blast radius analysis | Done (Phase 1.5) | Static imports only |
+| FR-26 | Pull request architecture guardian | Done in CLI (Phase 1.5) | GitHub Action and PR comments in Phase 3 |
+| FR-27 | Repository trend and drift | Done in CLI (Phase 1.5) | Charts in Phase 2 |
+| FR-28 | Commit, pull request and release signals | Done (Phase 1.5) | From local Git or the GitHub API sample |
+| FR-29 | Coverage report ingestion | Done (Phase 1.5) | LCOV, Istanbul summary, Cobertura |
+| FR-30 | Diagram exports (Mermaid, DOT, SVG) | Done (Phase 1.5) | Interactive graph in Phase 2 |
 
 ## 7. Non-functional requirements
 

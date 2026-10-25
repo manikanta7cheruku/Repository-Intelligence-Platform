@@ -41,6 +41,30 @@ Each item is done only when its acceptance criteria are met and `pnpm check` pas
 | P1-17 | Evaluation harness and Phase 1 results **[Built]** | 8 | docs/evaluation/results/phase-1.md published |
 | P1-18 | Benchmarks on 5 public repositories **[Open (script ready)]** | 5 | Time, memory, coverage recorded with SHAs |
 
+## Phase 1.5: Insight upgrade
+
+Status legend: Built (code complete, owner verification open via DOTEST.md).
+
+| ID | Item | Est | Acceptance |
+|---|---|---|---|
+| P15-01 | Review fixes 1 to 12 (counts, grouping, fixes, dev weighting, README, confidence, labels) **[Built]** | 14 | DOTEST section 2 matches expectations |
+| P15-02 | Glossary and executive summary **[Built]** | 8 | Glossary completeness test, reports show summary |
+| P15-03 | Explainable scoring (inputs used, points to gain) **[Built]** | 6 | Tests and report tables |
+| P15-04 | Coverage ingestion **[Built]** | 6 | Parser and matching tests, DOTEST 9 |
+| P15-05 | Commit quality, GitHub activity signals **[Built]** | 8 | Tests with fake GitHub API, DOTEST 2 and 3 |
+| P15-06 | Blast radius and `impact` command **[Built]** | 6 | Fixture ground truth, DOTEST 4 |
+| P15-07 | Risk index **[Built]** | 8 | Unit tests, DOTEST 2 and 3 |
+| P15-08 | Pull request guardian **[Built]** | 12 | Real Git tests, DOTEST 7 |
+| P15-09 | Trend **[Built]** | 8 | Real Git tests, DOTEST 8 |
+| P15-10 | Diagram exports **[Built]** | 6 | Format and escaping tests, DOTEST 5 |
+| P15-11 | Docs, ADRs 0017 and 0018, learning, prompts **[Built]** | 8 | Owner review |
+| P15-12 | Owner verification of DOTEST and Provenance before and after **[Open]** | 4 | `docs/evaluation/results/p15-provenance.md` |
+
+## Later additions from the Phase 1.5 review
+
+GitHub Action for the pull request guardian (Phase 3), PR comments, refactor of the largest functions (generateFindings, computeScores, analyze), calibration of risk weights and verdict thresholds (Phase 3),
+call graph for one language, per-snapshot security in trend, glossary translations.
+
 ## Phase 2: Web platform
 
 | ID | Item | Est | Acceptance |

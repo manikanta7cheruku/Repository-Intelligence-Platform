@@ -17,6 +17,11 @@ use case works today. Acceptance statements are testable.
 | UC-10 | Export a report | Reviewer | Yes | Planned |
 | UC-11 | Handle unsupported or huge repositories honestly | All | Yes | Planned |
 | UC-12 | Reproduce a report | Reviewer | Yes | Planned |
+| UC-13 | See what a change could break (blast radius) | Maintainer, Reviewer | Yes (`impact`) | Planned |
+| UC-14 | Guard a pull request against architectural regressions | Maintainer, CI | Yes (`pr`) | Phase 3 (GitHub Action) |
+| UC-15 | See how the repository evolved | Maintainer, Reviewer | Yes (`trend`) | Planned |
+| UC-16 | Find the riskiest files to change | Maintainer, Learner | Yes (risk section) | Planned |
+| UC-17 | Understand every term and how to improve a score | Everyone | Yes (glossary, summary) | Planned (hover help) |
 
 ## UC-01 Understand an unfamiliar repository
 
@@ -82,3 +87,29 @@ use case works today. Acceptance statements are testable.
 
 - Main flow: the report stores tool and schema versions, configuration hash, scoring profile hash, commit, input digest and a content hash. Running again on the same input gives the same content hash.
 - Acceptance: determinism tests including a different file creation order.
+
+## UC-13 See what a change could break
+
+- Main flow: `repolens impact report.json <file>` lists direct and indirect dependents, modules and entrypoints that could be affected. The report also lists the files with the largest blast radius.
+- Acceptance: fixture `ts-blast-radius` has hand-computed values (for example the hub file has 3 direct and 4 total dependents, 4 modules and 1 entrypoint) that the harness checks.
+
+## UC-14 Guard a pull request
+
+- Main flow: in CI or locally `repolens pr --base main --fail-on-regression`. The check analyzes base and head with the same rules and prints a verdict with reasons, new violations, cycles, packages, complexity and blast radius of the changed files.
+- Alternate: compare two saved reports. Refs that do not exist give exit code 3. Invalid refs give a usage error.
+- Acceptance: tests with real Git repositories cover regressed, improved and unchanged verdicts, clean-up of worktrees and unsafe refs.
+
+## UC-15 See how the repository evolved
+
+- Main flow: `repolens trend --points 6` shows size, modules, edges, cycles, third-party packages and scores over time, with drift and plain-language insights.
+- Acceptance: tests build a growing repository and check the points, drift, insights and that the working tree and worktree list are untouched.
+
+## UC-16 Find the riskiest files
+
+- Main flow: the Risk section ranks files by a blend of complexity, dependents, change frequency and test linkage or coverage, with reasons. Needs at least two factors.
+- Acceptance: unit tests for ranking, test linkage effects, coverage effects, confidence by factor count and determinism.
+
+## UC-17 Understand every term
+
+- Main flow: the report opens with an executive summary, shows "Inputs used" and "Points to gain" for each score, explains terms on hover (HTML) or in a glossary, and lists what to do to enable a not-assessed score.
+- Acceptance: glossary completeness test and report tests.

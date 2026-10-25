@@ -4,7 +4,7 @@ An open-source repository intelligence platform. It analyzes GitHub repositories
 and produces explainable, evidence-based engineering reports: architecture, dependencies, code
 quality, security signals, testing and CI practices, documentation, and Git history.
 
-Status: Phase 1 (engine and CLI) built. The web app arrives in Phase 2. See `docs/PROJECT_STATE.md`.
+Status: Phase 1.5 (insight upgrade) built. The web app arrives in Phase 2. See `docs/PROJECT_STATE.md` and `DOTEST.md`.
 
 ## Principles
 
@@ -35,7 +35,7 @@ pnpm check
 pnpm repolens analyze . --offline -f markdown,html -o repolens-report
 ```
 
-CLI reference: `docs/reference/cli.md`. Architecture rules: `docs/reference/rules.md`. Report schema: `packages/core/schema/report.schema.json`.
+What you can do: `analyze`, `impact`, `graph`, `pr`, `trend`, `glossary`, `diff`, `report`, `schema`. CLI reference: `docs/reference/cli.md`. Architecture rules: `docs/reference/rules.md`. Report schema: `packages/core/schema/report.schema.json`.
 
 ## Start here
 

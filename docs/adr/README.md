@@ -20,5 +20,7 @@ Status words: Proposed, Accepted, Rejected, Deferred, Superseded. Accepted means
 | [0014](0014-testing-tooling.md) | Testing and tooling strategy | Accepted |
 | [0015](0015-dependency-light-core.md) | Dependency-light core (schema validator and YAML subset) | Accepted |
 | [0016](0016-module-inference-and-graph-scope.md) | Module inference rule and graph scope | Accepted |
+| [0017](0017-report-schema-0-2-and-glossary.md) | Report schema 0.2.0 and a single glossary | Accepted |
+| [0018](0018-risk-index-pr-guardian-trend.md) | Risk index, pull request guardian and trend | Accepted |
 
 Template: [0000-template.md](0000-template.md)
