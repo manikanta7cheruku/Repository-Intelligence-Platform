@@ -25,6 +25,9 @@ Update this file at the end of every working session. A new AI chat can resume f
 
 - DOTEST sections 2 to 8 and 10 (built-in scan) were run on Provenance on 2026-10-25, see `docs/evaluation/results/p15-provenance.md`. Windows CRLF checkout caused 50 Biome format errors on `main`; fixed with `.gitattributes`.
 
+- Score proof added (schema 0.3.0): every score has a one sentence basis, and every input has description, curve, origin, contribution and evidence (see `docs/reference/report-schema.md`). 240 tests.
+- Phase 2 plan v2 written: `docs/phases/phase-2-plan-v2.md` (prompt review, scope tiers, monochrome design tokens, mobile design, graph and export plan). Awaiting owner approval.
+
 ## Not yet verified (owner tasks: DOTEST.md)
 
 - Visual check of the HTML report and diagrams in a browser, and hand-checking blast radius and two OSV advisories.
@@ -37,6 +40,7 @@ Update this file at the end of every working session. A new AI chat can resume f
 
 ## Next
 
+- Owner: approve `docs/phases/phase-2-plan-v2.md` (section 9 decisions), then run spike P2-00 (does the engine fit and run in a Vercel function).
 - Merge Phase 1.5, then start Phase 2 with `docs/prompts/phase-2-prompt.md` (see `docs/prompts/HANDOFF.md`).
 
 ## Open questions for the owner

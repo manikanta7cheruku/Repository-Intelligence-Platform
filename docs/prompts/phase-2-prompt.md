@@ -1,3 +1,5 @@
+> Note (2026-10-25): this prompt is superseded where it differs by `docs/phases/phase-2-plan-v2.md` (schema 0.3.0, 240 tests, scope tiers, stateless first release, monochrome design). Paste the amendments from section 8 of that file after this prompt.
+
 # Phase 2 prompt: the web platform (copy everything inside the code block)
 
 Before pasting, follow `HANDOFF.md` so the assistant can read the project files.
