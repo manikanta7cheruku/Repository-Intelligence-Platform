@@ -2,7 +2,7 @@
 
 - Status: Accepted (owner approved Phase 1.5 on 2026-10-22), confirm after DOTEST
 - Date: 2026-10-22
-- Technical validation: schema validation on every generated report in 237 tests, glossary completeness test
+- Technical validation: schema validation on every generated report in 238 tests, glossary completeness test
 - Related: ADR 0005, ADR 0015
 
 ## Context

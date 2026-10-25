@@ -63,5 +63,5 @@ satisfies when its GitHub issue is created.
 | E-01 | Vercel limits verified from vendor docs | research/verified-facts.md |
 | E-02 | Fixture accuracy, 11 fixtures, precision and recall 1.0 | evaluation/results/phase-1.md |
 | E-03 | 165 tests passing, TypeScript 6.0.3 strict typecheck | evaluation/results (this delivery), run `pnpm check` to reproduce |
-| E-05 | Phase 1.5: 237 tests, 12 fixtures (blast radius ground truth), real Git tests for pr and trend | packages/core/src/**/*.test.ts |
+| E-05 | Phase 1.5: 238 tests, 12 fixtures (blast radius ground truth), real Git tests for pr and trend | packages/core/src/**/*.test.ts |
 | E-04 | Sandbox smoke benchmark | evaluation/results/sandbox-smoke.md |

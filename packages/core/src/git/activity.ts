@@ -17,6 +17,7 @@ export interface ActivityOptions {
 
 interface ApiCommit {
   commit?: { author?: { name?: string; date?: string }; message?: string };
+  parents?: unknown[];
 }
 interface ApiPull {
   merged_at?: string | null;
@@ -77,10 +78,13 @@ export async function fetchGitHubActivity(
     if (r.data.length < 100) break;
   }
   if (commits.length === 0) return unavailable("The GitHub API returned no commits");
+  // A local `git log -- .` drops merge commits, so drop them here too and both sources count the same way.
+  const sampled = commits.filter((c) => !c.parents || c.parents.length < 2);
+  if (sampled.length === 0) return unavailable("The GitHub API returned only merge commits");
 
   const totals = new Map<string, number>();
   const dates: number[] = [];
-  for (const c of commits) {
+  for (const c of sampled) {
     const name = c.commit?.author?.name?.trim() || "unknown";
     totals.set(name, (totals.get(name) ?? 0) + 1);
     const t = Date.parse(c.commit?.author?.date ?? "");
@@ -91,7 +95,7 @@ export async function fetchGitHubActivity(
   const label = new Map(
     ranked.map(([n], i) => [n, opts.authors === "anonymous" ? `Author ${i + 1}` : n]),
   );
-  const total = commits.length;
+  const total = sampled.length;
 
   const pulls = await get<ApiPull[]>(
     "/pulls?state=closed&per_page=100&sort=updated&direction=desc",
@@ -128,7 +132,7 @@ export async function fetchGitHubActivity(
     reason: null,
     source: "github-api",
     commitQuality: commitQuality(
-      commits.map((c) => (c.commit?.message ?? "").split("\n")[0] as string),
+      sampled.map((c) => (c.commit?.message ?? "").split("\n")[0] as string),
     ),
     pullRequests,
     releases,

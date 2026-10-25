@@ -56,7 +56,7 @@ Companion to `how-the-engine-reads-and-analyzes-code.md`. Answers are short on p
 
 ## Quality and honesty
 
-**22. How do you know the engine is correct?** 237 automated tests pass (`pnpm check`), including real Git repositories, and 12 fixture repositories with hand-written ground truth score accuracy 1.0. Fixtures are written by the author, so they can share blind spots; real-repository benchmarks are recorded separately.
+**22. How do you know the engine is correct?** 238 automated tests pass (`pnpm check`), including real Git repositories, and 12 fixture repositories with hand-written ground truth score accuracy 1.0. Fixtures are written by the author, so they can share blind spots; real-repository benchmarks are recorded separately.
 
 **23. Is the output reproducible?** Yes: sorted traversal, content-hash ids, stable JSON serialization, and a test that shuffles file order and checks an identical hash. The only varying fields are timestamps.
 
