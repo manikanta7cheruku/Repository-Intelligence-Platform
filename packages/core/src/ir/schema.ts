@@ -36,15 +36,7 @@ const evidence = obj({
 const finding = obj({
   id: str({ pattern: "^RL-[A-Z0-9-]+-[0-9a-f]{6,}$" }),
   title: str(),
-  category: en([
-    "architecture",
-    "quality",
-    "security",
-    "practices",
-    "documentation",
-    "history",
-    "analysis",
-  ]),
+  category: en(["architecture", "quality", "security", "practices", "documentation", "history", "analysis"]),
   ruleId: str(),
   severity,
   confidence,
@@ -70,22 +62,24 @@ const dependency = obj({
 });
 const scoreInput = obj({
   name: str(),
+  impact: nul(num({ minimum: 0, maximum: 100 })),
   raw: nul(num()),
   normalized: nul(num()),
   weight: num(),
   available: bool(),
   note: str(),
 });
+const confidenceEnum = confidence;
+const riskFactor = obj({ name: str(), value: nul(num()), percentile: nul(num({ minimum: 0, maximum: 1 })), note: str() });
 const toolRun = obj({ assessed: bool(), reason: nul(str()), tool: str(), findings: nul(int()) });
 
 export const reportSchema: S = {
   $schema: "https://json-schema.org/draft/2020-12/schema",
-  $id: "https://repolens.dev/schema/report-0.1.0.json",
+  $id: "https://repolens.dev/schema/report-0.2.0.json",
   title: "RepoLens report",
-  description:
-    "Evidence-based repository analysis report. Missing values are null with a reason, never zero.",
+  description: "Evidence-based repository analysis report. Missing values are null with a reason, never zero.",
   ...obj({
-    schemaVersion: str({ pattern: "^0\\.1\\.[0-9]+$" }),
+    schemaVersion: str({ pattern: "^0\\.2\\.[0-9]+$" }),
     status: en(["complete", "partial", "failed"]),
     repository: obj({
       source: obj({ type: en(["local", "github"]), location: str(), ref: nul(str()) }),
@@ -96,6 +90,10 @@ export const reportSchema: S = {
       analyzedFiles: int({ minimum: 0 }),
       totalBytes: int({ minimum: 0 }),
       truncated: bool(),
+      codeFiles: int({ minimum: 0 }),
+      analyzedCodeFiles: int({ minimum: 0 }),
+      productionFiles: int({ minimum: 0 }),
+      testFiles: int({ minimum: 0 }),
     }),
     scope: obj({
       languages: arr(
@@ -176,9 +174,7 @@ export const reportSchema: S = {
         }),
       ),
       moduleEdges: arr(obj({ from: str(), to: str(), weight: int() })),
-      cycles: arr(
-        obj({ scope: en(["file", "module"]), members: arr(str()), size: int(), typeOnly: bool() }),
-      ),
+      cycles: arr(obj({ scope: en(["file", "module"]), members: arr(str()), size: int(), typeOnly: bool() })),
       levels: arr(obj({ moduleId: str(), level: int(), origin, confidence })),
       entrypointReachable: obj({
         analyzable: bool(),
@@ -193,9 +189,7 @@ export const reportSchema: S = {
         ratio: nul(num({ minimum: 0, maximum: 1 })),
       }),
     }),
-    externalDependencies: arr(
-      obj({ name: str(), builtin: bool(), importingFiles: int(), importCount: int() }),
-    ),
+    externalDependencies: arr(obj({ name: str(), builtin: bool(), importingFiles: int(), importCount: int() })),
     unresolvedImports: arr(dependency),
     metrics: obj({
       files: arr(
@@ -222,9 +216,7 @@ export const reportSchema: S = {
         }),
       ),
       functionCount: int(),
-      complexityDistribution: nul(
-        obj({ low: int(), moderate: int(), high: int(), veryHigh: int() }),
-      ),
+      complexityDistribution: nul(obj({ low: int(), moderate: int(), high: int(), veryHigh: int() })),
       duplication: obj({
         assessed: bool(),
         reason: nul(str()),
@@ -265,6 +257,7 @@ export const reportSchema: S = {
         value: nul(num({ minimum: 0, maximum: 100 })),
         confidence: nul(confidence),
         coverage: nul(num({ minimum: 0, maximum: 1 })),
+        weightCoverage: nul(num({ minimum: 0, maximum: 1 })),
         reason: nul(str()),
         inputs: arr(scoreInput),
       }),
@@ -276,7 +269,7 @@ export const reportSchema: S = {
         testFiles: int(),
         sourceFiles: int(),
         testToSourceFileRatio: nul(num()),
-        coverageReport: en(["not-ingested"]),
+        coverageReport: en(["ingested", "not-ingested"]),
       }),
       quality: obj({
         linters: arr(str()),
@@ -291,6 +284,8 @@ export const reportSchema: S = {
           headings: arr(str()),
           hasInstall: nul(bool()),
           hasUsage: nul(bool()),
+          sections: arr(str()),
+          links: int(),
         }),
         files: obj({
           contributing: bool(),
@@ -303,29 +298,22 @@ export const reportSchema: S = {
         adrDirectories: arr(str()),
         adrCount: int(),
       }),
-      setup: obj({
-        dockerfile: bool(),
-        envExample: bool(),
-        makefile: bool(),
-        devcontainer: bool(),
-      }),
+      setup: obj({ dockerfile: bool(), envExample: bool(), makefile: bool(), devcontainer: bool() }),
     }),
     history: obj({
       available: bool(),
       reason: nul(str()),
+      source: nul(en(["git", "github-api"])),
+      commitQuality: nul(obj({ sampled: int(), conventionalShare: num(), descriptiveShare: num(), genericShare: num(), avgSubjectLength: num() })),
+      pullRequests: nul(obj({ sampled: int(), merged: int(), medianHoursToMerge: nul(num()) })),
+      releases: nul(obj({ count: int(), latestDate: nul(str()) })),
       shallow: nul(bool()),
       commitsAnalyzed: nul(int()),
       window: obj({ first: nul(str()), last: nul(str()) }),
       contributors: arr(obj({ name: str(), commits: int(), share: num() })),
       topAuthorShare: nul(num()),
       hotspots: arr(
-        obj({
-          path: str(),
-          commits: int(),
-          churn: int(),
-          complexity: nul(int()),
-          score: nul(num()),
-        }),
+        obj({ path: str(), commits: int(), churn: int(), complexity: nul(int()), score: nul(num()) }),
       ),
       moduleOwnership: arr(
         obj({ moduleId: str(), path: str(), topAuthor: str(), share: num(), commits: int() }),
@@ -351,12 +339,23 @@ export const reportSchema: S = {
       violations: nul(int()),
       baseline: nul(obj({ source: nul(str()), suppressed: int() })),
     }),
-    methodology: obj({
-      profile: str(),
-      profileHash: str(),
-      configHash: str(),
-      scoringVersion: str(),
+    executiveSummary: obj({ headline: str(), overview: arr(str()), strengths: arr(str()), concerns: arr(str()), nextSteps: arr(str()) }),
+    testCoverage: obj({
+      ingested: bool(),
+      source: nul(str()),
+      format: nul(en(["lcov", "istanbul-summary", "cobertura"])),
+      lineRate: nul(num({ minimum: 0, maximum: 1 })),
+      filesMatched: nul(int()),
+      reason: nul(str()),
     }),
+    risk: obj({
+      assessed: bool(),
+      reason: nul(str()),
+      method: str(),
+      files: arr(obj({ path: str(), moduleId: nul(str()), risk: num({ minimum: 0, maximum: 100 }), confidence: confidenceEnum, factors: arr(riskFactor), drivers: arr(str()), explanation: str() })),
+    }),
+    blastRadius: arr(obj({ path: str(), directDependents: int(), transitiveDependents: int(), runtimeTransitive: int(), modulesAffected: arr(str()), entrypointsAffected: arr(str()), maxDepth: int() })),
+    methodology: obj({ profile: str(), profileHash: str(), configHash: str(), scoringVersion: str(), glossaryVersion: str() }),
     reproducibility: obj({
       toolVersion: str(),
       schemaVersion: str(),
@@ -388,14 +387,8 @@ function typeMatches(declared: string, actual: string): boolean {
 }
 
 /** Validates data against the JSON Schema subset used by this project. */
-export function validateAgainst(
-  schema: S,
-  data: unknown,
-  path = "$",
-  issues: ValidationIssue[] = [],
-): ValidationIssue[] {
-  const declared =
-    schema.type === undefined ? null : ([] as string[]).concat(schema.type as string | string[]);
+export function validateAgainst(schema: S, data: unknown, path = "$", issues: ValidationIssue[] = []): ValidationIssue[] {
+  const declared = schema.type === undefined ? null : ([] as string[]).concat(schema.type as string | string[]);
   const actual = typeOf(data);
   if (declared && !declared.some((d) => typeMatches(d, actual))) {
     issues.push({ path, message: `expected ${declared.join(" or ")}, got ${actual}` });
@@ -408,35 +401,25 @@ export function validateAgainst(
   if (Array.isArray(schema.enum) && !(schema.enum as unknown[]).includes(data)) {
     issues.push({ path, message: `value ${JSON.stringify(data)} not in enum` });
   }
-  if (
-    typeof data === "string" &&
-    typeof schema.pattern === "string" &&
-    !new RegExp(schema.pattern).test(data)
-  ) {
+  if (typeof data === "string" && typeof schema.pattern === "string" && !new RegExp(schema.pattern).test(data)) {
     issues.push({ path, message: `string does not match ${schema.pattern}` });
   }
   if (typeof data === "number") {
-    if (typeof schema.minimum === "number" && data < schema.minimum)
-      issues.push({ path, message: `below minimum ${schema.minimum}` });
-    if (typeof schema.maximum === "number" && data > schema.maximum)
-      issues.push({ path, message: `above maximum ${schema.maximum}` });
+    if (typeof schema.minimum === "number" && data < schema.minimum) issues.push({ path, message: `below minimum ${schema.minimum}` });
+    if (typeof schema.maximum === "number" && data > schema.maximum) issues.push({ path, message: `above maximum ${schema.maximum}` });
   }
   if (Array.isArray(data) && schema.items) {
-    data.forEach((item, i) => {
-      validateAgainst(schema.items as S, item, `${path}[${i}]`, issues);
-    });
+    data.forEach((item, i) => validateAgainst(schema.items as S, item, `${path}[${i}]`, issues));
   }
   if (actual === "object") {
     const record = data as Record<string, unknown>;
     const props = (schema.properties ?? {}) as Record<string, S>;
     for (const key of (schema.required ?? []) as string[]) {
-      if (!(key in record))
-        issues.push({ path: `${path}.${key}`, message: "required property missing" });
+      if (!(key in record)) issues.push({ path: `${path}.${key}`, message: "required property missing" });
     }
     for (const [key, value] of Object.entries(record)) {
       if (key in props) validateAgainst(props[key] as S, value, `${path}.${key}`, issues);
-      else if (schema.additionalProperties === false)
-        issues.push({ path: `${path}.${key}`, message: "unexpected property" });
+      else if (schema.additionalProperties === false) issues.push({ path: `${path}.${key}`, message: "unexpected property" });
       else if (typeof schema.additionalProperties === "object") {
         validateAgainst(schema.additionalProperties as S, value, `${path}.${key}`, issues);
       }
@@ -456,44 +439,23 @@ export function validateReport(report: unknown): ReportValidation {
   if (issues.length === 0) {
     const r = report as {
       schemaVersion: string;
-      scores: {
-        dimension: string;
-        state: string;
-        value: number | null;
-        reason: string | null;
-        confidence: string | null;
-      }[];
+      scores: { dimension: string; state: string; value: number | null; reason: string | null; confidence: string | null }[];
       reproducibility: { schemaVersion: string };
       graph: { resolution: { internalImports: number; ratio: number | null } };
     };
-    if (
-      r.schemaVersion !== REPORT_SCHEMA_VERSION ||
-      r.reproducibility.schemaVersion !== REPORT_SCHEMA_VERSION
-    ) {
-      issues.push({
-        path: "$.schemaVersion",
-        message: `unsupported schema version, expected ${REPORT_SCHEMA_VERSION}`,
-      });
+    if (r.schemaVersion !== REPORT_SCHEMA_VERSION || r.reproducibility.schemaVersion !== REPORT_SCHEMA_VERSION) {
+      issues.push({ path: "$.schemaVersion", message: `unsupported schema version, expected ${REPORT_SCHEMA_VERSION}` });
     }
     r.scores.forEach((s, i) => {
       if (s.state === "not-assessed" && (s.value !== null || !s.reason)) {
-        issues.push({
-          path: `$.scores[${i}]`,
-          message: "not-assessed score must have null value and a reason",
-        });
+        issues.push({ path: `$.scores[${i}]`, message: "not-assessed score must have null value and a reason" });
       }
       if (s.state === "assessed" && (s.value === null || s.confidence === null)) {
-        issues.push({
-          path: `$.scores[${i}]`,
-          message: "assessed score needs a value and confidence",
-        });
+        issues.push({ path: `$.scores[${i}]`, message: "assessed score needs a value and confidence" });
       }
     });
     if (r.graph.resolution.internalImports === 0 && r.graph.resolution.ratio !== null) {
-      issues.push({
-        path: "$.graph.resolution.ratio",
-        message: "ratio must be null when there are no internal imports",
-      });
+      issues.push({ path: "$.graph.resolution.ratio", message: "ratio must be null when there are no internal imports" });
     }
   }
   return { valid: issues.length === 0, issues };
