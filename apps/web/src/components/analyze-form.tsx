@@ -1,6 +1,6 @@
 "use client";
 
-import { type Report, validateReport } from "@repolens/core/browser";
+import { type Report, upgradeReport, validateReport } from "@repolens/core/browser";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type DragEvent, useEffect, useRef, useState } from "react";
@@ -115,7 +115,15 @@ export function AnalyzeForm() {
     setError(null);
     if (!f) return;
     try {
-      const data = JSON.parse(await f.text()) as unknown;
+      let data = JSON.parse(await f.text()) as unknown;
+      const up = upgradeReport(data);
+      if (!up) {
+        setError(
+          "That report is from a much older version of the tool. Analyze the repository again.",
+        );
+        return;
+      }
+      data = up.report;
       const v = validateReport(data);
       if (!v.valid) {
         setError(
