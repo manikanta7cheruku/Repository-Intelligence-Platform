@@ -1,0 +1,76 @@
+{
+  "description": "A hub file (util) with known direct and transitive dependents across three modules and an entrypoint, plus a test that imports the hub.",
+  "edges": [
+    [
+      "src/index.ts",
+      "src/a/one.ts"
+    ],
+    [
+      "src/index.ts",
+      "src/b/three.ts"
+    ],
+    [
+      "src/a/one.ts",
+      "src/core/util.ts"
+    ],
+    [
+      "src/a/one.ts",
+      "src/a/two.ts"
+    ],
+    [
+      "src/a/two.ts",
+      "src/core/util.ts"
+    ],
+    [
+      "src/b/three.ts",
+      "src/core/util.ts"
+    ],
+    [
+      "src/b/three.ts",
+      "src/a/two.ts"
+    ],
+    [
+      "src/core/util.ts",
+      "src/core/base.ts"
+    ]
+  ],
+  "externals": [],
+  "unresolved": [],
+  "fileCycles": [],
+  "moduleCycles": [],
+  "typeOnlyFileCycles": [],
+  "ruleViolations": {},
+  "entrypoints": [
+    "src/index.ts"
+  ],
+  "unsupportedLanguages": [],
+  "blast": {
+    "src/core/base.ts": {
+      "direct": 1,
+      "transitive": 5,
+      "modules": 4,
+      "entrypoints": [
+        "src/index.ts"
+      ],
+      "depth": 3
+    },
+    "src/core/util.ts": {
+      "direct": 3,
+      "transitive": 4,
+      "modules": 4,
+      "entrypoints": [
+        "src/index.ts"
+      ],
+      "depth": 2
+    },
+    "src/a/two.ts": {
+      "direct": 2,
+      "transitive": 3,
+      "modules": 3,
+      "entrypoints": [
+        "src/index.ts"
+      ],
+      "depth": 2
+    }
+  }
+}
