@@ -49,6 +49,7 @@ Update this file at the end of every working session. A new AI chat can resume f
 
 ## Known risks and debts
 
+- TypeScript 7 (native port) removes the JavaScript compiler API that `analyzers/js-ts.ts` uses (build fails with TS2694 on `CompilerOptions` and `ModuleResolutionCache`, seen in Dependabot PR 7). Major TypeScript updates are ignored in `.github/dependabot.yml` until the analyzer is ported or a stable programmatic API exists. `@types/node` majors are ignored while Node 22 is the supported runtime.
 - Solo delivery of a large scope: keep the MVP boundary in `product/product-spec.md`.
 - Risk index weights and PR verdict thresholds are provisional. Calibration is a Phase 3 work package.
 - The tool flags our own largest functions (pipeline orchestrator, score engine, findings generator). Refactoring is Phase 3 (P3-09).
