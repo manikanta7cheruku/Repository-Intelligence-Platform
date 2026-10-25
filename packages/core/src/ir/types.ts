@@ -2,7 +2,7 @@
  * Intermediate representation and report model (schema 0.1.0).
  * Rule: a value that was not computed is `null` with a reason, never 0.
  */
-export const REPORT_SCHEMA_VERSION = "0.2.0";
+export const REPORT_SCHEMA_VERSION = "0.3.0";
 
 export type Severity = "critical" | "high" | "medium" | "low" | "info";
 export type Confidence = "high" | "medium" | "low";
@@ -190,6 +190,16 @@ export interface SubMetricInput {
   weight: number;
   available: boolean;
   note: string;
+  /** What this input measures, in plain words. */
+  description: string;
+  /** Anchor points (raw value, score) of the piecewise linear curve that maps raw to 0..100. */
+  curve: [number, number][];
+  /** convention: widely used threshold. provisional: author's choice, not yet calibrated. */
+  origin: "convention" | "provisional";
+  /** Points this input adds to the dimension score (normalized times its share of available weight). */
+  contribution: number | null;
+  /** Up to 5 concrete items (files, modules, packages) behind the raw value. Empty when none exist. */
+  evidence: string[];
 }
 
 export interface ScoreRecord {
@@ -207,6 +217,8 @@ export interface ScoreRecord {
   /** Share of the dimension weight that had data (0 to 1). */
   weightCoverage: number | null;
   reason: string | null;
+  /** One sentence stating how the score was derived and from what. Deterministic, not generated text. */
+  basis: string;
   inputs: SubMetricInput[];
 }
 

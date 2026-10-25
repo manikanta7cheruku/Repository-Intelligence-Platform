@@ -1,6 +1,7 @@
 import { GLOSSARY_INDEX } from "../glossary/glossary.js";
 import type { Finding, Report } from "../ir/types.js";
 import {
+  curveText,
   dimLabel,
   glossaryIdsFor,
   improvements,
@@ -412,18 +413,36 @@ export function toMarkdown(r: Report, opts: { maxFindings?: number } = {}): stri
     "",
   );
   for (const s of r.scores) {
-    out.push(`### ${dimLabel(s.dimension)}`, "");
+    out.push(`### ${dimLabel(s.dimension)}`, "", `Proof: ${s.basis}`, "");
     out.push(
       table(
-        ["Input", "Raw", "Score", "Weight", "Points to gain", "Available", "Note"],
+        [
+          "Input",
+          "What it measures",
+          "Raw",
+          "Score",
+          "Weight",
+          "Adds to score",
+          "Curve (raw gives score)",
+          "Origin",
+          "Points to gain",
+          "Evidence",
+        ],
         s.inputs.map((i) => [
           inputLabel(i.name),
+          i.description,
           i.raw,
           i.normalized,
           i.weight,
+          i.contribution,
+          curveText(i.curve),
+          i.origin,
           i.impact,
-          i.available ? "yes" : "no",
-          i.note,
+          i.available
+            ? i.evidence.length > 0
+              ? i.evidence.join("; ")
+              : i.note
+            : `unavailable: ${i.note}`,
         ]),
       ),
     );

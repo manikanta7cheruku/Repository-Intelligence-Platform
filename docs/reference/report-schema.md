@@ -1,4 +1,4 @@
-# Report schema reference (0.2.0)
+# Report schema reference (0.3.0)
 
 The JSON report is validated against `packages/core/schema/report.schema.json` (also printed by `repolens schema`). This page explains the meaning of each top-level section for
 people who build on the report, including the web app.
@@ -8,7 +8,7 @@ people who build on the report, including the web app.
 | `schemaVersion`, `status` | Version of the format. `complete` or `partial` (budget reached, analyzer failed, or required lookup failed) |
 | `repository` | Source, commit, and file counts: `totalFiles`, `codeFiles`, `analyzedCodeFiles`, `productionFiles`, `testFiles` |
 | `executiveSummary` | Headline, overview lines, strengths, concerns and next steps, written from report facts with fixed templates |
-| `scores[]` | One per dimension: `value` (null when not assessed), `state`, `confidence`, `coverage`, `weightCoverage` (inputs used), `reason`, and `inputs[]` with `raw`, `normalized`, `weight`, `impact` (points to gain), `available`, `note`. Input names are glossary ids |
+| `scores[]` | One per dimension: `value` (null when not assessed), `state`, `confidence`, `coverage`, `weightCoverage` (inputs used), `reason`, and `inputs[]` with `raw`, `normalized`, `weight`, `impact` (points to gain), `available`, `note`, and from 0.3.0 the proof fields `description`, `curve`, `origin`, `contribution`, `evidence`. Each score also has `basis`, a one sentence derivation. Input names are glossary ids |
 | `scope`, `coverage[]` | Languages with support levels, analyzer coverage. `ratio` is null for detection-only languages |
 | `detection` | Package managers, frameworks, entrypoints, license |
 | `graph` | `nodes`, `edges` (with line occurrences), `modules`, `moduleEdges`, `cycles` (with `typeOnly`), `levels`, `entrypointReachable`, `resolution` |
@@ -31,4 +31,5 @@ Rules that never change: a value that was not computed is `null` with a reason, 
 | Version | Changes |
 |---|---|
 | 0.2.0 | Added file counts, `executiveSummary`, `testCoverage`, `risk`, `blastRadius`, `history.source`, `commitQuality`, `pullRequests`, `releases`, score `weightCoverage` and input `impact`, README `sections` and `links`, `methodology.glossaryVersion`, cycle `typeOnly` (already 0.1.0). Coverage report state `ingested` |
+| 0.3.0 | Score proof: each score has `basis`; each input has `description`, `curve` (raw to score anchors), `origin` (convention or provisional), `contribution` (points added to the score) and `evidence` (up to 5 files, modules or findings behind the value). Reports of 0.2.x are not accepted by the validator and must be regenerated |
 | 0.1.0 | First version |

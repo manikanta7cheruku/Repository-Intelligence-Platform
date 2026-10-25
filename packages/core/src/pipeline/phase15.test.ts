@@ -318,3 +318,33 @@ describe("history in a real repository adds commit quality and file level risk",
     expect(top?.factors.find((f) => f.name === "churn")?.value).toBe(5);
   });
 });
+
+describe("score proof", () => {
+  it("explains every input with its curve, contribution and evidence, and the parts add up to the score", async () => {
+    const r = await run(join(FIXTURES, "ts-cycle"));
+    expect(validateReport(r).valid).toBe(true);
+    for (const s of r.scores) {
+      expect(s.basis.length).toBeGreaterThan(20);
+      for (const i of s.inputs) {
+        expect(i.description.length).toBeGreaterThan(5);
+        expect(i.curve.length).toBeGreaterThanOrEqual(2);
+        expect(["convention", "provisional"]).toContain(i.origin);
+        expect(i.available ? i.contribution !== null : i.contribution === null).toBe(true);
+      }
+      if (s.state === "assessed") {
+        const sum = s.inputs.reduce((a, i) => a + (i.contribution ?? 0), 0);
+        expect(Math.abs(sum - (s.value as number))).toBeLessThanOrEqual(1);
+        expect(s.basis).toContain(`Score ${s.value}`);
+      } else {
+        expect(s.basis).toContain("Not assessed");
+      }
+    }
+  });
+  it("names the files behind a cycle input", async () => {
+    const r = await run(join(FIXTURES, "ts-cycle"));
+    const input = r.scores
+      .find((s) => s.dimension === "architecture")
+      ?.inputs.find((i) => i.name === "file-cycle-ratio");
+    expect(input?.evidence.length ?? 0).toBeGreaterThan(0);
+  });
+});

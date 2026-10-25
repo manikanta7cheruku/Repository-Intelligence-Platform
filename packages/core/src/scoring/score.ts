@@ -33,7 +33,8 @@ export interface ScoreInputs {
   languageLevels: { language: string; codeLines: number; supportLevel: number }[];
 }
 
-type Raw = { raw: number | null; note: string };
+type Raw = { raw: number | null; note: string; evidence?: string[] };
+const sample = (xs: Iterable<string>, n = 5): string[] => [...xs].sort().slice(0, n);
 
 const confidenceOf = (coverage: number): Confidence =>
   coverage >= 0.85 ? "high" : coverage >= 0.6 ? "medium" : "low";
@@ -43,6 +44,16 @@ export function structuralCoverage(files: FileRecord[]): number | null {
   const eligible = files.filter((f) => f.language !== null && f.kind === "source");
   if (eligible.length === 0) return null;
   return eligible.filter((f) => f.analyzed).length / eligible.length;
+}
+
+/** Deterministic one-sentence derivation: the weighted inputs and what each one measured. */
+function basisOf(dimension: string, value: number | null, inputs: SubMetricInput[]): string {
+  const used = inputs.filter((x) => x.available);
+  if (used.length === 0)
+    return `Not assessed. No input of ${dimension} could be computed, and a missing input is never counted as zero.`;
+  const parts = used.map((x) => `${x.name} ${x.normalized} (weight ${x.weight}: ${x.note})`);
+  const skipped = inputs.length - used.length;
+  return `${value === null ? "Not assessed. Inputs that were available" : `Score ${value} is the weighted average of ${used.length} input${used.length === 1 ? "" : "s"}`}: ${parts.join("; ")}.${skipped > 0 ? ` ${skipped} input${skipped === 1 ? " was" : "s were"} unavailable and excluded, not counted as zero.` : ""}`;
 }
 
 export function computeScores(i: ScoreInputs): ScoreRecord[] {
@@ -64,6 +75,7 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
         ? {
             raw: runtimeCycleFiles.size / nodes,
             note: `${runtimeCycleFiles.size} of ${nodes} files in runtime cycles`,
+            evidence: sample(runtimeCycleFiles),
           }
         : { raw: null, note: "Fewer than 3 files in the graph" },
     "module-cycle-ratio":
@@ -71,6 +83,7 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
         ? {
             raw: moduleCycleMembers.size / i.graph.modules.length,
             note: `${moduleCycleMembers.size} of ${i.graph.modules.length} modules in cycles`,
+            evidence: sample(moduleCycleMembers),
           }
         : { raw: null, note: "Fewer than 2 modules" },
     "rule-violations-per-100-edges":
@@ -78,6 +91,9 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
         ? {
             raw: (i.ruleViolations / i.graph.edges.length) * 100,
             note: `${i.ruleViolations} violations over ${i.graph.edges.length} edges`,
+            evidence: sample(
+              i.findings.filter((f) => f.ruleId.startsWith("rule.")).map((f) => f.title),
+            ),
           }
         : { raw: null, note: i.rulesEvaluated ? "No edges" : "No rules file supplied" },
     "unresolved-import-ratio":
@@ -91,7 +107,10 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
       nodes >= 10
         ? {
             raw: i.graph.nodes.filter((n) => n.fanOut > THRESHOLDS.fanOutFile).length / nodes,
-            note: `files with fan-out above ${THRESHOLDS.fanOutFile}`,
+            note: `${i.graph.nodes.filter((n) => n.fanOut > THRESHOLDS.fanOutFile).length} of ${nodes} files with fan-out above ${THRESHOLDS.fanOutFile}`,
+            evidence: sample(
+              i.graph.nodes.filter((n) => n.fanOut > THRESHOLDS.fanOutFile).map((n) => n.path),
+            ),
           }
         : { raw: null, note: "Fewer than 10 files" },
   };
@@ -108,6 +127,10 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
         ? {
             raw: (dist.high + dist.veryHigh) / fnTotal,
             note: `${dist.high + dist.veryHigh} of ${fnTotal} functions above the high threshold`,
+            evidence: i.findings
+              .filter((f) => f.ruleId === "quality.function-complexity")
+              .map((f) => f.title)
+              .slice(0, 5),
           }
         : { raw: null, note: "Fewer than 10 measured functions" },
     "duplication-ratio":
@@ -124,6 +147,11 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
               i.metrics.files.filter((f) => f.codeLines > 500 && !testPaths.has(f.path)).length /
               sourceFiles.length,
             note: "source files above 500 code lines",
+            evidence: sample(
+              i.metrics.files
+                .filter((f) => f.codeLines > 500 && !testPaths.has(f.path))
+                .map((f) => f.path),
+            ),
           }
         : { raw: null, note: "Fewer than 5 source files" },
     "hotspot-share":
@@ -133,6 +161,10 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
         ? {
             raw: hotspotCount / sourceFiles.length,
             note: `${hotspotCount} hotspots with score at least ${THRESHOLDS.hotspotScore}`,
+            evidence: i.history.hotspots
+              .filter((h) => (h.score ?? 0) >= THRESHOLDS.hotspotScore)
+              .slice(0, 5)
+              .map((h) => h.path),
           }
         : {
             raw: null,
@@ -157,15 +189,21 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
             0,
           ),
           note: `${osv.length} known vulnerabilities (${osv.filter((f) => f.tags.includes("dev")).length} in development-only packages, counted at 40 percent)`,
+          evidence: osv.slice(0, 5).map((f) => f.title),
         }
       : { raw: null, note: i.security.dependencies.reason ?? "Not assessed" },
     "secret-findings": secretsAssessed
-      ? { raw: secrets.length, note: `${secrets.length} possible secrets` }
+      ? {
+          raw: secrets.length,
+          note: `${secrets.length} possible secrets`,
+          evidence: sample(secrets.flatMap((f) => f.locations.map((l) => l.path))),
+        }
       : { raw: null, note: "No secret scanner ran" },
     "workflow-risk-weight": i.security.workflows.assessed
       ? {
           raw: wf.reduce((s, f) => s + wfWeight(f.severity), 0),
           note: `${wf.length} workflow findings`,
+          evidence: wf.slice(0, 5).map((f) => f.title),
         }
       : { raw: null, note: i.security.workflows.reason ?? "No workflows" },
     "lockfile-present": hasManifest
@@ -346,12 +384,20 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
         weight: def.weight,
         available,
         note: r.note,
+        description: def.description,
+        curve: def.curve,
+        origin: def.origin,
+        contribution: null as number | null,
+        evidence: r.evidence ?? [],
       };
     });
     const availWeight = inputs.filter((x) => x.available).reduce((s, x) => s + x.weight, 0);
     for (const x of inputs)
       if (x.available)
         x.impact = round(((100 - (x.normalized as number)) * x.weight) / availWeight, 1);
+    for (const x of inputs)
+      if (x.available)
+        x.contribution = round(((x.normalized as number) * x.weight) / availWeight, 1);
     const weightCoverage = total === 0 ? null : round(availWeight / total);
     const cov = coverageFor[dimension] ?? null;
     if (availWeight < total * i.profile.minAvailableWeight || cov === null) {
@@ -363,6 +409,7 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
         confidence: null,
         coverage: cov === null ? null : round(cov),
         weightCoverage,
+        basis: basisOf(dimension, null, inputs),
         reason:
           cov === null && availWeight >= total * i.profile.minAvailableWeight
             ? "No analyzable source files"
@@ -382,6 +429,7 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
       coverage: round(cov),
       weightCoverage,
       reason: null,
+      basis: basisOf(dimension, Math.round(value), inputs),
       inputs,
     };
   });

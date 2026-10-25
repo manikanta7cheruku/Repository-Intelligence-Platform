@@ -1,6 +1,7 @@
 import { explain, GLOSSARY_INDEX } from "../glossary/glossary.js";
 import type { Report, Severity } from "../ir/types.js";
 import {
+  curveText,
   dimLabel,
   glossaryIdsFor,
   improvements,
@@ -308,16 +309,34 @@ ${findings || `<p class="muted">No findings.</p>`}
 ${r.scores
   .map(
     (s) =>
-      `<h3>${term(s.dimension)}</h3>${table(
-        ["Input", "Raw", "Score", "Weight", "Points to gain", "Available", "Note"],
+      `<h3>${term(s.dimension)}</h3><p><strong>Proof:</strong> ${esc(s.basis)}</p>${table(
+        [
+          "Input",
+          "What it measures",
+          "Raw",
+          "Score",
+          "Weight",
+          "Adds to score",
+          "Curve (raw gives score)",
+          "Origin",
+          "Points to gain",
+          "Evidence",
+        ],
         s.inputs.map((i) => [
           term(i.name, inputLabel(i.name)),
+          i.description,
           i.raw,
           i.normalized,
           i.weight,
+          i.contribution,
+          curveText(i.curve),
+          i.origin,
           i.impact,
-          i.available ? "yes" : "no",
-          i.note,
+          i.available
+            ? i.evidence.length > 0
+              ? i.evidence.join("; ")
+              : i.note
+            : `unavailable: ${i.note}`,
         ]),
         new Set([0]),
       )}`,

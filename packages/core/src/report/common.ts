@@ -73,3 +73,7 @@ export function glossaryIdsFor(r: Report): string[] {
 
 export const pctText = (v: number | null): string =>
   v === null ? "n/a" : `${Math.round(v * 1000) / 10}%`;
+
+/** Plain text of a scoring curve, for example "0 gives 100, 0.1 gives 50, 0.3 gives 0". */
+export const curveText = (curve: [number, number][]): string =>
+  curve.map(([x, y]) => `${x} gives ${y}`).join(", ");
