@@ -1,16 +1,36 @@
 import ts from "typescript";
 import type { Workspace } from "../acquire/types.js";
-import { parseJsonSafe, readPackageJson } from "../detect/manifests.js";
 import type { DetectionSummary, FileRecord, PracticesSummary } from "../ir/types.js";
+import { parseJsonSafe, readPackageJson } from "../detect/manifests.js";
 import { basename, dirname } from "../util/paths.js";
 
 const hasPath = (ws: Workspace, re: RegExp): boolean => ws.files.some((f) => re.test(f.path));
 
-export function detectPractices(
-  ws: Workspace,
-  files: FileRecord[],
-  detection: DetectionSummary,
-): PracticesSummary {
+const SECTION_HEADINGS: [string, RegExp][] = [
+  ["overview", /overview|about|introduction|what is|summary|^[a-z0-9 ._-]{2,40}$/i],
+  ["install", /install|setup|set up|getting started|quick ?start|run (it )?locally|locally|local (dev|development|setup)|development|prerequisites|requirements|build|run it|how to run/i],
+  ["usage", /usage|how to use|example|quick ?start|getting started|commands|\bcli\b|\bapi\b/i],
+  ["contributing", /contribut|development guide|pull request/i],
+  ["license", /licen[sc]e/i],
+  ["testing", /test|\bci\b/i],
+  ["architecture", /architecture|design|how it works|structure|docs|documentation/i],
+  ["status", /status|roadmap|changelog|releases/i],
+];
+const INSTALL_COMMAND = /\b(npm|pnpm|yarn|bun|pip3?|uv|poetry|pipenv|cargo|go|docker[ -]compose|docker|make|bundle|composer|gradle|mvn)\s+(install|i|add|sync|build|run|up|get|compose|start|test)\b/i;
+
+/** README section kinds from headings, plus install commands anywhere in the text (fenced or inline). */
+export function readmeSections(headings: string[], text: string): string[] {
+  const found = new Set<string>();
+  for (const [kind, re] of SECTION_HEADINGS) {
+    if (kind === "overview") continue;
+    if (headings.some((h) => re.test(h))) found.add(kind);
+  }
+  if (INSTALL_COMMAND.test(text)) found.add("install");
+  if (headings.length > 0 || text.trim().split(/\s+/).length > 30) found.add("overview");
+  return [...found].sort();
+}
+
+export function detectPractices(ws: Workspace, files: FileRecord[], detection: DetectionSummary, coverageIngested = false): PracticesSummary {
   const paths = ws.files.map((f) => f.path);
   const providers = new Set<string>();
   const workflowFiles = paths.filter((p) => /^\.github\/workflows\/[^/]+\.ya?ml$/.test(p)).sort();
@@ -30,155 +50,73 @@ export function detectPractices(
     for (const d of Object.keys({ ...pkg.dependencies, ...pkg.devDependencies })) depNames.add(d);
     if (pkg.scripts?.test && !/no test specified/.test(pkg.scripts.test)) hasTestScript = true;
   }
-  const pyText = ws.files
-    .filter((f) =>
-      /(requirements.*\.txt|pyproject\.toml|setup\.cfg|tox\.ini|Pipfile)$/.test(f.path),
-    )
-    .map((f) => ws.read(f.path) ?? "")
-    .join("\n");
-  const py = (name: string) =>
-    new RegExp(`(^|[\\s"'\\[,])${name}([\\s=<>~!\\[;"',]|$)`, "im").test(pyText);
+  const pyText = ws.files.filter((f) => /(requirements.*\.txt|pyproject\.toml|setup\.cfg|tox\.ini|Pipfile)$/.test(f.path)).map((f) => ws.read(f.path) ?? "").join("\n");
+  const py = (name: string) => new RegExp(`(^|[\\s"'\\[,])${name}([\\s=<>~!\\[;"',]|$)`, "im").test(pyText);
 
   const testFrameworks = new Set<string>();
-  for (const [dep, label] of Object.entries({
-    vitest: "Vitest",
-    jest: "Jest",
-    mocha: "Mocha",
-    ava: "AVA",
-    "@playwright/test": "Playwright",
-    cypress: "Cypress",
-  }))
-    if (depNames.has(dep)) testFrameworks.add(label);
+  for (const [dep, label] of Object.entries({ vitest: "Vitest", jest: "Jest", mocha: "Mocha", ava: "AVA", "@playwright/test": "Playwright", cypress: "Cypress" })) if (depNames.has(dep)) testFrameworks.add(label);
   if (py("pytest")) testFrameworks.add("pytest");
-  if (
-    files.some(
-      (f) => f.language === "python" && f.kind === "test" && /unittest/.test(ws.read(f.path) ?? ""),
-    )
-  )
-    testFrameworks.add("unittest");
-  if (hasTestScript && testFrameworks.size === 0)
-    testFrameworks.add("npm test script (framework not identified)");
+  if (files.some((f) => f.language === "python" && f.kind === "test" && /unittest/.test(ws.read(f.path) ?? ""))) testFrameworks.add("unittest");
+  if (hasTestScript && testFrameworks.size === 0) testFrameworks.add("npm test script (framework not identified)");
 
   const linters = new Set<string>();
-  if (
-    depNames.has("eslint") ||
-    hasPath(ws, /(^|\/)(\.eslintrc(\.[a-z]+)?|eslint\.config\.[cm]?[jt]s)$/)
-  )
-    linters.add("ESLint");
+  if (depNames.has("eslint") || hasPath(ws, /(^|\/)(\.eslintrc(\.[a-z]+)?|eslint\.config\.[cm]?[jt]s)$/)) linters.add("ESLint");
   if (hasPath(ws, /(^|\/)biome\.jsonc?$/) || depNames.has("@biomejs/biome")) linters.add("Biome");
-  if (hasPath(ws, /(^|\/)ruff\.toml$/) || /\[tool\.ruff/.test(pyText) || py("ruff"))
-    linters.add("Ruff");
+  if (hasPath(ws, /(^|\/)ruff\.toml$/) || /\[tool\.ruff/.test(pyText) || py("ruff")) linters.add("Ruff");
   if (hasPath(ws, /(^|\/)\.flake8$/) || py("flake8")) linters.add("Flake8");
   if (hasPath(ws, /(^|\/)\.pylintrc$/) || py("pylint")) linters.add("Pylint");
   const formatters = new Set<string>();
-  if (depNames.has("prettier") || hasPath(ws, /(^|\/)\.prettierrc(\.[a-z]+)?$/))
-    formatters.add("Prettier");
+  if (depNames.has("prettier") || hasPath(ws, /(^|\/)\.prettierrc(\.[a-z]+)?$/)) formatters.add("Prettier");
   if (linters.has("Biome")) formatters.add("Biome");
   if (/\[tool\.black/.test(pyText) || py("black")) formatters.add("Black");
   if (/\[tool\.ruff\.format/.test(pyText)) formatters.add("Ruff format");
   const typeCheckers = new Set<string>();
   let strict: boolean | null = null;
-  const tsconfig =
-    paths.find((p) => basename(p) === "tsconfig.json" && dirname(p) === "") ??
-    paths.find((p) => basename(p) === "tsconfig.json");
+  const tsconfig = paths.find((p) => basename(p) === "tsconfig.json" && dirname(p) === "") ?? paths.find((p) => basename(p) === "tsconfig.json");
   if (tsconfig) {
     typeCheckers.add("TypeScript");
     const text = ws.read(tsconfig);
     if (text !== null) {
-      const parsed = ts.parseConfigFileTextToJson(tsconfig, text).config as
-        | { compilerOptions?: { strict?: boolean } }
-        | undefined;
+      const parsed = ts.parseConfigFileTextToJson(tsconfig, text).config as { compilerOptions?: { strict?: boolean } } | undefined;
       strict = parsed?.compilerOptions?.strict === true;
     }
   }
-  if (hasPath(ws, /(^|\/)mypy\.ini$/) || /\[tool\.mypy/.test(pyText) || py("mypy"))
-    typeCheckers.add("mypy");
+  if (hasPath(ws, /(^|\/)mypy\.ini$/) || /\[tool\.mypy/.test(pyText) || py("mypy")) typeCheckers.add("mypy");
   if (hasPath(ws, /(^|\/)pyrightconfig\.json$/) || py("pyright")) typeCheckers.add("Pyright");
 
   const testFiles = files.filter((f) => f.kind === "test").length;
   const sourceFiles = files.filter((f) => f.kind === "source").length;
 
   const readmePath = paths.find((p) => /^readme(\.[a-z]+)?$/i.test(p)) ?? null;
-  let readme: PracticesSummary["documentation"]["readme"] = {
-    path: null,
-    words: null,
-    headings: [],
-    hasInstall: null,
-    hasUsage: null,
-  };
+  let readme: PracticesSummary["documentation"]["readme"] = { path: null, words: null, headings: [], hasInstall: null, hasUsage: null, sections: [], links: 0 };
   if (readmePath) {
     const text = ws.read(readmePath) ?? "";
-    const headings = text
-      .split(/\r?\n/)
-      .filter((l) => /^#{1,6}\s+\S/.test(l))
-      .map((l) => l.replace(/^#+\s+/, "").trim())
-      .slice(0, 40);
+    const headings = text.split(/\r?\n/).filter((l) => /^#{1,6}\s+\S/.test(l)).map((l) => l.replace(/^#+\s+/, "").trim()).slice(0, 40);
+    const sections = readmeSections(headings, text);
     readme = {
-      path: readmePath,
-      words: text.split(/\s+/).filter(Boolean).length,
-      headings,
-      hasInstall:
-        headings.some((h) => /install|setup|getting started|build/i.test(h)) ||
-        /```[\s\S]*(npm|pnpm|yarn|pip|cargo|go) (install|i|add|build)/i.test(text),
-      hasUsage: headings.some((h) => /usage|quick ?start|example|how to/i.test(h)),
+      path: readmePath, words: text.split(/\s+/).filter(Boolean).length, headings,
+      hasInstall: sections.includes("install"), hasUsage: sections.includes("usage"), sections,
+      links: (text.match(/\]\((?:https?:\/\/|\.{0,2}\/|#|[\w./-]+\.md)/g) ?? []).length,
     };
   }
-  const adrFiles = paths.filter(
-    (p) =>
-      /(^|\/)(adrs?|decisions)\/[^/]+\.md$/i.test(p) &&
-      !/(^|\/)readme\.md$/i.test(p) &&
-      !/template/i.test(p),
-  );
-  const adrDirs = [
-    ...new Set(paths.filter((p) => /(^|\/)(adrs?|decisions)\/[^/]+\.md$/i.test(p)).map(dirname)),
-  ].sort();
+  const adrFiles = paths.filter((p) => /(^|\/)(adrs?|decisions)\/[^/]+\.md$/i.test(p) && !/(^|\/)readme\.md$/i.test(p) && !/template/i.test(p));
+  const adrDirs = [...new Set(paths.filter((p) => /(^|\/)(adrs?|decisions)\/[^/]+\.md$/i.test(p)).map(dirname))].sort();
   const root = (re: RegExp) => paths.some((p) => !p.includes("/") && re.test(p));
 
   return {
     ci: { providers: [...providers].sort(), workflowFiles },
-    tests: {
-      frameworks: [...testFrameworks].sort(),
-      testFiles,
-      sourceFiles,
-      testToSourceFileRatio:
-        sourceFiles === 0 ? null : Math.round((testFiles / sourceFiles) * 1000) / 1000,
-      coverageReport: "not-ingested",
-    },
-    quality: {
-      linters: [...linters].sort(),
-      formatters: [...formatters].sort(),
-      typeCheckers: [...typeCheckers].sort(),
-      strictTypeScript: strict,
-    },
+    tests: { frameworks: [...testFrameworks].sort(), testFiles, sourceFiles, testToSourceFileRatio: sourceFiles === 0 ? null : Math.round((testFiles / sourceFiles) * 1000) / 1000, coverageReport: coverageIngested ? "ingested" : "not-ingested" },
+    quality: { linters: [...linters].sort(), formatters: [...formatters].sort(), typeCheckers: [...typeCheckers].sort(), strictTypeScript: strict },
     documentation: {
       readme,
-      files: {
-        contributing:
-          root(/^contributing(\.[a-z]+)?$/i) || paths.includes(".github/CONTRIBUTING.md"),
-        codeOfConduct:
-          root(/^code_of_conduct(\.[a-z]+)?$/i) || paths.includes(".github/CODE_OF_CONDUCT.md"),
-        security: root(/^security(\.[a-z]+)?$/i) || paths.includes(".github/SECURITY.md"),
-        changelog: root(/^(changelog|history|releases)(\.[a-z]+)?$/i),
-        license: detection.license.file !== null,
-      },
-      docsDirectory: paths.some((p) => /^(docs?|documentation)\//i.test(p)),
-      adrDirectories: adrDirs,
-      adrCount: adrFiles.length,
+      files: { contributing: root(/^contributing(\.[a-z]+)?$/i) || paths.includes(".github/CONTRIBUTING.md"), codeOfConduct: root(/^code_of_conduct(\.[a-z]+)?$/i) || paths.includes(".github/CODE_OF_CONDUCT.md"), security: root(/^security(\.[a-z]+)?$/i) || paths.includes(".github/SECURITY.md"), changelog: root(/^(changelog|history|releases)(\.[a-z]+)?$/i), license: detection.license.file !== null },
+      docsDirectory: paths.some((p) => /^(docs?|documentation)\//i.test(p)), adrDirectories: adrDirs, adrCount: adrFiles.length,
     },
-    setup: {
-      dockerfile: paths.some((p) => basename(p) === "Dockerfile"),
-      envExample: paths.some((p) => /^\.env\.(example|sample|template)$/.test(basename(p))),
-      makefile: paths.some((p) => basename(p) === "Makefile"),
-      devcontainer: paths.some((p) => p.startsWith(".devcontainer/")),
-    },
+    setup: { dockerfile: paths.some((p) => basename(p) === "Dockerfile"), envExample: paths.some((p) => /^\.env\.(example|sample|template)$/.test(basename(p))), makefile: paths.some((p) => basename(p) === "Makefile"), devcontainer: paths.some((p) => p.startsWith(".devcontainer/")) },
   };
 }
 
 /** Reads a JSON file with comments allowed. Exposed for tests. */
 export function readJsonc<T>(text: string): T | null {
-  return (
-    parseJsonSafe<T>(text) ??
-    (ts.parseConfigFileTextToJson("x.json", text).config as T | undefined) ??
-    null
-  );
+  return parseJsonSafe<T>(text) ?? (ts.parseConfigFileTextToJson("x.json", text).config as T | undefined) ?? null;
 }
