@@ -8,6 +8,7 @@ An item can be Confirmed without being Validated (approved, validation still pen
 
 | ID | Decision | Confirmed by owner | Validation | Evidence | Owner |
 |---|---|---|---|---|---|
+| D-WEB | First web release is stateless (ADR 0019), custom SVG graphs (ADR 0020), client exports (ADR 0021) | Direction confirmed 2026-10-25, ADRs Proposed | Partial: local end to end run, deployment unverified | docs/phases/phase-2-web-platform.md | Owner |
 | D-01 | Local-first TypeScript monorepo (ADR 0001, 0002) | Confirmed 2026-10-19 | Pending P1 and P2 | Scaffold, V-01 to V-03 | Owner |
 | D-02 | Safe acquisition via archives, hardened Git for history (ADR 0003) | Confirmed | Pending P1-04, P3-02 | Threat model | Owner |
 | D-03 | TypeScript compiler API plus Tree-sitter (ADR 0004) | Confirmed | Partially validated (fixtures 1.0). Gate P1-01 on real repositories open | docs/evaluation/results/phase-1.md | Owner |

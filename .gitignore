@@ -16,3 +16,7 @@ coverage/
 .repolens-cache/
 tmp/
 repolens-report/
+
+# Next.js generated
+next-env.d.ts
+.claude/

@@ -6,7 +6,7 @@ Update this file at the end of every working session. A new AI chat can resume f
 
 - Project: RepoLens (working name, rename allowed before first release)
 - Owner and sole developer: (your name)
-- Current phase: **Phase 1.5, Insight upgrade** (built and tested without network access, owner verification via DOTEST.md open)
+- Current phase: **Phase 2, Web platform** (first release built and verified locally, deployment and accessibility audit open)
 - Last updated: 2026-10-25
 - Academic deadline: (fill in, see docs/roadmap/mvp-plan.md)
 - Weekly hours available: (fill in)
@@ -28,6 +28,8 @@ Update this file at the end of every working session. A new AI chat can resume f
 - Score proof added (schema 0.3.0): every score has a one sentence basis, and every input has description, curve, origin, contribution and evidence (see `docs/reference/report-schema.md`). 240 tests.
 - Phase 2 plan v2 written: `docs/phases/phase-2-plan-v2.md` (prompt review, scope tiers, monochrome design tokens, mobile design, graph and export plan). Awaiting owner approval.
 
+- Phase 2 first release built (2026-10-25): `apps/web` (Next.js 16, React 19), stateless, 12 report sections, interactive graphs, exports, glossary, API route, 13 web tests. See `docs/phases/phase-2-web-platform.md`, `docs/ux/web-design-system.md`, `docs/reference/web-app.md`, ADRs 0019 to 0021 (Proposed).
+
 ## Not yet verified (owner tasks: DOTEST.md)
 
 - Visual check of the HTML report and diagrams in a browser, and hand-checking blast radius and two OSV advisories.
@@ -40,6 +42,7 @@ Update this file at the end of every working session. A new AI chat can resume f
 
 ## Next
 
+- Phase 2 open items: deploy on Vercel and record the plan limits and bundle size (spike P2-00), run axe and Lighthouse, review on a real phone, add Playwright journeys, measure graph frame rate (ADR 0020), accept or change ADRs 0019 to 0021.
 - Owner: approve `docs/phases/phase-2-plan-v2.md` (section 9 decisions), then run spike P2-00 (does the engine fit and run in a Vercel function).
 - Merge Phase 1.5, then start Phase 2 with `docs/prompts/phase-2-prompt.md` (see `docs/prompts/HANDOFF.md`).
 
