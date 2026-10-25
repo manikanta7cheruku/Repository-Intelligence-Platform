@@ -14,24 +14,27 @@ export const dynamic = "force-dynamic";
 
 const MAX_BODY = 2_000;
 const WINDOW_MS = 10 * 60_000;
-const MAX_PER_WINDOW = 6;
 const hits = new Map<string, number[]>();
 
 /** Best effort per instance. A shared store would be needed for a hard limit (documented limitation). */
-function limited(ip: string): boolean {
+/** Limit per address per 10 minutes. Override with RIP_MAX_ANALYSES_PER_10_MIN. Requests without a forwarded address (local use) are not limited. */
+function limited(ip: string | null): boolean {
+  if (ip === null) return false;
+  const max = Number(process.env.RIP_MAX_ANALYSES_PER_10_MIN ?? 20) || 20;
   const now = Date.now();
   const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
   recent.push(now);
   hits.set(ip, recent);
   if (hits.size > 5_000)
     for (const [k, v] of hits) if (v.every((t) => now - t >= WINDOW_MS)) hits.delete(k);
-  return recent.length > MAX_PER_WINDOW;
+  return recent.length > max;
 }
 
 const line = (o: unknown): Uint8Array => new TextEncoder().encode(`${JSON.stringify(o)}\n`);
 
 export async function POST(req: Request): Promise<Response> {
-  const ip = (req.headers.get("x-forwarded-for") ?? "local").split(",")[0]?.trim() ?? "local";
+  const forwarded = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  const ip = forwarded ? forwarded : null;
   if (limited(ip))
     return Response.json(
       {
@@ -66,7 +69,7 @@ export async function POST(req: Request): Promise<Response> {
     includeTests: body.includeTests !== false,
     history: { enabled: body.history !== false, authors: "names" },
     // Budgets keep one request inside the function time and memory limits.
-    budgets: { analysisTimeoutMs: 50_000, maxArchiveBytes: 40 * 1024 * 1024, maxFiles: 8_000 },
+    budgets: { analysisTimeoutMs: 50_000, maxArchiveBytes: 200 * 1024 * 1024, maxFiles: 8_000 },
   });
   const token = process.env.GITHUB_TOKEN;
   const abort = new AbortController();

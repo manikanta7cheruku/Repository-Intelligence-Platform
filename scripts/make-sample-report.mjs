@@ -1,4 +1,4 @@
-// Builds apps/web/public/sample/report.json: a real analysis of this repository with anonymized authors
+// Builds apps/web/public/sample/report.json: a real, online analysis of this repository (history, pull requests) with anonymized authors
 // and the local path replaced by the public repository URL. Run after `pnpm build`.
 import { spawnSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -13,19 +13,7 @@ try {
   const cli = join(root, "packages", "cli", "dist", "index.js");
   const run = spawnSync(
     process.execPath,
-    [
-      cli,
-      "analyze",
-      root,
-      "--offline",
-      "-q",
-      "--config",
-      join(work, "anon.yaml"),
-      "-f",
-      "json",
-      "-o",
-      work,
-    ],
+    [cli, "analyze", root, "-q", "--config", join(work, "anon.yaml"), "-f", "json", "-o", work],
     { stdio: "inherit" },
   );
   if (run.status !== 0 && run.status !== 1) throw new Error(`analysis exited with ${run.status}`);

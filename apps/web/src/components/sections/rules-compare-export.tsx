@@ -357,7 +357,7 @@ export function ExportPage() {
   const items: { title: string; text: string; ext: string; run: () => void }[] = [
     {
       title: "Full report",
-      text: "The complete report as JSON (schema 0.3.0). Open it again here, or compare it later.",
+      text: "The complete report as JSON (schema 0.4.0). Open it again here, or compare it later.",
       ext: "JSON",
       run: () =>
         download(`${stem("report")}.json`, JSON.stringify(report, null, 2), "application/json"),

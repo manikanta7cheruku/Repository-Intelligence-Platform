@@ -31,13 +31,19 @@ Request JSON: `{ "url": "https://github.com/owner/repo[/tree/branch]", "includeT
 
 Response: `application/x-ndjson`, one JSON object per line:
 - `{ "stage": "acquiring" | "detecting" | "analyzing" | "graph" | "metrics" | "rules" | "history" | "security" | "practices" | "scoring" | "reporting", "detail": string | null }`
-- `{ "report": <Report 0.3.0> }` once, last
+- `{ "report": <Report 0.4.0> }` once, last
 - `{ "error": string }` instead of a report
 
 Errors before streaming: 400 (invalid body or URL, with the reason), 429 (rate limit), 405 for GET.
 
-Safety: only https `github.com` repositories (no credentials, ports or IP hosts), size budgets (archive 40 MB, 8,000 files, 50 s analysis timeout), cancellation when the client disconnects, temporary files deleted in `finally`,
-at most 6 requests per address per 10 minutes (best effort, per instance). `GITHUB_TOKEN` (optional environment variable) raises GitHub API limits and is never written to reports or logs.
+Safety: only https `github.com` repositories (no credentials, ports or IP hosts), budgets (download 200 MB, 8,000 analyzed files, 50 s analysis timeout), cancellation when the client disconnects, temporary files deleted in `finally`,
+20 requests per address per 10 minutes by default (`RIP_MAX_ANALYSES_PER_10_MIN`, best effort per instance, not applied to local use without a forwarded address).
+
+How the repository is read: the archive is streamed from `codeload.github.com` (no REST API quota) and unpacked on the fly. Dependency folders, binary and media files and oversized files are skipped and counted, so a large download does not fail.
+If the file or size budget runs out the report is marked partial and says how much was left out.
+
+History: totals (commits, first and last commit, contributors, merged pull requests, releases) come from the GitHub API and are exact. Commit message quality uses the latest 100 commits. File level history needs a local checkout.
+The GitHub REST API allows only 60 requests per hour without a token and each analysis uses about 7. Set `GITHUB_TOKEN` (5,000 per hour) for any real use. Without it history shows as not assessed with that reason, the rest of the report still works.
 
 ## Local storage
 
@@ -57,7 +63,8 @@ IndexedDB database `rip-reports`, store `reports` (id, name, commit, savedAt, re
 
 | Variable | Use |
 |---|---|
-| `GITHUB_TOKEN` | Optional read-only token for the GitHub API and archive download |
+| `GITHUB_TOKEN` | Recommended. Read-only token for the GitHub API (history and pull request signals). Copy `apps/web/.env.example` to `apps/web/.env.local` |
+| `RIP_MAX_ANALYSES_PER_10_MIN` | Optional. Analyses per address per 10 minutes on a hosted deployment (default 20) |
 
 ## Commands
 

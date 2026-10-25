@@ -209,6 +209,8 @@ const SEV: Record<string, Severity> = {
   LOW: "low",
 };
 
+const DETAIL_CONCURRENCY = 16;
+
 export async function queryOsv(
   packages: PackageRef[],
   opts: { fetchImpl?: OsvFetch; signal?: AbortSignal; maxPackages?: number; maxDetails?: number },
@@ -247,19 +249,40 @@ export async function queryOsv(
       });
     }
     const uniqueIds = [...new Set(hits.flatMap((h) => h.ids))].sort();
-    const maxDetails = opts.maxDetails ?? 150;
+    const maxDetails = opts.maxDetails ?? 400;
     const details = new Map<string, OsvVuln>();
-    for (const id of uniqueIds.slice(0, maxDetails)) {
-      const res = await doFetch(`https://api.osv.dev/v1/vulns/${encodeURIComponent(id)}`, {
-        method: "GET",
-        headers: { accept: "application/json" },
-        ...(opts.signal ? { signal: opts.signal } : {}),
-      });
-      if (res.ok) details.set(id, (await res.json()) as OsvVuln);
-    }
+    // Advisory details are independent requests, so they run in a small pool. One failed request
+    // leaves that advisory at default severity instead of failing the whole check.
+    const wanted = uniqueIds.slice(0, maxDetails);
+    let next = 0;
+    let failed = 0;
+    const worker = async () => {
+      for (;;) {
+        const id = wanted[next++];
+        if (id === undefined) return;
+        try {
+          const res = await doFetch(`https://api.osv.dev/v1/vulns/${encodeURIComponent(id)}`, {
+            method: "GET",
+            headers: { accept: "application/json" },
+            ...(opts.signal ? { signal: opts.signal } : {}),
+          });
+          if (res.ok) details.set(id, (await res.json()) as OsvVuln);
+          else failed++;
+        } catch {
+          if (opts.signal?.aborted) return;
+          failed++;
+        }
+      }
+    };
+    await Promise.all(Array.from({ length: Math.min(DETAIL_CONCURRENCY, wanted.length) }, worker));
+    if (opts.signal?.aborted) throw new Error("OSV lookup was cancelled");
     if (uniqueIds.length > maxDetails)
       limitations.push(
         `Details were fetched for ${maxDetails} of ${uniqueIds.length} advisories. The rest use default severity.`,
+      );
+    if (failed > 0)
+      limitations.push(
+        `Details for ${failed} advisories could not be fetched. They use default severity.`,
       );
     const findings: Finding[] = [];
     const norm = (n: string | undefined) => (n ?? "").toLowerCase().replace(/_/g, "-");

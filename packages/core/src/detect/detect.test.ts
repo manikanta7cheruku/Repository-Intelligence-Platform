@@ -30,7 +30,7 @@ describe("classifyPath", () => {
     expect(kind("src/a.ts")).toBe("source");
     expect(kind("src/a.test.ts")).toBe("test");
     expect(kind("tests/helper.py")).toBe("test");
-    expect(kind("fixtures/x/src/a.ts")).toBe("test");
+    expect(kind("fixtures/x/src/a.ts")).toBe("fixture");
     expect(kind("packages/core/dist/index.js")).toBe("generated");
     expect(kind("types/index.d.ts")).toBe("generated");
     expect(kind("vendor/lib/a.js")).toBe("vendored");

@@ -7,8 +7,14 @@ import { languageOf } from "../detect/languages.js";
 import { detectProject } from "../detect/manifests.js";
 import { generateFindings } from "../findings/generate.js";
 import { sortFindings } from "../findings/make.js";
-import { fetchGitHubActivity, type JsonFetch } from "../git/activity.js";
-import { collectHistory, type RepoHead, readHead, unavailable } from "../git/history.js";
+import { fetchGitHubActivity, fetchGitHubSignals, type JsonFetch } from "../git/activity.js";
+import {
+  collectHistory,
+  detectGitHubRemote,
+  type RepoHead,
+  readHead,
+  unavailable,
+} from "../git/history.js";
 import { GLOSSARY_VERSION } from "../glossary/glossary.js";
 import { buildGraph, moduleOf } from "../graph/build.js";
 import { computeBlastRadius } from "../graph/impact.js";
@@ -82,6 +88,11 @@ export interface AnalyzeOptions {
     token?: string | undefined;
     fetchImpl?: JsonFetch | undefined;
   } | null;
+  /**
+   * For a local clone whose origin is on GitHub: also read pull request and release signals from the GitHub API.
+   * Null or omitted means no network call is made for them.
+   */
+  githubSignals?: { token?: string | undefined; fetchImpl?: JsonFetch | undefined } | null;
   now?: () => Date;
 }
 
@@ -379,6 +390,35 @@ export async function analyze(opts: AnalyzeOptions): Promise<Report> {
           { files: complexityByPath, moduleOf: moduleLookup, fileStatsSink: fileStats },
           signal,
         );
+        if (history.available && opts.githubSignals && !config.security.offline) {
+          const remote = await detectGitHubRemote(histRoot, signal);
+          if (remote) {
+            const sig = await fetchGitHubSignals(remote, {
+              token: opts.githubSignals.token,
+              fetchImpl: opts.githubSignals.fetchImpl,
+              signal,
+              authors: config.history.authors,
+            });
+            history = {
+              ...history,
+              pullRequests: sig.pullRequests,
+              releases: sig.releases,
+              limitations: [
+                ...history.limitations,
+                ...(sig.limited
+                  ? [
+                      "The GitHub API rate limit was reached, so pull request and release signals may be missing. Set GITHUB_TOKEN to raise it.",
+                    ]
+                  : []),
+                ...(sig.pullRequests && !sig.pullRequests.exact
+                  ? [
+                      "The merged pull request count comes from the 100 most recently updated closed pull requests, not from every pull request.",
+                    ]
+                  : []),
+              ],
+            };
+          }
+        }
       }
     }
 

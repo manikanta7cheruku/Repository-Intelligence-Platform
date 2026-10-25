@@ -1,4 +1,4 @@
-# Report schema reference (0.3.0)
+# Report schema reference (0.4.0)
 
 The JSON report is validated against `packages/core/schema/report.schema.json` (also printed by `repolens schema`). This page explains the meaning of each top-level section for
 people who build on the report, including the web app.
@@ -31,5 +31,6 @@ Rules that never change: a value that was not computed is `null` with a reason, 
 | Version | Changes |
 |---|---|
 | 0.2.0 | Added file counts, `executiveSummary`, `testCoverage`, `risk`, `blastRadius`, `history.source`, `commitQuality`, `pullRequests`, `releases`, score `weightCoverage` and input `impact`, README `sections` and `links`, `methodology.glossaryVersion`, cycle `typeOnly` (already 0.1.0). Coverage report state `ingested` |
+| 0.4.0 | History totals: `history.totalCommits` (every commit, merges included), `totalContributors`, `totalContributorsAtLeast`, `exactTotals`; `pullRequests.exact` and `releases.exact`; file kind `fixture` (test data directories are no longer analyzed as code). `commitsAnalyzed` is now only the number of commits examined in detail. Reports of 0.3.x are not accepted by the validator |
 | 0.3.0 | Score proof: each score has `basis`; each input has `description`, `curve` (raw to score anchors), `origin` (convention or provisional), `contribution` (points added to the score) and `evidence` (up to 5 files, modules or findings behind the value). Reports of 0.2.x are not accepted by the validator and must be regenerated |
 | 0.1.0 | First version |

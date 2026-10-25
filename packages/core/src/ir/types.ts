@@ -2,7 +2,7 @@
  * Intermediate representation and report model (schema 0.1.0).
  * Rule: a value that was not computed is `null` with a reason, never 0.
  */
-export const REPORT_SCHEMA_VERSION = "0.3.0";
+export const REPORT_SCHEMA_VERSION = "0.4.0";
 
 export type Severity = "critical" | "high" | "medium" | "low" | "info";
 export type Confidence = "high" | "medium" | "low";
@@ -13,6 +13,7 @@ export type FileKind =
   | "config"
   | "docs"
   | "generated"
+  | "fixture"
   | "vendored"
   | "binary"
   | "other";
@@ -298,6 +299,14 @@ export interface HistorySummary {
   pullRequests: PullRequestSummary | null;
   releases: ReleaseSummary | null;
   shallow: boolean | null;
+  /** Every commit on the analyzed branch, merges included. Null when it could not be counted. */
+  totalCommits: number | null;
+  /** Distinct authors across the whole history when known (a lower bound when `totalContributorsAtLeast`). */
+  totalContributors: number | null;
+  totalContributorsAtLeast: boolean;
+  /** True when the totals above cover the whole history, not only a sample. */
+  exactTotals: boolean;
+  /** Commits examined for message quality, hotspots and ownership (a sample or a capped window). */
   commitsAnalyzed: number | null;
   window: { first: string | null; last: string | null };
   contributors: { name: string; commits: number; share: number }[];
@@ -397,12 +406,16 @@ export interface CommitQuality {
 
 export interface PullRequestSummary {
   sampled: number;
+  /** Merged pull requests. The total across the whole repository when `exact`, otherwise the count in the sample. */
   merged: number;
+  exact: boolean;
   medianHoursToMerge: number | null;
 }
 
 export interface ReleaseSummary {
   count: number;
+  /** False when the count stopped at the first page of results. */
+  exact: boolean;
   latestDate: string | null;
 }
 

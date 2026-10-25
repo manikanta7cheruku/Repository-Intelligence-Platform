@@ -1,8 +1,9 @@
 "use client";
 
 import { Briefing } from "./sections/briefing";
-import { History, Practices, Priorities, Quality, Risk, Security } from "./sections/findings-pages";
+import { Priorities, Quality, Risk, Security } from "./sections/findings-pages";
 import { Impact } from "./sections/impact";
+import { History, Practices } from "./sections/practices-history";
 import { Compare, ExportPage, Rules } from "./sections/rules-compare-export";
 import { Structure } from "./sections/structure";
 

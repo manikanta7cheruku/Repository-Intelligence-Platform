@@ -23,7 +23,7 @@ describe("report contract", () => {
     const v = validateReport(sample);
     expect(v.issues).toEqual([]);
     expect(v.valid).toBe(true);
-    expect(sample.schemaVersion).toBe("0.3.0");
+    expect(sample.schemaVersion).toBe("0.4.0");
   });
   it("every score carries the proof fields the briefing renders", () => {
     for (const s of sample.scores) {
@@ -153,9 +153,18 @@ describe("analyze route", () => {
     ).toBe(400);
     expect((await call({}, "10.2.0.3")).status).toBe(400);
   });
-  it("rate limits repeated requests from one address", async () => {
+  it("rate limits repeated requests from one address, and not local use", async () => {
+    process.env.RIP_MAX_ANALYSES_PER_10_MIN = "5";
     const codes: number[] = [];
     for (let i = 0; i < 8; i++) codes.push((await call({ url: "bad" }, "10.3.0.1")).status);
     expect(codes).toContain(429);
+    const local: number[] = [];
+    for (let i = 0; i < 8; i++)
+      local.push(
+        (await POST(new Request("http://localhost/api/analyze", { method: "POST", body: "{}" })))
+          .status,
+      );
+    expect(local).not.toContain(429);
+    process.env.RIP_MAX_ANALYSES_PER_10_MIN = undefined;
   });
 });

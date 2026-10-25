@@ -232,3 +232,42 @@ describe("checkWorkflows", () => {
     expect(checkWorkflows(ws).findings).toEqual([]);
   });
 });
+
+describe("queryOsv advisory details", () => {
+  const many = Array.from({ length: 40 }, (_, i) => ({
+    ecosystem: "npm" as const,
+    name: `pkg${i}`,
+    version: "1.0.0",
+    source: "package-lock.json",
+  }));
+  it("fetches advisory details in parallel, within a bound, and gets every result", async () => {
+    let inflight = 0;
+    let peak = 0;
+    const fetchImpl: OsvFetch = async (url) => {
+      if (url.endsWith("/v1/querybatch"))
+        return jsonRes({ results: many.map((_, i) => ({ vulns: [{ id: `GHSA-${i}` }] })) });
+      inflight++;
+      peak = Math.max(peak, inflight);
+      await new Promise((r) => setTimeout(r, 5));
+      inflight--;
+      return jsonRes({ id: "x", summary: "s", database_specific: { severity: "LOW" } });
+    };
+    const r = await queryOsv(many, { fetchImpl });
+    expect(r.summary.vulnerabilities).toBe(40);
+    expect(peak).toBeGreaterThan(1);
+    expect(peak).toBeLessThanOrEqual(16);
+  });
+  it("keeps the check when some advisory details fail", async () => {
+    const fetchImpl: OsvFetch = async (url) => {
+      if (url.endsWith("/v1/querybatch"))
+        return jsonRes({ results: many.map((_, i) => ({ vulns: [{ id: `GHSA-${i}` }] })) });
+      if (url.endsWith("GHSA-3")) throw new Error("socket hang up");
+      if (url.endsWith("GHSA-4")) return jsonRes({}, false, 500);
+      return jsonRes({ id: "x", summary: "s", database_specific: { severity: "LOW" } });
+    };
+    const r = await queryOsv(many, { fetchImpl });
+    expect(r.summary.assessed).toBe(true);
+    expect(r.summary.vulnerabilities).toBe(40);
+    expect(r.summary.reason).toMatch(/2 advisories could not be fetched/);
+  });
+});

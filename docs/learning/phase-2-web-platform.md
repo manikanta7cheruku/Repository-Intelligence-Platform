@@ -44,6 +44,15 @@ The page draws the curve as a tiny line with a marker at the raw value, so the r
 - A shell here-document corrupted several large files. Fix: write files with the editor tool.
 - The core `index` pulled the whole project into the server function trace (build warning). Fix: a dedicated `server` entry.
 
+### Data accuracy problems found by real use (2026-10-25)
+
+- **284 commits instead of 1,539.** The API history read only the latest 300 commits and called that the total. Now the total is read exactly (one commit per page, the page count of the last link), plus first and last commit dates, contributors (contributors endpoint) and merged pull requests (search total). Message quality still uses the latest 100 commits and says so.
+- **Merged pull requests n/a for this repository.** The bundled sample was generated offline. Local analyses now also read pull request and release totals from the GitHub API when the origin remote is on GitHub and the network is allowed.
+- **Wrong languages (Go, Rust, Python).** They were test fixture folders. A new file kind `fixture` keeps `fixtures`, `__fixtures__` and `testdata` folders out of languages, scores and the graph.
+- **"Archive exceeds the size budget".** The archive was downloaded fully into memory and capped at 40 MB. Now it is streamed and unpacked on the fly, dependency folders and media files are skipped, and only a huge analyzable size makes the report partial instead of failing.
+- **Slow and failing analyses.** Advisory details were fetched one after another (about 50 s for one repository). They now run 16 at a time (about 9 s for the same result). The local rate limit of 6 per 10 minutes is gone for local use.
+- **GitHub API limit.** Without a token the API allows 60 requests per hour and an analysis uses about 7. This cannot be fixed in code. Set `GITHUB_TOKEN`.
+
 ## 6. What is not verified
 
 No deployment, so Vercel limits, bundle size and cold start are unknown. No axe or Lighthouse run, no screen reader pass, no real phone, no Playwright journeys, no frame rate measurement for rendered graphs.
@@ -112,5 +121,13 @@ The rate limit is per server instance. The contrast ratios are computed, not aud
 **30. What are the main gaps?** Not deployed, hosting limits unverified, no automated accessibility audit, no Playwright journeys, graph rendering performance not measured, in-memory rate limit, provisional score curves inherited from the engine.
 
 **31. Why not use machine learning in the interface or analysis?** Explainability, no labeled data, repeatable results, privacy and exactness (see `docs/learning/00-master-college-qa.md` and ADR 0007).
+
+**33. Why was the commit count wrong at first and how is it exact now?** Sampling the latest 300 commits cannot give a total. Asking the API for one commit per page makes the page count of the last link equal to the total number of commits, in one request.
+
+**34. How does a download larger than memory get analyzed?** The archive is read as a stream, decompressed as it arrives and cut into tar entries. Only files worth analyzing are written to disk. Everything else is counted and discarded without being held in memory.
+
+**35. Why are test fixtures not part of the language list?** They are sample projects used by tests, not code of the project. Counting them would claim languages the project does not use.
+
+**36. Why is the GitHub token important?** Without a token GitHub allows 60 API requests per hour per address. Each analysis needs about 7, so a few analyses use it up. With a token the limit is 5,000 per hour.
 
 **32. What would you do next?** Deploy and record the real limits, run the accessibility audit, add Playwright journeys, measure the graph at the caps, then decide whether the worker is needed.

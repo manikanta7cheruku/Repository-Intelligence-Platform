@@ -30,6 +30,8 @@ Update this file at the end of every working session. A new AI chat can resume f
 
 - Phase 2 first release built (2026-10-25): `apps/web` (Next.js 16, React 19), stateless, 12 report sections, interactive graphs, exports, glossary, API route, 13 web tests. See `docs/phases/phase-2-web-platform.md`, `docs/ux/web-design-system.md`, `docs/reference/web-app.md`, ADRs 0019 to 0021 (Proposed).
 
+- Data accuracy pass after the owner's real use (2026-10-25): exact commit, contributor and pull request totals, streaming archive download, parallel advisory lookups, fixture folders excluded from languages, schema 0.4.0. See `docs/phases/phase-2-web-platform.md` for the results on seven repositories.
+
 ## Not yet verified (owner tasks: DOTEST.md)
 
 - Visual check of the HTML report and diagrams in a browser, and hand-checking blast radius and two OSV advisories.
