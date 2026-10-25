@@ -23,7 +23,7 @@
     "schema": "node packages/cli/dist/index.js schema > packages/core/schema/report.schema.json"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.0",
+    "@biomejs/biome": "^2.6.2",
     "@types/node": "^22.0.0",
     "typescript": "^6.0.0",
     "vitest": "^3.2.0"
