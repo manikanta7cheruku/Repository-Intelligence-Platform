@@ -18,7 +18,7 @@ WHAT EXISTS (done and verified; read the files, do not assume)
 - Phase 1: engine and CLI. Safe acquisition, JS/TS (level 3) and Python (level 2) analyzers, dependency graph with Tarjan cycles and modules, metrics, rules with baselines, Git history, OSV and secrets
   and workflow checks, practices, scoring with coverage and confidence, JSON/Markdown/HTML reports, fixture evaluation (precision and recall 1.0 on 12 fixtures), self-analysis in CI. ADRs 0015 and 0016.
 - Phase 1.5: insight upgrade. Glossary (five answers per term), executive summary, explainable scoring (inputs used, points to gain), risk index, blast radius, pull request guardian (`repolens pr`),
-  trend (`repolens trend`), coverage ingestion, commit and pull request signals via the GitHub API, diagram exports (Mermaid, DOT, SVG), schema 0.2.0, ADRs 0017 and 0018, 238 tests.
+  trend (`repolens trend`), coverage ingestion, commit and pull request signals via the GitHub API, diagram exports (Mermaid, DOT, SVG), schema 0.2.0, ADRs 0017 and 0018, 237 tests.
 - Read in this order: CLAUDE.md, docs/PROJECT_STATE.md, docs/phases/phase-2-web-platform.md, docs/phases/phase-1-5-insight-upgrade.md, docs/product/PRD.md, docs/product/use-cases.md,
   docs/ux/* (especially explanations-and-glossary.md), docs/architecture/*, docs/security/*, docs/adr/*, docs/reference/*, docs/learning/phase-1-engine-cli.md, docs/learning/phase-1-5-insight-upgrade.md,
   docs/registers/decision-register.md, docs/roadmap/backlog.md, packages/core/schema/report.schema.json, packages/core/src/ir/types.ts, packages/core/src/glossary/glossary.ts, and a sample report.

@@ -1,6 +1,6 @@
 import type { HistorySummary, PullRequestSummary, ReleaseSummary } from "../ir/types.js";
-import { commitQuality } from "./quality.js";
 import { unavailable } from "./history.js";
+import { commitQuality } from "./quality.js";
 
 export type JsonFetch = (
   url: string,

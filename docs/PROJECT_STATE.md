@@ -7,7 +7,7 @@ Update this file at the end of every working session. A new AI chat can resume f
 - Project: RepoLens (working name, rename allowed before first release)
 - Owner and sole developer: (your name)
 - Current phase: **Phase 1.5, Insight upgrade** (built and tested without network access, owner verification via DOTEST.md open)
-- Last updated: 2026-10-22
+- Last updated: 2026-10-25
 - Academic deadline: (fill in, see docs/roadmap/mvp-plan.md)
 - Weekly hours available: (fill in)
 - Branch flow: integration branch per delivery (`phase/1-5-insight-upgrade`), feature branches merged with `--no-ff`, one PR, rebase and merge
@@ -18,8 +18,10 @@ Update this file at the end of every working session. A new AI chat can resume f
 - Phase 1.5 code complete: report fixes 1 to 12 from the Provenance review, glossary with five answers per term, executive summary, explainable scoring (inputs used, points to gain),
   risk index, blast radius (`impact`), pull request guardian (`pr`), trend (`trend`), coverage ingestion, commit quality and GitHub API activity, diagram exports (`graph`), schema 0.2.0,
   ADR 0017 and 0018, docs and learning files, Phase 2 and Phase 3 prompts, handoff guide.
-- Verified in the build environment: TypeScript 6.0.3 strict typecheck, 238 tests on Node 22 (through a Vitest compatibility shim), fixture accuracy 1.0 on 12 fixtures including blast radius ground truth,
-  self-analysis with 0 rule violations, apply script simulation.
+- Verified on the owner's Windows machine (2026-10-25, Node 24.10.0, pnpm 10): `pnpm check` passes (Biome lint, build, typecheck, 237 tests in 33 files), `pnpm eval` has no failures, `pnpm analyze:self` exits 0.
+  Smoke run of `analyze`, `impact`, `graph`, `trend` and `pr` on this repository worked; `pr --base "--upload-pack=x"` and a lookalike GitHub host are refused. Live network items in DOTEST.md (sections 2, 3, 9 to 11) are still unverified.
+- Fixes made while verifying: lint warnings (optional chains, one test-only suppression), formatter drift, a Windows-invalid hostile file name in report tests (now `a'c&d.ts` on win32), and two files over the 700-line self-rule (`pipeline/files.ts` and `cli/help.ts` extracted). Test count is 237, not the 238 reported by the earlier shim.
+- Academic docs added: `docs/academic/how-the-engine-reads-and-analyzes-code.md` and `docs/academic/viva-questions.md`.
 
 ## Not yet verified (owner tasks: DOTEST.md)
 

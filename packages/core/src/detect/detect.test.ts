@@ -2,12 +2,12 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { resolveConfig } from "../config/config.js";
 import { openLocalWorkspace } from "../acquire/local.js";
+import { resolveConfig } from "../config/config.js";
+import { detectPractices, readmeSections } from "../practices/detect.js";
 import { classifyPath, looksGenerated } from "./classify.js";
 import { languageOf } from "./languages.js";
 import { detectProject } from "./manifests.js";
-import { detectPractices, readmeSections } from "../practices/detect.js";
 
 let dirs: string[] = [];
 afterEach(() => {

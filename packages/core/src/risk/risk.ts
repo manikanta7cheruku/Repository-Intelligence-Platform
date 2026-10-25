@@ -1,3 +1,4 @@
+import { buildReverseIndex, impactOf } from "../graph/impact.js";
 import type {
   Confidence,
   FileMetrics,
@@ -6,7 +7,6 @@ import type {
   RiskFile,
   RiskSummary,
 } from "../ir/types.js";
-import { buildReverseIndex, impactOf } from "../graph/impact.js";
 
 export const RISK_METHOD =
   "Risk index = weighted mean of available factors: complexity percentile (0.30), dependents percentile (0.25), change frequency percentile (0.25), lack of test linkage or coverage (0.20). At least 2 factors are required. It ranks files by how costly a change could be. It does not predict defects.";

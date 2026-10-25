@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
+import type { Finding } from "../ir/types.js";
 import { applyCurve } from "./profile.js";
 import { buildRecommendations } from "./recommend.js";
-import type { Finding } from "../ir/types.js";
 
 describe("applyCurve", () => {
   const curve: [number, number][] = [

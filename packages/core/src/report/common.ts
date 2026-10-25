@@ -1,5 +1,5 @@
-import type { Report, ScoreRecord } from "../ir/types.js";
 import { DIMENSION_LABELS, explain } from "../glossary/glossary.js";
+import type { Report, ScoreRecord } from "../ir/types.js";
 
 export const dimLabel = (d: string): string => DIMENSION_LABELS[d] ?? d;
 export const inputLabel = (name: string): string => explain(name)?.label ?? name;

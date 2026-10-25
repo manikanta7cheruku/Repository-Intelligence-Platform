@@ -1,10 +1,10 @@
-import { readFileSync, existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import type { AnalysisConfig } from "../config/config.js";
 import { openLocalWorkspace } from "../acquire/local.js";
+import type { AnalysisConfig } from "../config/config.js";
 import { withWorktree } from "../git/worktree.js";
 import type { Report } from "../ir/types.js";
-import { analyze, type AnalyzeOptions } from "./analyze.js";
+import { type AnalyzeOptions, analyze } from "./analyze.js";
 
 export interface SnapshotOptions {
   config: AnalysisConfig;

@@ -4,15 +4,15 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
-import { resolveConfig } from "../config/config.js";
 import { openLocalWorkspace } from "../acquire/local.js";
 import { jsTsAnalyzer } from "../analyzers/js-ts.js";
 import { pythonAnalyzer } from "../analyzers/python.js";
 import type { AnalyzerPlugin } from "../analyzers/types.js";
+import { resolveConfig } from "../config/config.js";
 import { validateReport } from "../ir/schema.js";
 import { RulesError } from "../rules/engine.js";
 import type { OsvFetch } from "../security/osv.js";
-import { analyze, type AnalyzeOptions } from "./analyze.js";
+import { type AnalyzeOptions, analyze } from "./analyze.js";
 
 const FIXTURES = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "..", "fixtures");
 let dirs: string[] = [];

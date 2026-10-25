@@ -1,5 +1,6 @@
 import type { AnalysisConfig } from "../config/config.js";
 import type {
+  Dependency,
   DetectionSummary,
   FileRecord,
   Finding,
@@ -7,7 +8,6 @@ import type {
   HistorySummary,
   Metrics,
   PracticesSummary,
-  Dependency,
   RiskSummary,
   TestCoverageSummary,
 } from "../ir/types.js";

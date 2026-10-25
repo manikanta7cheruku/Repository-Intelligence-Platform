@@ -14,15 +14,13 @@ const g: GraphModel = {
     fanOut: 0,
   })),
   // everything depends on f0 (the hub); f1 depends on f2
-  edges: paths
-    .slice(1)
-    .map((p) => ({
-      from: fileIdFor(p),
-      to: fileIdFor("src/f0.ts"),
-      weight: 1,
-      typeOnly: false,
-      occurrences: [],
-    })),
+  edges: paths.slice(1).map((p) => ({
+    from: fileIdFor(p),
+    to: fileIdFor("src/f0.ts"),
+    weight: 1,
+    typeOnly: false,
+    occurrences: [],
+  })),
   modules: [
     {
       id: moduleIdFor("src"),

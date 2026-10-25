@@ -1,9 +1,9 @@
 import type { AnalysisConfig } from "../config/config.js";
 import { git } from "../git/history.js";
 import { isSafeGitRef, withWorktree } from "../git/worktree.js";
+import { DIMENSION_LABELS } from "../glossary/glossary.js";
 import type { Report } from "../ir/types.js";
 import { analyzeDirectory } from "../pipeline/snapshot.js";
-import { DIMENSION_LABELS } from "../glossary/glossary.js";
 
 export interface TrendPoint {
   commit: string;

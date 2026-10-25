@@ -492,7 +492,9 @@ export function validateAgainst(
       issues.push({ path, message: `above maximum ${schema.maximum}` });
   }
   if (Array.isArray(data) && schema.items) {
-    data.forEach((item, i) => validateAgainst(schema.items as S, item, `${path}[${i}]`, issues));
+    data.forEach((item, i) => {
+      validateAgainst(schema.items as S, item, `${path}[${i}]`, issues);
+    });
   }
   if (actual === "object") {
     const record = data as Record<string, unknown>;

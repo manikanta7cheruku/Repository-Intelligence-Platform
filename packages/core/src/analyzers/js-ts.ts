@@ -1,15 +1,15 @@
 import { builtinModules } from "node:module";
 import ts from "typescript";
-import { basename, dirname, joinPosix } from "../util/paths.js";
-import { readPackageJson, type PackageJson } from "../detect/manifests.js";
 import type { Workspace } from "../acquire/types.js";
-import type { Dependency, DependencyKind, Symbol } from "../ir/types.js";
+import { type PackageJson, readPackageJson } from "../detect/manifests.js";
+import type { Symbol as AnalyzedSymbol, Dependency, DependencyKind } from "../ir/types.js";
+import { basename, dirname, joinPosix } from "../util/paths.js";
 import {
-  throwIfAborted,
   type AnalyzerContext,
   type AnalyzerPlugin,
   type AnalyzerResult,
   type FileAnalysis,
+  throwIfAborted,
 } from "./types.js";
 
 const VROOT = "/r";
@@ -491,8 +491,12 @@ export function analyzeJsTsFile(path: string, text: string, resolver: JsResolver
 
   const topLevel = (stmt: ts.Statement) => {
     const exported = hasExportModifier(stmt);
-    const push = (name: string, kind: Omit<Symbol, "fileId">["kind"], node: ts.Node, ex: boolean) =>
-      symbols.push({ name, kind, exported: ex, line: line(node), endLine: endLine(node) });
+    const push = (
+      name: string,
+      kind: Omit<AnalyzedSymbol, "fileId">["kind"],
+      node: ts.Node,
+      ex: boolean,
+    ) => symbols.push({ name, kind, exported: ex, line: line(node), endLine: endLine(node) });
     if (ts.isFunctionDeclaration(stmt))
       push(
         stmt.name?.text ?? (hasDefaultModifier(stmt) ? "default" : "<anonymous>"),

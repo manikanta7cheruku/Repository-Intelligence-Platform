@@ -1,9 +1,9 @@
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { resolveConfig } from "../config/config.js";
 import { openLocalWorkspace } from "../acquire/local.js";
-import { analyze } from "../pipeline/analyze.js";
+import { resolveConfig } from "../config/config.js";
 import type { Report } from "../ir/types.js";
+import { analyze } from "../pipeline/analyze.js";
 
 export interface Expected {
   description: string;

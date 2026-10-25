@@ -2,10 +2,10 @@ import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:f
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { resolveConfig } from "../config/config.js";
 import { openLocalWorkspace } from "../acquire/local.js";
+import { resolveConfig } from "../config/config.js";
 import type { FileKind } from "../ir/types.js";
-import { extractPackages, queryOsv, type OsvFetch } from "./osv.js";
+import { extractPackages, type OsvFetch, queryOsv } from "./osv.js";
 import { runGitleaks, scanSecretsBuiltin } from "./secrets.js";
 import { checkWorkflows } from "./workflows.js";
 
@@ -211,6 +211,7 @@ describe("checkWorkflows", () => {
         "  a:",
         "    steps:",
         "      - uses: third/party@v2",
+        // biome-ignore lint/suspicious/noTemplateCurlyInString: GitHub Actions expression, not a JS template
         "      - run: echo ${{ github.head_ref }}",
       ].join("\n"),
     });

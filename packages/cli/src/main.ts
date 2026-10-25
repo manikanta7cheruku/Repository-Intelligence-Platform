@@ -1,37 +1,38 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
+import type { AnalysisConfig, Report, Severity, Stage } from "@repolens/core";
 import {
-  ConfigError,
-  GitHubUrlError,
-  ArchiveError,
   AcquisitionError,
-  RulesError,
-  SEVERITY_RANK,
-  TOOL_VERSION,
-  GLOSSARY,
-  GLOSSARY_VERSION,
+  ArchiveError,
   acquireTarget,
   analyze,
   analyzeDirectory,
   analyzeRef,
   assessPullRequest,
   buildReverseIndex,
+  ConfigError,
   changedFiles,
   changedFilesWorkingTree,
   computeTrend,
   diffReports,
   diffToMarkdown,
   explain,
+  GitHubUrlError,
+  GLOSSARY,
+  GLOSSARY_VERSION,
   impactOf,
   isGitHubTarget,
   isSafeGitRef,
   parseGitHubUrl,
   prToMarkdown,
+  RulesError,
   readRulesFrom,
   reportSchema,
   resolveConfig,
   resolveRef,
+  SEVERITY_RANK,
+  TOOL_VERSION,
   toDot,
   toHtml,
   toMarkdown,
@@ -41,7 +42,7 @@ import {
   trendToMarkdown,
   validateReport,
 } from "@repolens/core";
-import type { AnalysisConfig, Report, Severity, Stage } from "@repolens/core";
+import { helpText } from "./help.js";
 import { parseYamlConfig } from "./yaml-config.js";
 
 export const EXIT = { OK: 0, POLICY: 1, USAGE: 2, ERROR: 3, PARTIAL: 4 } as const;
@@ -54,45 +55,7 @@ export interface Io {
   isTty: boolean;
 }
 
-const HELP = `RepoLens ${TOOL_VERSION}: explainable repository analysis
-
-Usage:
-  repolens analyze <path|github-url> [options]
-  repolens report <report.json> [--format markdown|html] [--out <file>]
-  repolens diff <before.json> <after.json> [--format markdown|json]
-  repolens impact <report.json> <file> [--format markdown|json]
-  repolens graph <report.json> [--format mermaid|dot|svg] [--module <path>] [--out <file>]
-  repolens pr [path] --base <ref> [--head <ref>] [--online] [--fail-on-regression] [--format markdown|json]
-  repolens pr --base-report <a.json> --head-report <b.json> [--changed <list.txt>]
-  repolens trend [path] [--ref <ref>] [--points 6] [--format markdown|json]
-  repolens glossary [term] [--format markdown|json]
-  repolens schema
-  repolens --version | --help
-
-Analyze options:
-  -f, --format <list>      json, markdown, html (comma separated or repeated). Default: json,markdown
-  -o, --out <dir>          Output directory. Default: ./repolens-report
-      --stdout             Print the JSON report to stdout (summary goes to stderr)
-      --ref <ref>          Branch, tag or commit for GitHub targets
-      --rules <file>       Architecture rules file (default: repolens.rules.yaml in the target)
-      --baseline <file>    Accepted finding ids (JSON). Matching findings are suppressed
-      --write-baseline <f> Write all current finding ids as a new baseline and exit 0
-      --config <file>      Configuration file (JSON or simple YAML)
-      --exclude <glob>     Exclude paths (repeatable)
-      --offline            No network access (vulnerability lookups become "not assessed")
-      --no-history         Skip Git history analysis
-      --with-history       For GitHub targets, also clone shallowly for history (needs git)
-      --coverage <file>    Coverage report to ingest (lcov.info, coverage-summary.json or Cobertura XML)
-      --no-activity        For GitHub targets, do not call the GitHub API for commit, pull request and release signals
-      --no-tests           Do not analyze test files
-      --fail-on <severity> Exit 1 when any finding is at or above critical|high|medium|low
-      --fail-on-partial    Exit 4 when the report is partial
-  -q, --quiet              Print nothing except errors
-  -h, --help               Show help
-
-Exit codes: 0 ok, 1 policy failure, 2 usage or configuration error, 3 analysis error, 4 partial result (with --fail-on-partial).
-The GitHub token, if needed, is read from GITHUB_TOKEN and is never written to reports or logs.
-`;
+const HELP = helpText(TOOL_VERSION);
 
 class UsageError extends Error {}
 
@@ -273,7 +236,9 @@ async function cmdAnalyze(argv: string[], io: Io): Promise<number> {
           token: io.env.GITHUB_TOKEN,
         }
       : null;
-  let acquired;
+
+  let acquired: Awaited<ReturnType<typeof acquireTarget>>;
+
   try {
     log(remote ? `Fetching ${target}` : `Reading ${resolve(io.cwd, target)}`);
     acquired = await acquireTarget(target, {
@@ -396,11 +361,15 @@ function cmdDiff(argv: string[], io: Io): number {
   });
   if (positionals.length !== 2)
     throw new UsageError("diff needs two report.json paths: before and after");
+  const format = values.format ?? "markdown";
+  if (format !== "json" && format !== "markdown")
+    throw new UsageError("--format must be markdown or json");
+
   const d = diffReports(
     loadReport(positionals[0] as string, io),
     loadReport(positionals[1] as string, io),
   );
-  io.out(values.format === "json" ? `${JSON.stringify(d, null, 2)}\n` : diffToMarkdown(d));
+  io.out(format === "json" ? `${JSON.stringify(d, null, 2)}\n` : diffToMarkdown(d));
   return EXIT.OK;
 }
 
@@ -430,7 +399,11 @@ function cmdImpact(argv: string[], io: Io): number {
       `${file} is not a production source file in the dependency graph.${near.length ? ` Did you mean: ${near.join(", ")}?` : ""}`,
     );
   }
-  if (values.format === "json") {
+  const format = values.format ?? "markdown";
+  if (format !== "json" && format !== "markdown")
+    throw new UsageError("--format must be markdown or json");
+
+  if (format === "json") {
     io.out(`${JSON.stringify(entry, null, 2)}\n`);
     return EXIT.OK;
   }
@@ -484,8 +457,16 @@ function cmdGraph(argv: string[], io: Io): number {
     text = m;
   } else
     text = format === "dot" ? toDot(report) : format === "svg" ? toSvg(report) : toMermaid(report);
-  if (values.out) writeFileSync(resolve(io.cwd, values.out), text);
-  else io.out(text);
+  if (values.out) {
+    try {
+      writeFileSync(resolve(io.cwd, values.out), text);
+    } catch (e) {
+      io.err(`Error writing report: ${(e as Error).message}\n`);
+      return EXIT.ERROR;
+    }
+  } else {
+    io.out(text);
+  }
   return EXIT.OK;
 }
 
@@ -571,7 +552,7 @@ async function cmdPr(argv: string[], io: Io): Promise<number> {
     try {
       config = resolveConfig(fileLayer, {
         history: { enabled: false },
-        security: { offline: values.online ? false : true },
+        security: { offline: !values.online },
       });
     } catch (e) {
       if (e instanceof ConfigError) throw new UsageError(e.message);
@@ -588,9 +569,16 @@ async function cmdPr(argv: string[], io: Io): Promise<number> {
         throw new UsageError(`Cannot read rules file ${values.rules}`);
       }
     } else rules = readRulesFrom(root);
-    const baseline = values.baseline
-      ? { text: readFileSync(resolve(io.cwd, values.baseline), "utf8") }
-      : null;
+    let baseline: { text: string } | null = null;
+    if (values.baseline) {
+      try {
+        baseline = {
+          text: readFileSync(resolve(io.cwd, values.baseline), "utf8"),
+        };
+      } catch {
+        throw new UsageError(`Cannot read baseline file ${values.baseline}`);
+      }
+    }
     try {
       const baseCommit = await resolveRef(root, values.base);
       if (!values.quiet) io.err(`Analyzing base ${values.base} (${baseCommit.slice(0, 7)})\n`);

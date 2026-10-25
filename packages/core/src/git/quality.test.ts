@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { commitQuality } from "./quality.js";
 import { fetchGitHubActivity, type JsonFetch } from "./activity.js";
+import { commitQuality } from "./quality.js";
 
 describe("commitQuality", () => {
   it("measures conventional, descriptive and generic subjects and ignores merges", () => {

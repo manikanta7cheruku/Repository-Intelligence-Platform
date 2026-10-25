@@ -4,7 +4,7 @@ import { fileIdFor, moduleIdFor } from "../util/hash.js";
 import { buildReverseIndex, computeBlastRadius, impactOf } from "./impact.js";
 
 function graph(edges: [string, string, boolean?][], modules: Record<string, string>): GraphModel {
-  const paths = [...new Set(edges.flatMap(([a, b]) => [a, b]))];
+  const paths = [...new Set(edges.flatMap((e) => [e[0], e[1]]))];
   const modPaths = [...new Set(Object.values(modules))];
   return {
     nodes: paths.map((p) => ({

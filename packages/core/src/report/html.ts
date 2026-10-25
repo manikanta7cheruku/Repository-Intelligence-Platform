@@ -1,6 +1,5 @@
+import { explain, GLOSSARY_INDEX } from "../glossary/glossary.js";
 import type { Report, Severity } from "../ir/types.js";
-import { GLOSSARY_INDEX, explain } from "../glossary/glossary.js";
-import { toSvg } from "./diagram.js";
 import {
   dimLabel,
   glossaryIdsFor,
@@ -9,6 +8,7 @@ import {
   missingInputs,
   pctText,
 } from "./common.js";
+import { toSvg } from "./diagram.js";
 
 const esc = (v: unknown): string =>
   String(v ?? "")

@@ -1,6 +1,5 @@
-import type { Finding, Report } from "../ir/types.js";
 import { GLOSSARY_INDEX } from "../glossary/glossary.js";
-import { toMermaid } from "./diagram.js";
+import type { Finding, Report } from "../ir/types.js";
 import {
   dimLabel,
   glossaryIdsFor,
@@ -9,6 +8,7 @@ import {
   missingInputs,
   pctText,
 } from "./common.js";
+import { toMermaid } from "./diagram.js";
 
 /** Neutralizes HTML in untrusted text so Markdown viewers cannot render injected markup. */
 const safe = (v: string): string =>

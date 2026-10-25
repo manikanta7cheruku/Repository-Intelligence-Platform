@@ -1,6 +1,6 @@
 # Phase 1.5: Insight upgrade
 
-Status: **built and verified in the build environment (238 tests), owner verification open (see DOTEST.md at the repository root).**
+Status: **built and verified in the build environment (237 tests), owner verification open (see DOTEST.md at the repository root).**
 This phase sits between Phase 1 and Phase 2. It exists because the first real report (Provenance) showed that the facts were right but the explanation, the
 grouping and the insight were not good enough for a product.
 

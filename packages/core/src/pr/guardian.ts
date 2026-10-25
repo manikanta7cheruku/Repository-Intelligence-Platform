@@ -1,6 +1,6 @@
-import type { BlastRadiusEntry, CycleRecord, Finding, Report, RiskFile } from "../ir/types.js";
 import { SEVERITY_RANK } from "../findings/make.js";
 import { DIMENSION_LABELS } from "../glossary/glossary.js";
+import type { BlastRadiusEntry, CycleRecord, Finding, Report, RiskFile } from "../ir/types.js";
 
 export type PrVerdict = "regressed" | "improved" | "unchanged";
 

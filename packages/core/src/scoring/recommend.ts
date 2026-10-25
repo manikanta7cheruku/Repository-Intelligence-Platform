@@ -134,14 +134,12 @@ export function buildRecommendations(findings: Finding[], limit = 12): Recommend
     };
   });
   recs.sort((a, b) => b.priority - a.priority || a.key.localeCompare(b.key));
-  return recs
-    .slice(0, limit)
-    .map((r, idx) => ({
-      rank: idx + 1,
-      title: r.title,
-      rationale: r.rationale,
-      priority: r.priority,
-      findingIds: r.findingIds,
-      effort: r.effort,
-    }));
+  return recs.slice(0, limit).map((r, idx) => ({
+    rank: idx + 1,
+    title: r.title,
+    rationale: r.rationale,
+    priority: r.priority,
+    findingIds: r.findingIds,
+    effort: r.effort,
+  }));
 }

@@ -1,7 +1,7 @@
 import ts from "typescript";
 import type { Workspace } from "../acquire/types.js";
-import type { DetectionSummary, FileRecord, PracticesSummary } from "../ir/types.js";
 import { parseJsonSafe, readPackageJson } from "../detect/manifests.js";
+import type { DetectionSummary, FileRecord, PracticesSummary } from "../ir/types.js";
 import { basename, dirname } from "../util/paths.js";
 
 const hasPath = (ws: Workspace, re: RegExp): boolean => ws.files.some((f) => re.test(f.path));

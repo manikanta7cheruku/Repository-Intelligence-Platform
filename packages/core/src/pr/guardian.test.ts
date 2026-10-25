@@ -5,13 +5,13 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 import { resolveConfig } from "../config/config.js";
-import { analyzeRef, readRulesFrom } from "../pipeline/snapshot.js";
 import {
   changedFiles,
   changedFilesWorkingTree,
   isSafeGitRef,
   withWorktree,
 } from "../git/worktree.js";
+import { analyzeRef, readRulesFrom } from "../pipeline/snapshot.js";
 import { assessPullRequest, prToMarkdown } from "./guardian.js";
 
 const FIXTURES = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "..", "fixtures");

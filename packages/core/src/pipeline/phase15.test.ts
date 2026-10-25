@@ -9,7 +9,7 @@ import { resolveConfig } from "../config/config.js";
 import type { JsonFetch } from "../git/activity.js";
 import { validateReport } from "../ir/schema.js";
 import type { OsvFetch } from "../security/osv.js";
-import { analyze, type AnalyzeOptions } from "./analyze.js";
+import { type AnalyzeOptions, analyze } from "./analyze.js";
 
 const FIXTURES = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "..", "fixtures");
 let dirs: string[] = [];

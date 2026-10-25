@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_PROFILE } from "../scoring/profile.js";
-import { DIMENSION_LABELS, GLOSSARY, GLOSSARY_INDEX, explain } from "./glossary.js";
+import { DIMENSION_LABELS, explain, GLOSSARY, GLOSSARY_INDEX } from "./glossary.js";
 
 describe("glossary", () => {
   it("has a complete entry for every score dimension and every score input", () => {

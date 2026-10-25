@@ -129,11 +129,11 @@ export function toSvg(r: Report): string {
     `<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8a93a3"/></marker></defs>`,
   );
   out.push(`<rect class="bg" width="${width}" height="${height}"/>`);
-  levels.forEach((l, i) =>
+  levels.forEach((l, i) => {
     out.push(
       `<text class="s" x="${PAD + i * (W + GX)}" y="${PAD + 8}">${l === 0 ? "Level 0: depends on nothing" : `Level ${l}`}</text>`,
-    ),
-  );
+    );
+  });
   for (const e of edges) {
     const a = pos.get(e.from);
     const b = pos.get(e.to);

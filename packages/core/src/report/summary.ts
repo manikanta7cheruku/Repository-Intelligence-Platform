@@ -1,5 +1,5 @@
-import type { ExecutiveSummary, Report, ScoreRecord } from "../ir/types.js";
 import { DIMENSION_LABELS } from "../glossary/glossary.js";
+import type { ExecutiveSummary, Report, ScoreRecord } from "../ir/types.js";
 
 const LANG_NAMES: Record<string, string> = {
   typescript: "TypeScript",
