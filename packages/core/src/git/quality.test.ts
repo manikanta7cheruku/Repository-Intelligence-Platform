@@ -65,6 +65,23 @@ describe("fetchGitHubActivity", () => {
     expect(h.hotspots).toEqual([]);
     expect(h.limitations.join(" ")).toMatch(/local clone/);
   });
+  it("does not count merge commits, matching the local Git source", async () => {
+    const withMerge: JsonFetch = (url) =>
+      url.includes("/commits")
+        ? res([
+            {
+              ...commit("Ana", "2024-03-01T00:00:00Z", "Merge pull request #1"),
+              parents: [{}, {}],
+            },
+            { ...commit("Ana", "2024-02-01T00:00:00Z", "feat: b"), parents: [{}] },
+          ])
+        : res([]);
+    const h = await fetchGitHubActivity(
+      { owner: "o", repo: "r", ref: null },
+      { fetchImpl: withMerge, authors: "names" },
+    );
+    expect(h.commitsAnalyzed).toBe(1);
+  });
   it("anonymizes authors on request", async () => {
     const h = await fetchGitHubActivity(
       { owner: "o", repo: "r", ref: null },

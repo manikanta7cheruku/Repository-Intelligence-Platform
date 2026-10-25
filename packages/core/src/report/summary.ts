@@ -138,8 +138,12 @@ export function buildExecutiveSummary(r: Report): ExecutiveSummary {
       `${plural(riskHigh.length, "file")} rank high on the risk index, the top one is ${riskHigh[0]?.path}.`,
     );
   const cx = r.metrics.complexityDistribution;
-  if (cx && cx.high + cx.veryHigh > 0)
-    concerns.push(`${plural(cx.high + cx.veryHigh, "function")} have very high complexity.`);
+  if (cx && cx.high + cx.veryHigh > 0) {
+    const n = cx.high + cx.veryHigh;
+    concerns.push(
+      `${plural(n, "function")} ${n === 1 ? "has" : "have"} high or very high complexity.`,
+    );
+  }
   if (r.practices.tests.testFiles === 0 && r.repository.productionFiles > 0)
     concerns.push("No test files were detected.");
   if (r.testCoverage.ingested && r.testCoverage.lineRate !== null && r.testCoverage.lineRate < 0.5)

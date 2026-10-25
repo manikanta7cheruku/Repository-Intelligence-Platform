@@ -1,7 +1,7 @@
 # DOTEST: what you must test after merging Phase 1.5
 
 Do these in order. Each step says what you should see. Anything different is a bug or a gap: copy the exact command and output into the
-"resume Phase 1.5" prompt in `docs/phases/phase-1-5-insight-upgrade.md`. Everything here was verified by 237 automated tests in a sandbox, but
+"resume Phase 1.5" prompt in `docs/phases/phase-1-5-insight-upgrade.md`. Everything here was verified by 238 automated tests in a sandbox, but
 the items marked **LIVE** need real network, real tools or your real repositories, which the sandbox did not have.
 
 Use a scratch folder for outputs, for example `~/rl-out`. The commands assume you are in the RepoLens repository and ran `pnpm build`.
@@ -16,7 +16,7 @@ pnpm format
 pnpm check
 ```
 
-Expected: lint, build, typecheck and tests pass. The test summary should show **237 tests passed** (Vitest counts the same tests). If Biome reports
+Expected: lint, build, typecheck and tests pass. The test summary should show **238 tests passed** (Vitest counts the same tests). If Biome reports
 lint errors that were not there in Phase 1, paste them. Then:
 
 ```bash
