@@ -7,7 +7,7 @@
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "pattern": "^0\\.3\\.[0-9]+$"
+      "pattern": "^0\\.4\\.[0-9]+$"
     },
     "status": {
       "type": "string",
@@ -298,7 +298,17 @@
           },
           "kind": {
             "type": "string",
-            "enum": ["source", "test", "config", "docs", "generated", "vendored", "binary", "other"]
+            "enum": [
+              "source",
+              "test",
+              "config",
+              "docs",
+              "generated",
+              "fixture",
+              "vendored",
+              "binary",
+              "other"
+            ]
           },
           "kindReason": {
             "type": "string"
@@ -1359,11 +1369,14 @@
             "merged": {
               "type": "integer"
             },
+            "exact": {
+              "type": "boolean"
+            },
             "medianHoursToMerge": {
               "type": ["number", "null"]
             }
           },
-          "required": ["sampled", "merged", "medianHoursToMerge"],
+          "required": ["sampled", "merged", "exact", "medianHoursToMerge"],
           "additionalProperties": false
         },
         "releases": {
@@ -1372,15 +1385,30 @@
             "count": {
               "type": "integer"
             },
+            "exact": {
+              "type": "boolean"
+            },
             "latestDate": {
               "type": ["string", "null"]
             }
           },
-          "required": ["count", "latestDate"],
+          "required": ["count", "exact", "latestDate"],
           "additionalProperties": false
         },
         "shallow": {
           "type": ["boolean", "null"]
+        },
+        "totalCommits": {
+          "type": ["integer", "null"]
+        },
+        "totalContributors": {
+          "type": ["integer", "null"]
+        },
+        "totalContributorsAtLeast": {
+          "type": "boolean"
+        },
+        "exactTotals": {
+          "type": "boolean"
         },
         "commitsAnalyzed": {
           "type": ["integer", "null"]
@@ -1485,6 +1513,10 @@
         "pullRequests",
         "releases",
         "shallow",
+        "totalCommits",
+        "totalContributors",
+        "totalContributorsAtLeast",
+        "exactTotals",
         "commitsAnalyzed",
         "window",
         "contributors",

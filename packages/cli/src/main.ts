@@ -272,6 +272,8 @@ async function cmdAnalyze(argv: string[], io: Io): Promise<number> {
       baseline,
       coverage,
       activity,
+      githubSignals:
+        values["no-activity"] || config.security.offline ? null : { token: io.env.GITHUB_TOKEN },
       onProgress: progress,
     });
   } catch (e) {

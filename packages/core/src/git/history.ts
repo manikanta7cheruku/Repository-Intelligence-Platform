@@ -113,6 +113,10 @@ export function unavailable(reason: string): HistorySummary {
     pullRequests: null,
     releases: null,
     shallow: null,
+    totalCommits: null,
+    totalContributors: null,
+    totalContributorsAtLeast: false,
+    exactTotals: false,
     commitsAnalyzed: null,
     window: { first: null, last: null },
     contributors: [],
@@ -275,6 +279,43 @@ export async function collectHistory(
     })
     .sort((a, b) => a.path.localeCompare(b.path));
 
+  // Exact totals come from Git itself, not from the capped window used for hotspots and message quality.
+  let totalCommits: number | null = null;
+  let totalContributors: number | null = null;
+  let exactContributors: { name: string; commits: number }[] | null = null;
+  try {
+    const scope = head.prefix ? ["--", "."] : [];
+    const n = Number((await git(["rev-list", "--count", "HEAD", ...scope], root, signal)).trim());
+    if (Number.isFinite(n) && n > 0) totalCommits = n;
+    const sl = await git(["shortlog", "-sn", "HEAD", ...scope], root, signal);
+    const rows = sl
+      .split("\n")
+      .map((l) => /^\s*(\d+)\s+(.+)$/.exec(l))
+      .filter((m): m is RegExpExecArray => m !== null)
+      .map((m) => ({ commits: Number(m[1]), name: (m[2] as string).trim() }));
+    if (rows.length > 0) {
+      exactContributors = rows;
+      totalContributors = rows.length;
+    }
+  } catch {
+    /* totals stay null and the report says so */
+  }
+  const exactTotals = totalCommits !== null && head.shallow !== true;
+  let contributorsOut = contributors;
+  let topShare = Math.round(((ranked[0] as [string, number])[1] / total) * 1000) / 1000;
+  if (exactContributors && exactTotals) {
+    const sum = exactContributors.reduce((a, r) => a + r.commits, 0);
+    const sorted = [...exactContributors].sort(
+      (a, b) => b.commits - a.commits || a.name.localeCompare(b.name),
+    );
+    contributorsOut = sorted.slice(0, 20).map((r, i) => ({
+      name: opts.authors === "anonymous" ? `Author ${i + 1}` : r.name,
+      commits: r.commits,
+      share: Math.round((r.commits / sum) * 1000) / 1000,
+    }));
+    topShare = Math.round(((sorted[0] as { commits: number }).commits / sum) * 1000) / 1000;
+  }
+
   const limitations = [
     "File renames are not followed, so a renamed file starts a new history.",
     "Squash merges attribute the whole change to the squasher, which can hide real authorship.",
@@ -286,7 +327,13 @@ export async function collectHistory(
       "The repository is a shallow clone, so history is incomplete and ownership is biased toward recent authors.",
     );
   if (commits.length >= opts.maxCommits)
-    limitations.unshift(`History was limited to the most recent ${opts.maxCommits} commits.`);
+    limitations.unshift(
+      `Hotspots, ownership and commit message quality use the most recent ${opts.maxCommits} commits${totalCommits ? ` of ${totalCommits}` : ""}. Totals and contributors cover the whole history.`,
+    );
+  else if (totalCommits !== null && totalCommits > total)
+    limitations.push(
+      `${totalCommits - total} of ${totalCommits} commits are merge commits or do not touch analyzed paths, so they are counted in the total but not in the file level details.`,
+    );
 
   return {
     available: true,
@@ -296,13 +343,17 @@ export async function collectHistory(
     pullRequests: null,
     releases: null,
     shallow: head.shallow,
+    totalCommits,
+    totalContributors,
+    totalContributorsAtLeast: false,
+    exactTotals,
     commitsAnalyzed: total,
     window: {
       first: (commits[commits.length - 1] as { date: string }).date,
       last: (commits[0] as { date: string }).date,
     },
-    contributors,
-    topAuthorShare: Math.round(((ranked[0] as [string, number])[1] / total) * 1000) / 1000,
+    contributors: contributorsOut,
+    topAuthorShare: topShare,
     hotspots,
     moduleOwnership,
     limitations,
@@ -348,4 +399,23 @@ export async function cloneForHistory(
     maxBuffer: 16 * 1024 * 1024,
     ...(signal ? { signal } : {}),
   });
+}
+
+/** Owner and repository of the `origin` remote when it points at github.com. Reads Git configuration only. */
+export async function detectGitHubRemote(
+  root: string,
+  signal?: AbortSignal,
+): Promise<{ owner: string; repo: string } | null> {
+  try {
+    const url = (await git(["remote", "get-url", "origin"], root, signal, 10_000)).trim();
+    const m =
+      /^https:\/\/(?:[^@/]+@)?github\.com\/([A-Za-z0-9-]+)\/([A-Za-z0-9._-]+?)(?:\.git)?\/?$/.exec(
+        url,
+      ) ??
+      /^git@github\.com:([A-Za-z0-9-]+)\/([A-Za-z0-9._-]+?)(?:\.git)?$/.exec(url) ??
+      /^ssh:\/\/git@github\.com\/([A-Za-z0-9-]+)\/([A-Za-z0-9._-]+?)(?:\.git)?\/?$/.exec(url);
+    return m ? { owner: m[1] as string, repo: m[2] as string } : null;
+  } catch {
+    return null;
+  }
 }

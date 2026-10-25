@@ -50,7 +50,7 @@ export const DEFAULT_CONFIG: AnalysisConfig = {
   moduleDepth: 1,
   complexity: { moderate: 10, high: 20, veryHigh: 50 },
   duplication: { enabled: true, minLines: 8, minChars: 120, includeTests: false },
-  history: { enabled: true, maxCommits: 1000, authors: "names", hotspotLimit: 15 },
+  history: { enabled: true, maxCommits: 5000, authors: "names", hotspotLimit: 15 },
   security: { offline: false, osv: true, secrets: true, workflows: true, gitleaksPath: null },
   rulesFile: null,
   baselineFile: null,

@@ -14,7 +14,7 @@ explore structure and change impact on interactive graphs, and download every ch
 | Area | Delivered | Where |
 |---|---|---|
 | App | Next.js 16 (App Router), React 19, TypeScript strict, plain CSS with tokens, no UI framework | `apps/web` |
-| Contract | The web reads only report JSON 0.3.0 and the glossary through `@repolens/core/browser` (pure modules). Hosted analysis uses `@repolens/core/server` | `packages/core/src/browser.ts`, `server.ts` |
+| Contract | The web reads only report JSON 0.4.0 and the glossary through `@repolens/core/browser` (pure modules). Hosted analysis uses `@repolens/core/server` | `packages/core/src/browser.ts`, `server.ts` |
 | Start page | GitHub URL form with real streamed stages and cancel, open a local report (drag and drop), reports saved in the browser, live sample report | `app/page.tsx`, `components/analyze-form.tsx` |
 | Report sections | Briefing (scores with proof panels, reliability), Priorities, Structure (Map and Ledger), Impact, Risk, Quality, Security, Practices, History, Rules, Compare, Export | `components/sections/*` |
 | Graphs | Layered interactive map: pan, zoom, search, cycle filter, hover and focus highlight of dependents and dependencies, module to file drill-down, keyboard navigation, ledger alternative | `components/layered-graph.tsx`, `lib/layout.ts` |
@@ -34,6 +34,23 @@ explore structure and change impact on interactive graphs, and download every ch
   Impact graph, Risk scatter, Glossary deep link, mobile layout at 390 px, CSP header present on the production build.
 - Layout speed (Node, synthetic graphs): 60 nodes 7 ms, 1,000 nodes 5 ms, 5,000 nodes 32 ms. This is layout only. Rendering of thousands of nodes was **not** measured because the interface caps the map at 60 modules,
   70 files or 90 impact nodes by design.
+
+## Real repository results (2026-10-25, through `POST /api/analyze`, no GitHub token)
+
+| Repository | Files analyzed | Commits (exact) | Contributors | Merged PRs (exact) | Result |
+|---|---|---|---|---|---|
+| manikanta7cheruku/NEURAL-SHELL | 482 | 1,539 | 3 | 17 | complete, 11 s, 162 known vulnerable dependency versions |
+| manikanta7cheruku/Repository-Intelligence-Platform | 359 | 65 | 2 | 7 | complete, 4 s |
+| pallets/flask | 231 | 5,562 | 100 or more | 1,623 | complete, 8 s |
+| expressjs/express | 216 | 6,183 | 100 or more | 579 | complete, 5 s |
+| sindresorhus/got | 135 | 1,788 | 100 or more | 549 | complete, 5 s |
+| tiangolo/fastapi | 3,045 | not assessed | not assessed | not assessed | complete in 8 s, history missing because the unauthenticated GitHub API limit (60 per hour) was used up |
+| vercel/next.js | 8,000 of about 33,000 | not requested | | | partial in 27 s, says how much was left out |
+
+Problems found by the owner on 2026-10-25 and their causes: history showed 284 commits for a repository with 1,539 (only a recent sample was counted), merged pull requests showed n/a (the sample report was made offline),
+the RIP sample listed Go, Rust and Python (test fixture folders were counted as project code), some repositories failed with "archive exceeds the size budget" (the whole download was capped at 40 MB and held in memory) and
+others failed or were slow (about 150 sequential advisory lookups took 50 s, and the in-memory rate limit allowed 6 analyses per 10 minutes even on a local machine, and the unauthenticated GitHub API limit is 60 per hour).
+All fixed, see `docs/learning/phase-2-web-platform.md` section 5.
 
 ## Not done or not verified (honest list)
 

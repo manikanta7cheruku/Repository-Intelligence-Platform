@@ -138,7 +138,7 @@ export function ReportLoader({ id, children }: { id: string; children: ReactNode
       <div className="state">
         <h1 className="h1">This file is not a valid report</h1>
         <p className="lede">
-          The report does not match schema 0.3.0. Regenerate it with the current CLI.
+          The report does not match schema 0.4.0. Regenerate it with the current CLI.
         </p>
         <ul className="plain-list mono small">
           {state.issues.map((i) => (

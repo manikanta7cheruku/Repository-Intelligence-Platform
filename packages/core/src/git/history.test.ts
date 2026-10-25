@@ -3,7 +3,7 @@ import { appendFileSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSy
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { collectHistory, git, parseLog, readHead } from "./history.js";
+import { collectHistory, detectGitHubRemote, git, parseLog, readHead } from "./history.js";
 
 let dirs: string[] = [];
 const tmp = () => {
@@ -108,7 +108,7 @@ describe("collectHistory", () => {
       { files: new Map(), moduleOf: () => null },
     );
     expect(h.commitsAnalyzed).toBe(3);
-    expect(h.limitations[0]).toMatch(/limited to the most recent 3/);
+    expect(h.limitations[0]).toMatch(/most recent 3 commits/);
   });
   it("returns null head outside a repository", async () => {
     expect(await readHead(tmp())).toBeNull();
@@ -146,5 +146,47 @@ describe("hardening against hostile repository configuration (SA-04)", () => {
     await git(["status", "--porcelain"], d);
     await readHead(d);
     expect(existsSync(marker)).toBe(false);
+  });
+});
+
+describe("exact totals", () => {
+  it("counts every commit including merges, and takes contributors from the whole history", async () => {
+    const d = makeRepo();
+    g(d, ["switch", "-q", "-c", "feature"], "Bob", 7);
+    appendFileSync(join(d, "src", "cold.ts"), "export const c = 3;\n");
+    g(d, ["commit", "-q", "-am", "feature work"], "Bob", 8);
+    g(d, ["switch", "-q", "main"], "Alice", 9);
+    appendFileSync(join(d, "src", "hot.ts"), "export const z = 9;\n");
+    g(d, ["commit", "-q", "-am", "main work"], "Alice", 10);
+    g(d, ["merge", "-q", "--no-ff", "feature", "-m", "Merge pull request #1"], "Alice", 11);
+    const head = await readHead(d);
+    const h = await collectHistory(
+      d,
+      head as NonNullable<typeof head>,
+      { maxCommits: 3, authors: "names", hotspotLimit: 5 },
+      { files: new Map(), moduleOf: () => null },
+    );
+    expect(h.totalCommits).toBe(9);
+    expect(h.exactTotals).toBe(true);
+    expect(h.totalContributors).toBe(2);
+    expect(h.commitsAnalyzed).toBe(3);
+    expect(h.contributors.reduce((a, c) => a + c.commits, 0)).toBe(9);
+    expect(h.limitations.join(" ")).toMatch(/most recent 3 commits of 9/);
+  });
+  it("detects a GitHub origin remote in https and ssh forms, and ignores others", async () => {
+    const d = makeRepo();
+    expect(await detectGitHubRemote(d)).toBeNull();
+    let hasRemote = false;
+    for (const [url, expected] of [
+      ["https://github.com/acme/tool.git", { owner: "acme", repo: "tool" }],
+      ["git@github.com:acme/tool.git", { owner: "acme", repo: "tool" }],
+      ["https://github.com/acme/tool", { owner: "acme", repo: "tool" }],
+      ["https://gitlab.com/acme/tool.git", null],
+      ["https://github.com.evil.com/acme/tool.git", null],
+    ] as const) {
+      g(d, hasRemote ? ["remote", "set-url", "origin", url] : ["remote", "add", "origin", url]);
+      hasRemote = true;
+      expect(await detectGitHubRemote(d), url).toEqual(expected);
+    }
   });
 });

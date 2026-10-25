@@ -69,50 +69,12 @@ const DATA_EXT = new Set([
   ".proto",
 ]);
 
-const BINARY_EXT = new Set([
-  ".png",
-  ".jpg",
-  ".jpeg",
-  ".gif",
-  ".webp",
-  ".ico",
-  ".bmp",
-  ".pdf",
-  ".zip",
-  ".gz",
-  ".tar",
-  ".tgz",
-  ".7z",
-  ".woff",
-  ".woff2",
-  ".ttf",
-  ".otf",
-  ".eot",
-  ".mp3",
-  ".mp4",
-  ".mov",
-  ".wav",
-  ".exe",
-  ".dll",
-  ".so",
-  ".dylib",
-  ".class",
-  ".jar",
-  ".pyc",
-  ".wasm",
-  ".bin",
-  ".psd",
-  ".sketch",
-]);
-
 /** Programming language of a path, or null when it is not a recognized programming language. */
 export function languageOf(path: string): string | null {
   return EXT_LANG[extname(path)] ?? null;
 }
 
-export function isBinaryExt(path: string): boolean {
-  return BINARY_EXT.has(extname(path));
-}
+export { isBinaryExt } from "../util/binary.js";
 
 export function isDataExt(path: string): boolean {
   return DATA_EXT.has(extname(path));

@@ -34,10 +34,16 @@ const GENERATED_PATH = new GlobSet([
   "*.pb.go",
   "*.g.dart",
 ]);
-const TEST_PATH = new GlobSet([
-  "**/__tests__/**",
+/** Test data, not code of the project: sample repositories, snapshots and recorded inputs. */
+const FIXTURE_PATH = new GlobSet([
   "**/fixtures/**",
   "**/__fixtures__/**",
+  "**/testdata/**",
+  "**/test-data/**",
+  "**/test_data/**",
+]);
+const TEST_PATH = new GlobSet([
+  "**/__tests__/**",
   "**/tests/**",
   "**/test/**",
   "**/spec/**",
@@ -94,6 +100,12 @@ export function classifyPath(path: string): Classification {
     return {
       kind: "generated",
       reason: "path matches a generated or build output pattern",
+      language,
+    };
+  if (FIXTURE_PATH.matches(path))
+    return {
+      kind: "fixture",
+      reason: "test data directory (fixtures or testdata), not analyzed as project code",
       language,
     };
   if (TEST_PATH.matches(path))

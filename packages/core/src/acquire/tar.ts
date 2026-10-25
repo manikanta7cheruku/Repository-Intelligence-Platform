@@ -19,22 +19,22 @@ export interface ExtractResult {
   skipped: { reason: string; count: number }[];
 }
 
-const BLOCK = 512;
+export const BLOCK = 512;
 
-function readString(buf: Buffer, start: number, len: number): string {
+export function readString(buf: Buffer, start: number, len: number): string {
   const slice = buf.subarray(start, start + len);
   const nul = slice.indexOf(0);
   return slice.subarray(0, nul === -1 ? len : nul).toString("utf8");
 }
 
-function readOctal(buf: Buffer, start: number, len: number): number {
+export function readOctal(buf: Buffer, start: number, len: number): number {
   const s = readString(buf, start, len).trim();
   if (s === "") return 0;
   if (!/^[0-7]+$/.test(s)) throw new ArchiveError("Malformed numeric field in archive header");
   return Number.parseInt(s, 8);
 }
 
-function parsePax(data: Buffer): Record<string, string> {
+export function parsePax(data: Buffer): Record<string, string> {
   const out: Record<string, string> = {};
   let pos = 0;
   while (pos < data.length) {

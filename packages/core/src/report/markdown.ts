@@ -358,7 +358,7 @@ export function toMarkdown(r: Report, opts: { maxFindings?: number } = {}): stri
   if (r.history.available) {
     const h = r.history;
     out.push(
-      `${h.commitsAnalyzed} commits analyzed (${h.source === "github-api" ? "sample from the GitHub API" : "local Git"})${h.shallow ? ", shallow clone" : ""}.`,
+      `${h.totalCommits ?? h.commitsAnalyzed} commits${h.exactTotals ? " in the whole history" : " in the analyzed window"} (${h.source === "github-api" ? "GitHub API" : "local Git"}), ${h.commitsAnalyzed ?? 0} examined for message quality and file level detail${h.shallow ? ", shallow clone" : ""}.`,
       "",
     );
     if (h.commitQuality)
@@ -368,7 +368,7 @@ export function toMarkdown(r: Report, opts: { maxFindings?: number } = {}): stri
       );
     if (h.pullRequests)
       out.push(
-        `Pull requests (recent sample of ${h.pullRequests.sampled} closed): ${h.pullRequests.merged} merged, median time to merge ${h.pullRequests.medianHoursToMerge === null ? "n/a" : `${h.pullRequests.medianHoursToMerge} hours`}.`,
+        `Pull requests: ${h.pullRequests.merged} merged${h.pullRequests.exact ? " in total" : ` (counted in a recent sample of ${h.pullRequests.sampled} closed)`}, median time to merge${h.pullRequests.sampled > 0 ? ` over the last ${h.pullRequests.sampled} closed` : ""} ${h.pullRequests.medianHoursToMerge === null ? "n/a" : `${h.pullRequests.medianHoursToMerge} hours`}.`,
         "",
       );
     if (h.releases)

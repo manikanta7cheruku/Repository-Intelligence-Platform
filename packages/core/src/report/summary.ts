@@ -71,7 +71,7 @@ export function buildExecutiveSummary(r: Report): ExecutiveSummary {
   if (r.history.available) {
     const h = r.history;
     overview.push(
-      `History (${h.source === "github-api" ? "GitHub API sample" : "Git"}): ${plural(h.commitsAnalyzed ?? 0, "commit")} from ${plural(h.contributors.length, "contributor")}${h.pullRequests ? `, ${plural(h.pullRequests.merged, "merged pull request")} in the recent sample` : ""}${h.releases ? `, ${plural(h.releases.count, "release")}` : ""}.`,
+      `History (${h.source === "github-api" ? "GitHub API" : "Git"}): ${plural(h.totalCommits ?? h.commitsAnalyzed ?? 0, "commit")}${h.exactTotals ? "" : " in the analyzed window"} from ${h.totalContributors === null ? plural(h.contributors.length, "contributor") : `${h.totalContributorsAtLeast ? "at least " : ""}${plural(h.totalContributors, "contributor")}`}${h.pullRequests ? `, ${plural(h.pullRequests.merged, "merged pull request")}${h.pullRequests.exact ? "" : " in the recent sample"}` : ""}${h.releases ? `, ${plural(h.releases.count, "release")}` : ""}.`,
     );
   }
 

@@ -5,7 +5,7 @@ import { GlobSet } from "../util/glob.js";
 import type { Workspace, WorkspaceFile } from "./types.js";
 
 /** Directories never entered. The reason is reported so exclusions are never silent. */
-const ALWAYS_EXCLUDED_DIRS: Record<string, string> = {
+export const ALWAYS_EXCLUDED_DIRS: Record<string, string> = {
   ".git": "git metadata",
   node_modules: "dependency directory",
   ".hg": "version control metadata",

@@ -307,14 +307,15 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
 
   const h = i.history;
   let perMonth: number | null = null;
-  if (h.available && h.window.first && h.window.last && h.commitsAnalyzed) {
+  const activityCommits = h.totalCommits ?? h.commitsAnalyzed;
+  if (h.available && h.window.first && h.window.last && activityCommits) {
     const months = Math.max(
       1,
       (Date.parse(h.window.last) - Date.parse(h.window.first)) / (30.44 * 86_400_000),
     );
-    perMonth = h.commitsAnalyzed / months;
+    perMonth = activityCommits / months;
   }
-  const enough = h.available && (h.commitsAnalyzed ?? 0) >= 10;
+  const enough = h.available && (activityCommits ?? 0) >= 10;
   raws["maintenance-activity"] = {
     "author-concentration":
       enough && h.topAuthorShare !== null
@@ -325,7 +326,10 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
           },
     "commits-per-month":
       enough && perMonth !== null
-        ? { raw: round(perMonth, 2), note: `${h.commitsAnalyzed} commits in the analyzed window` }
+        ? {
+            raw: round(perMonth, 2),
+            note: `${activityCommits} commits in ${h.exactTotals ? "the whole history" : "the analyzed window"}`,
+          }
         : {
             raw: null,
             note: h.available ? "Fewer than 10 commits" : (h.reason ?? "No Git history"),
