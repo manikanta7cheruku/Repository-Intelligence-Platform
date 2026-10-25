@@ -25,5 +25,6 @@ Status words: Proposed, Accepted, Rejected, Deferred, Superseded. Accepted means
 | [0019](0019-stateless-web-first-release.md) | Stateless web application for the first release | Proposed |
 | [0020](0020-graph-rendering-custom-svg.md) | Custom layered SVG graph rendering | Proposed |
 | [0021](0021-client-side-export-pipeline.md) | Client-side export pipeline | Proposed |
+| [0022](0022-python-package-init-dependencies.md) | Python package imports depend on the package `__init__.py` | Proposed |
 
 Template: [0000-template.md](0000-template.md)

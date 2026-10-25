@@ -10,7 +10,7 @@ const SECTION_HEADINGS: [string, RegExp][] = [
   ["overview", /overview|about|introduction|what is|summary|^[a-z0-9 ._-]{2,40}$/i],
   [
     "install",
-    /install|setup|set up|getting started|quick ?start|run (it )?locally|locally|local (dev|development|setup)|development|prerequisites|requirements|build|run it|how to run/i,
+    /install|setup|set up|getting started|get started|^get\b|download|quick ?start|run (it )?locally|locally|local (dev|development|setup)|development|prerequisites|requirements|build|run it|how to run/i,
   ],
   ["usage", /usage|how to use|example|quick ?start|getting started|commands|\bcli\b|\bapi\b/i],
   ["contributing", /contribut|development guide|pull request/i],
@@ -22,6 +22,23 @@ const SECTION_HEADINGS: [string, RegExp][] = [
 const INSTALL_COMMAND =
   /\b(npm|pnpm|yarn|bun|pip3?|uv|poetry|pipenv|cargo|go|docker[ -]compose|docker|make|bundle|composer|gradle|mvn)\s+(install|i|add|sync|build|run|up|get|compose|start|test)\b/i;
 
+const INSTALL_WORDS =
+  /\b(download(?:s|ed)? (?:the )?(?:latest )?(?:installer|release|app|binary|build)|installer|installation|setup wizard|install(?:s|ed)? (?:it|the|this|via|with|using|from)\b|pip install|npm install)\b/i;
+
+/** Text under each markdown heading, up to the next heading. */
+function sectionBodies(text: string): string[] {
+  const out: string[] = [];
+  let cur: string[] | null = null;
+  for (const line of text.split(/\r?\n/)) {
+    if (/^#{1,6}\s/.test(line)) {
+      if (cur) out.push(cur.join("\n"));
+      cur = [];
+    } else if (cur) cur.push(line);
+  }
+  if (cur) out.push(cur.join("\n"));
+  return out;
+}
+
 /** README section kinds from headings, plus install commands anywhere in the text (fenced or inline). */
 export function readmeSections(headings: string[], text: string): string[] {
   const found = new Set<string>();
@@ -30,6 +47,10 @@ export function readmeSections(headings: string[], text: string): string[] {
     if (headings.some((h) => re.test(h))) found.add(kind);
   }
   if (INSTALL_COMMAND.test(text)) found.add("install");
+  // A section whose first lines tell the reader to download, install or run a setup wizard is an install section,
+  // whatever its heading is called ("Get Seven", "Try it").
+  if (!found.has("install") && sectionBodies(text).some((b) => INSTALL_WORDS.test(b.slice(0, 500))))
+    found.add("install");
   if (headings.length > 0 || text.trim().split(/\s+/).length > 30) found.add("overview");
   return [...found].sort();
 }

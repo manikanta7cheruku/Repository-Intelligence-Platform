@@ -348,3 +348,29 @@ describe("score proof", () => {
     expect(input?.evidence.length ?? 0).toBeGreaterThan(0);
   });
 });
+
+describe("files that were not unpacked", () => {
+  it("still count in the totals, with the reason they were not analyzed", async () => {
+    const dir = write({ "src/a.ts": "export const a = 1;\n" });
+    const config = resolveConfig({ security: { offline: true }, history: { enabled: false } });
+    const ws = openLocalWorkspace(dir, config);
+    ws.skipped = [
+      { path: "assets/logo.png", bytes: 5000, reason: "binary or media file" },
+      { path: "data/big.json", bytes: 9_000_000, reason: "file exceeds the per-file size budget" },
+      { path: "src/late.ts", bytes: 100, reason: "not analyzed: file count budget reached" },
+    ];
+    const r = await analyze({
+      config,
+      workspace: ws,
+      source: { type: "local", location: "x", ref: null, name: "x" },
+      historyRoot: null,
+    });
+    expect(r.repository.totalFiles).toBe(4);
+    const byPath = new Map(r.files.map((f) => [f.path, f]));
+    expect(byPath.get("assets/logo.png")).toMatchObject({ kind: "binary", analyzed: false });
+    expect(byPath.get("data/big.json")?.notAnalyzedReason).toMatch(/per-file size budget/);
+    expect(byPath.get("src/late.ts")).toMatchObject({ analyzed: false });
+    expect(byPath.get("src/late.ts")?.notAnalyzedReason).toMatch(/file count budget/);
+    expect(validateReport(r).valid).toBe(true);
+  });
+});

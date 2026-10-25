@@ -1,5 +1,5 @@
 {
-  "description": "Relative import cycle across three modules, a parent-relative import, and a relative import of a module that does not exist.",
+  "description": "Relative import cycle across three modules, a parent-relative import, and a relative import of a module that does not exist. Importing from a package also depends on the package's __init__.py, which Python runs.",
   "edges": [
     [
       "pkg/a.py",
@@ -16,6 +16,10 @@
     [
       "pkg/sub/m.py",
       "pkg/a.py"
+    ],
+    [
+      "pkg/c.py",
+      "pkg/__init__.py"
     ]
   ],
   "externals": [],

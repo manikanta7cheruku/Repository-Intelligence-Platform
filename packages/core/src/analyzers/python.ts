@@ -102,6 +102,8 @@ function moduleFile(ctx: PyContext, base: string, parts: string[]): string | nul
   return null;
 }
 
+const isPackageInit = (p: string): boolean => p === "__init__.py" || p.endsWith("/__init__.py");
+
 function resolveAbsolute(ctx: PyContext, parts: string[]): string | null {
   for (const root of ctx.roots) {
     const hit = moduleFile(ctx, root, parts);
@@ -230,11 +232,12 @@ export function analyzePythonFile(path: string, text: string, ctx: PyContext): F
         const sub = moduleFile(ctx, base, [...modParts, n]);
         if (sub && sub !== target) subs.push(sub);
       }
-      if (subs.length > 0)
-        for (const s of [...new Set(subs)])
-          deps.push(make(st, { resolution: "resolved", toPath: s }));
-      else if (target) deps.push(make(st, { resolution: "resolved", toPath: target }));
-      else
+      for (const s of [...new Set(subs)])
+        deps.push(make(st, { resolution: "resolved", toPath: s }));
+      // Importing from a package also runs the package's __init__.py, so it is a dependency too.
+      if (target && target !== path && (subs.length === 0 || isPackageInit(target)))
+        deps.push(make(st, { resolution: "resolved", toPath: target }));
+      if (subs.length === 0 && !target)
         deps.push(
           make(st, { resolution: "unresolved", reason: "relative module not found in repository" }),
         );
@@ -246,17 +249,18 @@ export function analyzePythonFile(path: string, text: string, ctx: PyContext): F
       continue;
     }
     const target = resolveAbsolute(ctx, modParts);
-    if (target) {
-      const subs: string[] = [];
-      for (const n of st.names) {
-        if (n === "*") continue;
-        const sub = resolveAbsolute(ctx, [...modParts, n]);
-        if (sub && sub !== target) subs.push(sub);
-      }
-      if (subs.length > 0)
-        for (const s of [...new Set(subs)])
-          deps.push(make(st, { resolution: "resolved", toPath: s }));
-      else deps.push(make(st, { resolution: "resolved", toPath: target }));
+    const subs: string[] = [];
+    for (const n of st.names) {
+      if (n === "*") continue;
+      const sub = resolveAbsolute(ctx, [...modParts, n]);
+      if (sub && sub !== target) subs.push(sub);
+    }
+    // A directory without __init__.py is a namespace package: its modules can still be imported by name.
+    if (target || subs.length > 0) {
+      for (const s of [...new Set(subs)])
+        deps.push(make(st, { resolution: "resolved", toPath: s }));
+      if (target && target !== path && (subs.length === 0 || isPackageInit(target)))
+        deps.push(make(st, { resolution: "resolved", toPath: target }));
     } else if (ctx.topLevelNames.has(top)) {
       deps.push(
         make(st, { resolution: "unresolved", reason: "submodule not found in repository package" }),

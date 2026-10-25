@@ -1,5 +1,5 @@
 {
-  "description": "Absolute, relative and from-package imports, stdlib and third-party externals, a TYPE_CHECKING import, and an import inside a docstring that must be ignored.",
+  "description": "Absolute, relative and from-package imports, stdlib and third-party externals, a TYPE_CHECKING import, and an import inside a docstring that must be ignored. Importing from a package also depends on the package's __init__.py, which Python runs.",
   "edges": [
     [
       "app/main.py",
@@ -20,6 +20,10 @@
     [
       "app/main.py",
       "app/types.py"
+    ],
+    [
+      "app/main.py",
+      "app/__init__.py"
     ]
   ],
   "externals": [

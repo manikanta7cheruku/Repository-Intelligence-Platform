@@ -3,10 +3,10 @@
 import { DIMENSION_LABELS, type ScoreRecord } from "@repolens/core/browser";
 import Link from "next/link";
 import { useState } from "react";
-import { CurveSpark } from "@/components/charts";
+import { ProofPanel } from "@/components/proof-panel";
 import { useReport } from "@/components/report-context";
 import { Bar, Card, ConfidenceChip, NotAssessed, PageHead, Stat, Term } from "@/components/ui";
-import { dateText, dec, num, pct, shortSha } from "@/lib/format";
+import { dateText, num, shortSha } from "@/lib/format";
 
 export function Briefing() {
   const { id, report, select } = useReport();
@@ -175,7 +175,6 @@ export function Briefing() {
 
 function ScoreRow({ score }: { score: ScoreRecord }) {
   const [open, setOpen] = useState(false);
-  const { select } = useReport();
   const label = DIMENSION_LABELS[score.dimension] ?? score.dimension;
   const assessed = score.state === "assessed" && score.value !== null;
   const panel = `proof-${score.dimension}`;
@@ -204,98 +203,7 @@ function ScoreRow({ score }: { score: ScoreRecord }) {
           {open ? "Hide proof" : "Show proof"}
         </button>
       </div>
-      {open ? (
-        <div className="proof" id={panel}>
-          <p className="proof-basis">{score.basis}</p>
-          <div className="table-wrap">
-            <table className="table proof-table">
-              <caption className="sr-only">Inputs of {label}</caption>
-              <thead>
-                <tr>
-                  <th scope="col">Input</th>
-                  <th scope="col" className="right">
-                    Raw
-                  </th>
-                  <th scope="col">Curve</th>
-                  <th scope="col" className="right">
-                    Score
-                  </th>
-                  <th scope="col" className="right">
-                    Weight
-                  </th>
-                  <th scope="col" className="right">
-                    Adds
-                  </th>
-                  <th scope="col" className="right">
-                    To gain
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {score.inputs.map((i) => (
-                  <tr key={i.name} className={i.available ? "" : "is-off"}>
-                    <td data-label="Input">
-                      <div className="cell-title">
-                        <Term id={i.name}>{i.name.replace(/-/g, " ")}</Term>
-                      </div>
-                      <div className="small muted">{i.description}</div>
-                      <div className="small">{i.available ? i.note : `Unavailable: ${i.note}`}</div>
-                      {i.evidence.length > 0 ? (
-                        <div className="evid">
-                          {i.evidence.map((e) => (
-                            <button
-                              key={e}
-                              type="button"
-                              className="path-link"
-                              onClick={() =>
-                                e.includes("/") || e.includes(".")
-                                  ? select({ kind: "file", path: e })
-                                  : undefined
-                              }
-                            >
-                              {e}
-                            </button>
-                          ))}
-                        </div>
-                      ) : null}
-                    </td>
-                    <td data-label="Raw" className="right num">
-                      {i.raw === null ? "n/a" : dec(i.raw, i.raw < 10 ? 3 : 1)}
-                    </td>
-                    <td data-label="Curve">
-                      <CurveSpark curve={i.curve} raw={i.raw} label={`Curve of ${i.name}`} />
-                      <div className="small muted">
-                        {i.origin === "provisional" ? "Provisional curve" : "Convention"}
-                      </div>
-                    </td>
-                    <td data-label="Score" className="right num">
-                      {i.normalized === null ? "n/a" : Math.round(i.normalized)}
-                    </td>
-                    <td data-label="Weight" className="right num">
-                      {pct(i.weight)}
-                    </td>
-                    <td data-label="Adds" className="right num">
-                      {i.contribution === null ? "n/a" : dec(i.contribution, 1)}
-                    </td>
-                    <td data-label="To gain" className="right num">
-                      {i.impact === null ? "n/a" : `+${dec(i.impact, 1)}`}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {score.weightCoverage !== null ? (
-            <p className="small muted">
-              <Term id="weight-coverage">Inputs used</Term>: {pct(score.weightCoverage)} of this
-              score's weight had data.
-              {score.coverage !== null
-                ? ` Code coverage behind the confidence: ${pct(score.coverage)}.`
-                : ""}
-            </p>
-          ) : null}
-        </div>
-      ) : null}
+      {open ? <ProofPanel score={score} label={label} /> : null}
     </div>
   );
 }

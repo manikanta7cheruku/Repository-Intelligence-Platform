@@ -211,6 +211,41 @@ const SEV: Record<string, Severity> = {
 
 const DETAIL_CONCURRENCY = 16;
 
+/**
+ * One vulnerability often has several OSV records (a GHSA and a PYSEC or CVE record that list each other as aliases).
+ * Records that share an id or an alias are one advisory. The best known id is kept (GHSA, then CVE, then others)
+ * and the other ids are returned as aliases, so the same vulnerability is never counted twice.
+ */
+export function groupAdvisories(
+  ids: string[],
+  aliasesOf: (id: string) => string[],
+): { id: string; aliases: string[] }[] {
+  const rank = (id: string) => (id.startsWith("GHSA-") ? 0 : id.startsWith("CVE-") ? 1 : 2);
+  const sorted = [...ids].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
+  const groups: { keys: Set<string>; members: string[] }[] = [];
+  for (const id of sorted) {
+    const keys = [id, ...aliasesOf(id)];
+    const hit = groups.filter((g) => keys.some((k) => g.keys.has(k)));
+    const target = hit[0] ?? { keys: new Set<string>(), members: [] };
+    if (!hit[0]) groups.push(target);
+    for (const extra of hit.slice(1)) {
+      for (const k of extra.keys) target.keys.add(k);
+      target.members.push(...extra.members);
+      groups.splice(groups.indexOf(extra), 1);
+    }
+    for (const k of keys) target.keys.add(k);
+    target.members.push(id);
+  }
+  return groups
+    .map((g) => {
+      const members = [...g.members].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
+      const id = members[0] as string;
+      const aliases = [...g.keys].filter((k) => k !== id).sort();
+      return { id, aliases };
+    })
+    .sort((a, b) => a.id.localeCompare(b.id));
+}
+
 export async function queryOsv(
   packages: PackageRef[],
   opts: { fetchImpl?: OsvFetch; signal?: AbortSignal; maxPackages?: number; maxDetails?: number },
@@ -287,7 +322,8 @@ export async function queryOsv(
     const findings: Finding[] = [];
     const norm = (n: string | undefined) => (n ?? "").toLowerCase().replace(/_/g, "-");
     for (const h of hits) {
-      for (const id of h.ids) {
+      const groups = groupAdvisories(h.ids, (i) => details.get(i)?.aliases ?? []);
+      for (const { id, aliases: groupAliases } of groups) {
         const d = details.get(id);
         const sev = d?.database_specific?.severity
           ? SEV[d.database_specific.severity.toUpperCase()]
@@ -310,7 +346,7 @@ export async function queryOsv(
           ),
         ];
         const fix = nearestFix(h.pkg.version, fixed);
-        const aliases = (d?.aliases ?? []).filter((a) => a !== id).sort();
+        const aliases = groupAliases;
         const summary = d?.summary ?? "Advisory listed by OSV.";
         const devNote =
           h.pkg.dev === true

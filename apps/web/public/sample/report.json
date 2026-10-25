@@ -8,30 +8,30 @@
       "ref": null
     },
     "name": "Repository-Intelligence-Platform",
-    "commitSha": "5d0a47a1b8035d9f25321c6e977bb77026787076",
+    "commitSha": "eeca4b624ce7a04c2abd903f1d16d1bb5fa6900e",
     "defaultBranch": null,
-    "totalFiles": 562,
-    "analyzedFiles": 145,
-    "totalBytes": 3618298,
+    "totalFiles": 574,
+    "analyzedFiles": 149,
+    "totalBytes": 3786431,
     "truncated": false,
-    "codeFiles": 145,
-    "analyzedCodeFiles": 145,
-    "productionFiles": 110,
+    "codeFiles": 149,
+    "analyzedCodeFiles": 149,
+    "productionFiles": 114,
     "testFiles": 35
   },
   "scope": {
     "languages": [
       {
         "language": "typescript",
-        "files": 142,
-        "codeLines": 23141,
+        "files": 146,
+        "codeLines": 23594,
         "supportLevel": 3,
         "analyzerId": "js-ts"
       },
       {
         "language": "javascript",
         "files": 3,
-        "codeLines": 174,
+        "codeLines": 163,
         "supportLevel": 3,
         "analyzerId": "js-ts"
       }
@@ -114,8 +114,8 @@
       "analyzerId": "js-ts",
       "language": "typescript",
       "supportLevel": 3,
-      "filesEligible": 142,
-      "filesAnalyzed": 142,
+      "filesEligible": 146,
+      "filesAnalyzed": 146,
       "ratio": 1,
       "limitations": [
         "Dynamic imports and require calls with non-literal arguments are counted but not resolved.",
@@ -136,7 +136,7 @@
       "language": null,
       "kind": "config",
       "kindReason": "configuration or data file",
-      "bytes": 230,
+      "bytes": 228,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -299,6 +299,30 @@
       "notAnalyzedReason": null
     },
     {
+      "id": "f_c8e463bbf676",
+      "path": "apps/web/.env.example",
+      "language": null,
+      "kind": "config",
+      "kindReason": "configuration or data file",
+      "bytes": 299,
+      "lines": null,
+      "codeLines": null,
+      "analyzed": false,
+      "notAnalyzedReason": null
+    },
+    {
+      "id": "f_285ec76f9170",
+      "path": "apps/web/.env.local",
+      "language": null,
+      "kind": "config",
+      "kindReason": "configuration or data file",
+      "bytes": 392,
+      "lines": null,
+      "codeLines": null,
+      "analyzed": false,
+      "notAnalyzedReason": null
+    },
+    {
       "id": "f_026858141189",
       "path": "apps/web/next-env.d.ts",
       "language": "typescript",
@@ -340,7 +364,7 @@
       "language": null,
       "kind": "config",
       "kindReason": "configuration or data file",
-      "bytes": 324806,
+      "bytes": 461982,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -352,9 +376,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 4499,
-      "lines": 137,
-      "codeLines": 122,
+      "bytes": 4754,
+      "lines": 140,
+      "codeLines": 124,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -364,7 +388,7 @@
       "language": null,
       "kind": "config",
       "kindReason": "configuration or data file",
-      "bytes": 40957,
+      "bytes": 42739,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -508,9 +532,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 8645,
-      "lines": 263,
-      "codeLines": 250,
+      "bytes": 8887,
+      "lines": 271,
+      "codeLines": 258,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -520,9 +544,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 9036,
-      "lines": 273,
-      "codeLines": 263,
+      "bytes": 7492,
+      "lines": 229,
+      "codeLines": 221,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -635,14 +659,26 @@
       "notAnalyzedReason": null
     },
     {
+      "id": "f_f9c25e19a441",
+      "path": "apps/web/src/components/proof-panel.tsx",
+      "language": "typescript",
+      "kind": "source",
+      "kindReason": "typescript source extension",
+      "bytes": 10483,
+      "lines": 288,
+      "codeLines": 276,
+      "analyzed": true,
+      "notAnalyzedReason": null
+    },
+    {
       "id": "f_24690aea149f",
       "path": "apps/web/src/components/report-context.tsx",
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 4529,
-      "lines": 154,
-      "codeLines": 142,
+      "bytes": 4894,
+      "lines": 164,
+      "codeLines": 152,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -664,9 +700,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 1011,
-      "lines": 38,
-      "codeLines": 36,
+      "bytes": 1058,
+      "lines": 39,
+      "codeLines": 37,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -676,9 +712,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 11075,
-      "lines": 301,
-      "codeLines": 291,
+      "bytes": 7133,
+      "lines": 209,
+      "codeLines": 199,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -688,9 +724,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 24845,
-      "lines": 735,
-      "codeLines": 720,
+      "bytes": 14184,
+      "lines": 420,
+      "codeLines": 411,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -707,14 +743,26 @@
       "notAnalyzedReason": null
     },
     {
+      "id": "f_8162f93f794b",
+      "path": "apps/web/src/components/sections/practices-history.tsx",
+      "language": "typescript",
+      "kind": "source",
+      "kindReason": "typescript source extension",
+      "bytes": 10774,
+      "lines": 313,
+      "codeLines": 308,
+      "analyzed": true,
+      "notAnalyzedReason": null
+    },
+    {
       "id": "f_50821c70ea80",
       "path": "apps/web/src/components/sections/rules-compare-export.tsx",
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 14079,
-      "lines": 412,
-      "codeLines": 403,
+      "bytes": 14323,
+      "lines": 421,
+      "codeLines": 412,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -844,9 +892,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 6803,
-      "lines": 181,
-      "codeLines": 164,
+      "bytes": 6891,
+      "lines": 183,
+      "codeLines": 166,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -856,9 +904,9 @@
       "language": "typescript",
       "kind": "test",
       "kindReason": "path matches a test pattern",
-      "bytes": 5945,
-      "lines": 161,
-      "codeLines": 155,
+      "bytes": 7663,
+      "lines": 205,
+      "codeLines": 198,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -880,7 +928,7 @@
       "language": null,
       "kind": "other",
       "kindReason": "no matching rule",
-      "bytes": 152449,
+      "bytes": 153038,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -1456,7 +1504,7 @@
       "language": null,
       "kind": "docs",
       "kindReason": "documentation file or directory",
-      "bytes": 12069,
+      "bytes": 14532,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -1540,7 +1588,7 @@
       "language": null,
       "kind": "docs",
       "kindReason": "documentation file or directory",
-      "bytes": 7603,
+      "bytes": 9255,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -1612,7 +1660,7 @@
       "language": null,
       "kind": "docs",
       "kindReason": "documentation file or directory",
-      "bytes": 5331,
+      "bytes": 5636,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -1708,7 +1756,7 @@
       "language": null,
       "kind": "docs",
       "kindReason": "documentation file or directory",
-      "bytes": 3619,
+      "bytes": 4009,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -1732,7 +1780,7 @@
       "language": null,
       "kind": "docs",
       "kindReason": "documentation file or directory",
-      "bytes": 3345,
+      "bytes": 4343,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -3472,9 +3520,9 @@
       "language": "typescript",
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 1244,
-      "lines": 25,
-      "codeLines": 15,
+      "bytes": 1453,
+      "lines": 31,
+      "codeLines": 20,
       "analyzed": false,
       "notAnalyzedReason": null
     },
@@ -3484,9 +3532,9 @@
       "language": "javascript",
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 8110,
-      "lines": 215,
-      "codeLines": 208,
+      "bytes": 8602,
+      "lines": 225,
+      "codeLines": 218,
       "analyzed": false,
       "notAnalyzedReason": null
     },
@@ -3496,7 +3544,7 @@
       "language": null,
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 8170,
+      "bytes": 8606,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -3544,9 +3592,9 @@
       "language": "typescript",
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 614,
-      "lines": 25,
-      "codeLines": 23,
+      "bytes": 945,
+      "lines": 34,
+      "codeLines": 28,
       "analyzed": false,
       "notAnalyzedReason": null
     },
@@ -3628,9 +3676,9 @@
       "language": "javascript",
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 13639,
-      "lines": 351,
-      "codeLines": 349,
+      "bytes": 14003,
+      "lines": 352,
+      "codeLines": 348,
       "analyzed": false,
       "notAnalyzedReason": null
     },
@@ -3640,7 +3688,7 @@
       "language": null,
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 14436,
+      "bytes": 14752,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -3724,9 +3772,9 @@
       "language": "typescript",
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 890,
-      "lines": 14,
-      "codeLines": 10,
+      "bytes": 939,
+      "lines": 15,
+      "codeLines": 11,
       "analyzed": false,
       "notAnalyzedReason": null
     },
@@ -3736,9 +3784,9 @@
       "language": "javascript",
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 666,
-      "lines": 11,
-      "codeLines": 6,
+      "bytes": 715,
+      "lines": 12,
+      "codeLines": 7,
       "analyzed": false,
       "notAnalyzedReason": null
     },
@@ -3748,7 +3796,7 @@
       "language": null,
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 438,
+      "bytes": 481,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -3868,7 +3916,7 @@
       "language": "typescript",
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 389,
+      "bytes": 378,
       "lines": 8,
       "codeLines": 7,
       "analyzed": false,
@@ -3880,9 +3928,9 @@
       "language": "javascript",
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 3284,
-      "lines": 141,
-      "codeLines": 139,
+      "bytes": 2814,
+      "lines": 104,
+      "codeLines": 102,
       "analyzed": false,
       "notAnalyzedReason": null
     },
@@ -3892,7 +3940,7 @@
       "language": null,
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 4349,
+      "bytes": 3909,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -4096,7 +4144,7 @@
       "language": "javascript",
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 9491,
+      "bytes": 9482,
       "lines": 200,
       "codeLines": 190,
       "analyzed": false,
@@ -4108,7 +4156,7 @@
       "language": null,
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 10012,
+      "bytes": 10002,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -4372,9 +4420,9 @@
       "language": "typescript",
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 2534,
-      "lines": 38,
-      "codeLines": 38,
+      "bytes": 2583,
+      "lines": 39,
+      "codeLines": 39,
       "analyzed": false,
       "notAnalyzedReason": null
     },
@@ -4384,9 +4432,9 @@
       "language": "javascript",
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 2062,
-      "lines": 33,
-      "codeLines": 32,
+      "bytes": 2111,
+      "lines": 34,
+      "codeLines": 33,
       "analyzed": false,
       "notAnalyzedReason": null
     },
@@ -4396,7 +4444,7 @@
       "language": null,
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 1714,
+      "bytes": 1757,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -4469,6 +4517,42 @@
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
       "bytes": 161,
+      "lines": null,
+      "codeLines": null,
+      "analyzed": false,
+      "notAnalyzedReason": null
+    },
+    {
+      "id": "f_4557458320b0",
+      "path": "packages/core/dist/ir/upgrade.d.ts",
+      "language": "typescript",
+      "kind": "generated",
+      "kindReason": "path matches a generated or build output pattern",
+      "bytes": 448,
+      "lines": 9,
+      "codeLines": 4,
+      "analyzed": false,
+      "notAnalyzedReason": null
+    },
+    {
+      "id": "f_3e302e70c108",
+      "path": "packages/core/dist/ir/upgrade.js",
+      "language": "javascript",
+      "kind": "generated",
+      "kindReason": "path matches a generated or build output pattern",
+      "bytes": 1923,
+      "lines": 40,
+      "codeLines": 34,
+      "analyzed": false,
+      "notAnalyzedReason": null
+    },
+    {
+      "id": "f_6d484a555705",
+      "path": "packages/core/dist/ir/upgrade.js.map",
+      "language": null,
+      "kind": "generated",
+      "kindReason": "path matches a generated or build output pattern",
+      "bytes": 1640,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -4636,9 +4720,9 @@
       "language": "javascript",
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 2311,
-      "lines": 61,
-      "codeLines": 59,
+      "bytes": 2887,
+      "lines": 77,
+      "codeLines": 74,
       "analyzed": false,
       "notAnalyzedReason": null
     },
@@ -4648,7 +4732,7 @@
       "language": null,
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 2222,
+      "bytes": 2753,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -4708,9 +4792,9 @@
       "language": "javascript",
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 3668,
-      "lines": 87,
-      "codeLines": 85,
+      "bytes": 3773,
+      "lines": 91,
+      "codeLines": 89,
       "analyzed": false,
       "notAnalyzedReason": null
     },
@@ -4720,7 +4804,7 @@
       "language": null,
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 3665,
+      "bytes": 3707,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -4780,9 +4864,9 @@
       "language": "javascript",
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 9059,
-      "lines": 201,
-      "codeLines": 198,
+      "bytes": 10061,
+      "lines": 223,
+      "codeLines": 217,
       "analyzed": false,
       "notAnalyzedReason": null
     },
@@ -4792,7 +4876,7 @@
       "language": null,
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 9442,
+      "bytes": 10237,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -5236,9 +5320,9 @@
       "language": "typescript",
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 982,
-      "lines": 33,
-      "codeLines": 32,
+      "bytes": 1458,
+      "lines": 42,
+      "codeLines": 36,
       "analyzed": false,
       "notAnalyzedReason": null
     },
@@ -5248,9 +5332,9 @@
       "language": "javascript",
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 13547,
-      "lines": 333,
-      "codeLines": 330,
+      "bytes": 15143,
+      "lines": 368,
+      "codeLines": 360,
       "analyzed": false,
       "notAnalyzedReason": null
     },
@@ -5260,7 +5344,7 @@
       "language": null,
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 14203,
+      "bytes": 16226,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -5320,9 +5404,9 @@
       "language": "javascript",
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 6562,
-      "lines": 102,
-      "codeLines": 101,
+      "bytes": 7222,
+      "lines": 113,
+      "codeLines": 111,
       "analyzed": false,
       "notAnalyzedReason": null
     },
@@ -5332,7 +5416,7 @@
       "language": null,
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
-      "bytes": 5032,
+      "bytes": 5845,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -5405,6 +5489,42 @@
       "kind": "generated",
       "kindReason": "path matches a generated or build output pattern",
       "bytes": 10867,
+      "lines": null,
+      "codeLines": null,
+      "analyzed": false,
+      "notAnalyzedReason": null
+    },
+    {
+      "id": "f_03c3c8d38abe",
+      "path": "packages/core/dist/util/binary.d.ts",
+      "language": "typescript",
+      "kind": "generated",
+      "kindReason": "path matches a generated or build output pattern",
+      "bytes": 60,
+      "lines": 1,
+      "codeLines": 1,
+      "analyzed": false,
+      "notAnalyzedReason": null
+    },
+    {
+      "id": "f_414d95079493",
+      "path": "packages/core/dist/util/binary.js",
+      "language": "javascript",
+      "kind": "generated",
+      "kindReason": "path matches a generated or build output pattern",
+      "bytes": 591,
+      "lines": 40,
+      "codeLines": 39,
+      "analyzed": false,
+      "notAnalyzedReason": null
+    },
+    {
+      "id": "f_325dde80e437",
+      "path": "packages/core/dist/util/binary.js.map",
+      "language": null,
+      "kind": "generated",
+      "kindReason": "path matches a generated or build output pattern",
+      "bytes": 635,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -5644,9 +5764,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 8034,
-      "lines": 235,
-      "codeLines": 214,
+      "bytes": 8727,
+      "lines": 246,
+      "codeLines": 224,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -5680,9 +5800,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 566,
-      "lines": 25,
-      "codeLines": 20,
+      "bytes": 858,
+      "lines": 30,
+      "codeLines": 21,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -5716,9 +5836,9 @@
       "language": "typescript",
       "kind": "test",
       "kindReason": "path matches a test pattern",
-      "bytes": 3906,
-      "lines": 103,
-      "codeLines": 98,
+      "bytes": 5362,
+      "lines": 133,
+      "codeLines": 127,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -5728,9 +5848,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 13128,
-      "lines": 373,
-      "codeLines": 357,
+      "bytes": 13556,
+      "lines": 377,
+      "codeLines": 358,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -5764,9 +5884,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 891,
-      "lines": 15,
-      "codeLines": 10,
+      "bytes": 940,
+      "lines": 16,
+      "codeLines": 11,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -5824,9 +5944,9 @@
       "language": "typescript",
       "kind": "test",
       "kindReason": "path matches a test pattern",
-      "bytes": 7718,
-      "lines": 206,
-      "codeLines": 201,
+      "bytes": 8310,
+      "lines": 224,
+      "codeLines": 219,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -5836,9 +5956,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 3150,
-      "lines": 147,
-      "codeLines": 139,
+      "bytes": 2730,
+      "lines": 109,
+      "codeLines": 102,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -5920,7 +6040,7 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 10728,
+      "bytes": 10719,
       "lines": 273,
       "codeLines": 249,
       "analyzed": true,
@@ -5932,9 +6052,9 @@
       "language": "typescript",
       "kind": "test",
       "kindReason": "path matches a test pattern",
-      "bytes": 7315,
-      "lines": 195,
-      "codeLines": 180,
+      "bytes": 7307,
+      "lines": 192,
+      "codeLines": 178,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -5956,7 +6076,7 @@
       "language": "typescript",
       "kind": "test",
       "kindReason": "path matches a test pattern",
-      "bytes": 8074,
+      "bytes": 8075,
       "lines": 204,
       "codeLines": 198,
       "analyzed": true,
@@ -6088,9 +6208,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 2566,
-      "lines": 47,
-      "codeLines": 46,
+      "bytes": 2615,
+      "lines": 48,
+      "codeLines": 47,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -6127,6 +6247,18 @@
       "bytes": 13510,
       "lines": 517,
       "codeLines": 455,
+      "analyzed": true,
+      "notAnalyzedReason": null
+    },
+    {
+      "id": "f_a6397e777ed4",
+      "path": "packages/core/src/ir/upgrade.ts",
+      "language": "typescript",
+      "kind": "source",
+      "kindReason": "typescript source extension",
+      "bytes": 2096,
+      "lines": 42,
+      "codeLines": 35,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -6232,9 +6364,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 2280,
-      "lines": 67,
-      "codeLines": 65,
+      "bytes": 2778,
+      "lines": 83,
+      "codeLines": 80,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -6244,9 +6376,9 @@
       "language": "typescript",
       "kind": "test",
       "kindReason": "path matches a test pattern",
-      "bytes": 13919,
-      "lines": 350,
-      "codeLines": 342,
+      "bytes": 15244,
+      "lines": 376,
+      "codeLines": 367,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -6268,9 +6400,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 4162,
-      "lines": 131,
-      "codeLines": 126,
+      "bytes": 4235,
+      "lines": 135,
+      "codeLines": 130,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -6304,9 +6436,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 8880,
-      "lines": 216,
-      "codeLines": 203,
+      "bytes": 9845,
+      "lines": 237,
+      "codeLines": 219,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -6532,9 +6664,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 13666,
-      "lines": 382,
-      "codeLines": 365,
+      "bytes": 15289,
+      "lines": 418,
+      "codeLines": 395,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -6556,9 +6688,9 @@
       "language": "typescript",
       "kind": "test",
       "kindReason": "path matches a test pattern",
-      "bytes": 11536,
-      "lines": 273,
-      "codeLines": 262,
+      "bytes": 13337,
+      "lines": 318,
+      "codeLines": 305,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -6568,9 +6700,9 @@
       "language": "typescript",
       "kind": "source",
       "kindReason": "typescript source extension",
-      "bytes": 7407,
-      "lines": 197,
-      "codeLines": 194,
+      "bytes": 7946,
+      "lines": 206,
+      "codeLines": 202,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -6607,6 +6739,18 @@
       "bytes": 9854,
       "lines": 259,
       "codeLines": 247,
+      "analyzed": true,
+      "notAnalyzedReason": null
+    },
+    {
+      "id": "f_afd80eafb3c0",
+      "path": "packages/core/src/util/binary.ts",
+      "language": "typescript",
+      "kind": "source",
+      "kindReason": "typescript source extension",
+      "bytes": 508,
+      "lines": 41,
+      "codeLines": 39,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -6748,7 +6892,7 @@
       "language": null,
       "kind": "config",
       "kindReason": "configuration or data file",
-      "bytes": 150324,
+      "bytes": 147437,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -6760,7 +6904,7 @@
       "language": null,
       "kind": "config",
       "kindReason": "configuration or data file",
-      "bytes": 478498,
+      "bytes": 469866,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -6772,7 +6916,7 @@
       "language": null,
       "kind": "docs",
       "kindReason": "documentation file or directory",
-      "bytes": 52020,
+      "bytes": 49669,
       "lines": null,
       "codeLines": null,
       "analyzed": false,
@@ -6820,9 +6964,9 @@
       "language": "javascript",
       "kind": "source",
       "kindReason": "javascript source extension",
-      "bytes": 1568,
-      "lines": 40,
-      "codeLines": 37,
+      "bytes": 1501,
+      "lines": 29,
+      "codeLines": 26,
       "analyzed": true,
       "notAnalyzedReason": null
     },
@@ -6979,7 +7123,7 @@
         "id": "f_46f84cf68a3a",
         "path": "apps/web/src/components/charts.tsx",
         "moduleId": "m_8f7fe79585d8",
-        "fanIn": 2,
+        "fanIn": 1,
         "fanOut": 4
       },
       {
@@ -6993,14 +7137,14 @@
         "id": "f_0cf0c2f2c30b",
         "path": "apps/web/src/components/data-table.tsx",
         "moduleId": "m_8f7fe79585d8",
-        "fanIn": 5,
+        "fanIn": 6,
         "fanOut": 0
       },
       {
         "id": "f_2eaedc5e5c8b",
         "path": "apps/web/src/components/drawer.tsx",
         "moduleId": "m_8f7fe79585d8",
-        "fanIn": 2,
+        "fanIn": 1,
         "fanOut": 6
       },
       {
@@ -7046,10 +7190,17 @@
         "fanOut": 4
       },
       {
+        "id": "f_f9c25e19a441",
+        "path": "apps/web/src/components/proof-panel.tsx",
+        "moduleId": "m_8f7fe79585d8",
+        "fanIn": 1,
+        "fanOut": 5
+      },
+      {
         "id": "f_24690aea149f",
         "path": "apps/web/src/components/report-context.tsx",
         "moduleId": "m_8f7fe79585d8",
-        "fanIn": 9,
+        "fanIn": 11,
         "fanOut": 2
       },
       {
@@ -7064,7 +7215,7 @@
         "path": "apps/web/src/components/section-view.tsx",
         "moduleId": "m_8f7fe79585d8",
         "fanIn": 1,
-        "fanOut": 5
+        "fanOut": 6
       },
       {
         "id": "f_f66a14a2c380",
@@ -7078,7 +7229,7 @@
         "path": "apps/web/src/components/sections/findings-pages.tsx",
         "moduleId": "m_8f7fe79585d8",
         "fanIn": 1,
-        "fanOut": 9
+        "fanOut": 8
       },
       {
         "id": "f_e4f3cc75bd55",
@@ -7086,6 +7237,13 @@
         "moduleId": "m_8f7fe79585d8",
         "fanIn": 1,
         "fanOut": 9
+      },
+      {
+        "id": "f_8162f93f794b",
+        "path": "apps/web/src/components/sections/practices-history.tsx",
+        "moduleId": "m_8f7fe79585d8",
+        "fanIn": 1,
+        "fanOut": 4
       },
       {
         "id": "f_50821c70ea80",
@@ -7119,14 +7277,14 @@
         "id": "f_02d493a30ae5",
         "path": "apps/web/src/components/ui.tsx",
         "moduleId": "m_8f7fe79585d8",
-        "fanIn": 8,
+        "fanIn": 10,
         "fanOut": 3
       },
       {
         "id": "f_3bd2a3c5fb5c",
         "path": "apps/web/src/lib/format.ts",
         "moduleId": "m_f7d0b3a9fb56",
-        "fanIn": 11,
+        "fanIn": 13,
         "fanOut": 1
       },
       {
@@ -7168,7 +7326,7 @@
         "id": "f_f3b6515ccf2f",
         "path": "apps/web/src/lib/svg.ts",
         "moduleId": "m_f7d0b3a9fb56",
-        "fanIn": 7,
+        "fanIn": 8,
         "fanOut": 0
       },
       {
@@ -7266,8 +7424,8 @@
         "id": "f_697d94f35967",
         "path": "packages/core/src/browser.ts",
         "moduleId": "m_e9c909d4bd4a",
-        "fanIn": 15,
-        "fanOut": 6
+        "fanIn": 16,
+        "fanOut": 7
       },
       {
         "id": "f_47607adc7025",
@@ -7294,8 +7452,8 @@
         "id": "f_027bb6fab35d",
         "path": "packages/core/src/detect/languages.ts",
         "moduleId": "m_0d464f19f383",
-        "fanIn": 4,
-        "fanOut": 1
+        "fanIn": 3,
+        "fanOut": 2
       },
       {
         "id": "f_6c11c7599591",
@@ -7393,7 +7551,7 @@
         "path": "packages/core/src/index.ts",
         "moduleId": "m_e9c909d4bd4a",
         "fanIn": 0,
-        "fanOut": 30
+        "fanOut": 31
       },
       {
         "id": "f_b253b28dff63",
@@ -7406,8 +7564,15 @@
         "id": "f_c4e69eb883b7",
         "path": "packages/core/src/ir/types.ts",
         "moduleId": "m_e709837b1d15",
-        "fanIn": 38,
+        "fanIn": 39,
         "fanOut": 0
+      },
+      {
+        "id": "f_a6397e777ed4",
+        "path": "packages/core/src/ir/upgrade.ts",
+        "moduleId": "m_e709837b1d15",
+        "fanIn": 2,
+        "fanOut": 1
       },
       {
         "id": "f_ad875e74c4e0",
@@ -7592,6 +7757,13 @@
         "fanOut": 6
       },
       {
+        "id": "f_afd80eafb3c0",
+        "path": "packages/core/src/util/binary.ts",
+        "moduleId": "m_d5822bad58de",
+        "fanIn": 2,
+        "fanOut": 1
+      },
+      {
         "id": "f_096beb44b441",
         "path": "packages/core/src/util/glob.ts",
         "moduleId": "m_d5822bad58de",
@@ -7609,7 +7781,7 @@
         "id": "f_3b9c02094236",
         "path": "packages/core/src/util/paths.ts",
         "moduleId": "m_d5822bad58de",
-        "fanIn": 13,
+        "fanIn": 14,
         "fanOut": 0
       },
       {
@@ -7655,6 +7827,13 @@
         "weight": 1,
         "typeOnly": false,
         "occurrences": [{ "line": 1, "specifier": "../util/paths.js", "kind": "import" }]
+      },
+      {
+        "from": "f_027bb6fab35d",
+        "to": "f_afd80eafb3c0",
+        "weight": 1,
+        "typeOnly": false,
+        "occurrences": [{ "line": 77, "specifier": "../util/binary.js", "kind": "reexport" }]
       },
       {
         "from": "f_02d493a30ae5",
@@ -7941,7 +8120,7 @@
         "to": "f_61981a7f7497",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 20, "specifier": "@/lib/store", "kind": "import" }]
+        "occurrences": [{ "line": 21, "specifier": "@/lib/store", "kind": "import" }]
       },
       {
         "from": "f_24690aea149f",
@@ -8172,17 +8351,17 @@
       },
       {
         "from": "f_2d687c227de7",
-        "to": "f_027bb6fab35d",
-        "weight": 1,
-        "typeOnly": false,
-        "occurrences": [{ "line": 5, "specifier": "../detect/languages.js", "kind": "import" }]
-      },
-      {
-        "from": "f_2d687c227de7",
         "to": "f_3b9c02094236",
         "weight": 1,
         "typeOnly": false,
         "occurrences": [{ "line": 6, "specifier": "../util/paths.js", "kind": "import" }]
+      },
+      {
+        "from": "f_2d687c227de7",
+        "to": "f_afd80eafb3c0",
+        "weight": 1,
+        "typeOnly": false,
+        "occurrences": [{ "line": 5, "specifier": "../util/binary.js", "kind": "import" }]
       },
       {
         "from": "f_2d687c227de7",
@@ -8441,14 +8620,14 @@
         "to": "f_02d493a30ae5",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 17, "specifier": "@/components/ui", "kind": "import" }]
+        "occurrences": [{ "line": 18, "specifier": "@/components/ui", "kind": "import" }]
       },
       {
         "from": "f_50821c70ea80",
         "to": "f_0cf0c2f2c30b",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 13, "specifier": "@/components/data-table", "kind": "import" }]
+        "occurrences": [{ "line": 14, "specifier": "@/components/data-table", "kind": "import" }]
       },
       {
         "from": "f_50821c70ea80",
@@ -8456,7 +8635,7 @@
         "weight": 1,
         "typeOnly": false,
         "occurrences": [
-          { "line": 16, "specifier": "@/components/report-context", "kind": "import" }
+          { "line": 17, "specifier": "@/components/report-context", "kind": "import" }
         ]
       },
       {
@@ -8464,28 +8643,28 @@
         "to": "f_3bd2a3c5fb5c",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 26, "specifier": "@/lib/format", "kind": "import" }]
+        "occurrences": [{ "line": 27, "specifier": "@/lib/format", "kind": "import" }]
       },
       {
         "from": "f_50821c70ea80",
         "to": "f_50e8071a1ff9",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 15, "specifier": "@/components/layered-graph", "kind": "import" }]
+        "occurrences": [{ "line": 16, "specifier": "@/components/layered-graph", "kind": "import" }]
       },
       {
         "from": "f_50821c70ea80",
         "to": "f_612221bbbf85",
         "weight": 1,
         "typeOnly": true,
-        "occurrences": [{ "line": 27, "specifier": "@/lib/layout", "kind": "type-only" }]
+        "occurrences": [{ "line": 28, "specifier": "@/lib/layout", "kind": "type-only" }]
       },
       {
         "from": "f_50821c70ea80",
         "to": "f_65c77f429e1b",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 14, "specifier": "@/components/findings", "kind": "import" }]
+        "occurrences": [{ "line": 15, "specifier": "@/components/findings", "kind": "import" }]
       },
       {
         "from": "f_50821c70ea80",
@@ -8499,7 +8678,7 @@
         "to": "f_f3b6515ccf2f",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 28, "specifier": "@/lib/svg", "kind": "import" }]
+        "occurrences": [{ "line": 29, "specifier": "@/lib/svg", "kind": "import" }]
       },
       {
         "from": "f_50e8071a1ff9",
@@ -8746,7 +8925,7 @@
         "to": "f_81c4f2ed725a",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 13, "specifier": "./report/diagram.js", "kind": "reexport" }]
+        "occurrences": [{ "line": 14, "specifier": "./report/diagram.js", "kind": "reexport" }]
       },
       {
         "from": "f_697d94f35967",
@@ -8757,6 +8936,13 @@
           { "line": 6, "specifier": "./glossary/glossary.js", "kind": "type-only" },
           { "line": 7, "specifier": "./glossary/glossary.js", "kind": "reexport" }
         ]
+      },
+      {
+        "from": "f_697d94f35967",
+        "to": "f_a6397e777ed4",
+        "weight": 1,
+        "typeOnly": false,
+        "occurrences": [{ "line": 13, "specifier": "./ir/upgrade.js", "kind": "reexport" }]
       },
       {
         "from": "f_697d94f35967",
@@ -8774,8 +8960,8 @@
         "weight": 2,
         "typeOnly": false,
         "occurrences": [
-          { "line": 14, "specifier": "./report/diff.js", "kind": "type-only" },
-          { "line": 15, "specifier": "./report/diff.js", "kind": "reexport" }
+          { "line": 15, "specifier": "./report/diff.js", "kind": "type-only" },
+          { "line": 16, "specifier": "./report/diff.js", "kind": "reexport" }
         ]
       },
       {
@@ -8887,6 +9073,34 @@
         "occurrences": [{ "line": 45, "specifier": "./help.js", "kind": "import" }]
       },
       {
+        "from": "f_8162f93f794b",
+        "to": "f_02d493a30ae5",
+        "weight": 1,
+        "typeOnly": false,
+        "occurrences": [{ "line": 5, "specifier": "@/components/ui", "kind": "import" }]
+      },
+      {
+        "from": "f_8162f93f794b",
+        "to": "f_0cf0c2f2c30b",
+        "weight": 1,
+        "typeOnly": false,
+        "occurrences": [{ "line": 3, "specifier": "@/components/data-table", "kind": "import" }]
+      },
+      {
+        "from": "f_8162f93f794b",
+        "to": "f_24690aea149f",
+        "weight": 1,
+        "typeOnly": false,
+        "occurrences": [{ "line": 4, "specifier": "@/components/report-context", "kind": "import" }]
+      },
+      {
+        "from": "f_8162f93f794b",
+        "to": "f_3bd2a3c5fb5c",
+        "weight": 1,
+        "typeOnly": false,
+        "occurrences": [{ "line": 6, "specifier": "@/lib/format", "kind": "import" }]
+      },
+      {
         "from": "f_81c4f2ed725a",
         "to": "f_c4e69eb883b7",
         "weight": 1,
@@ -8919,7 +9133,7 @@
         "to": "f_02d493a30ae5",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 11, "specifier": "@/components/ui", "kind": "import" }]
+        "occurrences": [{ "line": 10, "specifier": "@/components/ui", "kind": "import" }]
       },
       {
         "from": "f_878313845331",
@@ -8933,23 +9147,14 @@
         "to": "f_24690aea149f",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [
-          { "line": 10, "specifier": "@/components/report-context", "kind": "import" }
-        ]
-      },
-      {
-        "from": "f_878313845331",
-        "to": "f_2eaedc5e5c8b",
-        "weight": 1,
-        "typeOnly": false,
-        "occurrences": [{ "line": 7, "specifier": "@/components/drawer", "kind": "import" }]
+        "occurrences": [{ "line": 9, "specifier": "@/components/report-context", "kind": "import" }]
       },
       {
         "from": "f_878313845331",
         "to": "f_3bd2a3c5fb5c",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 22, "specifier": "@/lib/format", "kind": "import" }]
+        "occurrences": [{ "line": 21, "specifier": "@/lib/format", "kind": "import" }]
       },
       {
         "from": "f_878313845331",
@@ -8963,7 +9168,7 @@
         "to": "f_65c77f429e1b",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 9, "specifier": "@/components/findings", "kind": "import" }]
+        "occurrences": [{ "line": 8, "specifier": "@/components/findings", "kind": "import" }]
       },
       {
         "from": "f_878313845331",
@@ -8977,7 +9182,7 @@
         "to": "f_a96b892ca3f3",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 8, "specifier": "@/components/export-menu", "kind": "import" }]
+        "occurrences": [{ "line": 7, "specifier": "@/components/export-menu", "kind": "import" }]
       },
       {
         "from": "f_88aed4ea5796",
@@ -8998,14 +9203,14 @@
         "to": "f_1432b0fd11b2",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 26, "specifier": "./rules/engine.js", "kind": "reexport" }]
+        "occurrences": [{ "line": 27, "specifier": "./rules/engine.js", "kind": "reexport" }]
       },
       {
         "from": "f_9a4ceebe7c6f",
         "to": "f_205f1b656fc2",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 44, "specifier": "./rules/yaml.js", "kind": "reexport" }]
+        "occurrences": [{ "line": 45, "specifier": "./rules/yaml.js", "kind": "reexport" }]
       },
       {
         "from": "f_9a4ceebe7c6f",
@@ -9013,8 +9218,8 @@
         "weight": 2,
         "typeOnly": false,
         "occurrences": [
-          { "line": 15, "specifier": "./pipeline/analyze.js", "kind": "type-only" },
-          { "line": 16, "specifier": "./pipeline/analyze.js", "kind": "reexport" }
+          { "line": 16, "specifier": "./pipeline/analyze.js", "kind": "type-only" },
+          { "line": 17, "specifier": "./pipeline/analyze.js", "kind": "reexport" }
         ]
       },
       {
@@ -9022,7 +9227,7 @@
         "to": "f_3c3430ec8596",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 32, "specifier": "./git/activity.js", "kind": "reexport" }]
+        "occurrences": [{ "line": 33, "specifier": "./git/activity.js", "kind": "reexport" }]
       },
       {
         "from": "f_9a4ceebe7c6f",
@@ -9036,21 +9241,21 @@
         "to": "f_4b3cac6f432d",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 34, "specifier": "./git/worktree.js", "kind": "reexport" }]
+        "occurrences": [{ "line": 35, "specifier": "./git/worktree.js", "kind": "reexport" }]
       },
       {
         "from": "f_9a4ceebe7c6f",
         "to": "f_4f0f7e579233",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 41, "specifier": "./pipeline/snapshot.js", "kind": "reexport" }]
+        "occurrences": [{ "line": 42, "specifier": "./pipeline/snapshot.js", "kind": "reexport" }]
       },
       {
         "from": "f_9a4ceebe7c6f",
         "to": "f_503584de8dc7",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 22, "specifier": "./report/html.js", "kind": "reexport" }]
+        "occurrences": [{ "line": 23, "specifier": "./report/html.js", "kind": "reexport" }]
       },
       {
         "from": "f_9a4ceebe7c6f",
@@ -9058,8 +9263,8 @@
         "weight": 2,
         "typeOnly": false,
         "occurrences": [
-          { "line": 17, "specifier": "./pipeline/target.js", "kind": "type-only" },
-          { "line": 18, "specifier": "./pipeline/target.js", "kind": "reexport" }
+          { "line": 18, "specifier": "./pipeline/target.js", "kind": "type-only" },
+          { "line": 19, "specifier": "./pipeline/target.js", "kind": "reexport" }
         ]
       },
       {
@@ -9074,7 +9279,7 @@
         "to": "f_6b68c8a5c01c",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 23, "specifier": "./report/markdown.js", "kind": "reexport" }]
+        "occurrences": [{ "line": 24, "specifier": "./report/markdown.js", "kind": "reexport" }]
       },
       {
         "from": "f_9a4ceebe7c6f",
@@ -9082,8 +9287,8 @@
         "weight": 2,
         "typeOnly": false,
         "occurrences": [
-          { "line": 42, "specifier": "./pr/guardian.js", "kind": "type-only" },
-          { "line": 43, "specifier": "./pr/guardian.js", "kind": "reexport" }
+          { "line": 43, "specifier": "./pr/guardian.js", "kind": "type-only" },
+          { "line": 44, "specifier": "./pr/guardian.js", "kind": "reexport" }
         ]
       },
       {
@@ -9091,21 +9296,21 @@
         "to": "f_81c4f2ed725a",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 19, "specifier": "./report/diagram.js", "kind": "reexport" }]
+        "occurrences": [{ "line": 20, "specifier": "./report/diagram.js", "kind": "reexport" }]
       },
       {
         "from": "f_9a4ceebe7c6f",
         "to": "f_849a05d8d719",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 33, "specifier": "./git/quality.js", "kind": "reexport" }]
+        "occurrences": [{ "line": 34, "specifier": "./git/quality.js", "kind": "reexport" }]
       },
       {
         "from": "f_9a4ceebe7c6f",
         "to": "f_8540e6326357",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 25, "specifier": "./risk/risk.js", "kind": "reexport" }]
+        "occurrences": [{ "line": 26, "specifier": "./risk/risk.js", "kind": "reexport" }]
       },
       {
         "from": "f_9a4ceebe7c6f",
@@ -9126,10 +9331,17 @@
       },
       {
         "from": "f_9a4ceebe7c6f",
+        "to": "f_a6397e777ed4",
+        "weight": 1,
+        "typeOnly": false,
+        "occurrences": [{ "line": 14, "specifier": "./ir/upgrade.js", "kind": "reexport" }]
+      },
+      {
+        "from": "f_9a4ceebe7c6f",
         "to": "f_ad875e74c4e0",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 14, "specifier": "./metrics/coverage.js", "kind": "reexport" }]
+        "occurrences": [{ "line": 15, "specifier": "./metrics/coverage.js", "kind": "reexport" }]
       },
       {
         "from": "f_9a4ceebe7c6f",
@@ -9146,7 +9358,7 @@
         "to": "f_b94869cc583c",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 27, "specifier": "./scoring/profile.js", "kind": "reexport" }]
+        "occurrences": [{ "line": 28, "specifier": "./scoring/profile.js", "kind": "reexport" }]
       },
       {
         "from": "f_9a4ceebe7c6f",
@@ -9161,8 +9373,8 @@
         "weight": 2,
         "typeOnly": false,
         "occurrences": [
-          { "line": 20, "specifier": "./report/diff.js", "kind": "type-only" },
-          { "line": 21, "specifier": "./report/diff.js", "kind": "reexport" }
+          { "line": 21, "specifier": "./report/diff.js", "kind": "type-only" },
+          { "line": 22, "specifier": "./report/diff.js", "kind": "reexport" }
         ]
       },
       {
@@ -9177,7 +9389,7 @@
         "to": "f_d8625b869742",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 24, "specifier": "./report/summary.js", "kind": "reexport" }]
+        "occurrences": [{ "line": 25, "specifier": "./report/summary.js", "kind": "reexport" }]
       },
       {
         "from": "f_9a4ceebe7c6f",
@@ -9199,8 +9411,8 @@
         "weight": 2,
         "typeOnly": false,
         "occurrences": [
-          { "line": 45, "specifier": "./trend/trend.js", "kind": "type-only" },
-          { "line": 46, "specifier": "./trend/trend.js", "kind": "reexport" }
+          { "line": 46, "specifier": "./trend/trend.js", "kind": "type-only" },
+          { "line": 47, "specifier": "./trend/trend.js", "kind": "reexport" }
         ]
       },
       {
@@ -9222,7 +9434,7 @@
         "to": "f_fe61648aff7e",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 47, "specifier": "./util/semver.js", "kind": "reexport" }]
+        "occurrences": [{ "line": 48, "specifier": "./util/semver.js", "kind": "reexport" }]
       },
       {
         "from": "f_a1ae653af785",
@@ -9258,6 +9470,13 @@
         "weight": 1,
         "typeOnly": false,
         "occurrences": [{ "line": 2, "specifier": "@/components/glossary-view", "kind": "import" }]
+      },
+      {
+        "from": "f_a6397e777ed4",
+        "to": "f_c4e69eb883b7",
+        "weight": 1,
+        "typeOnly": false,
+        "occurrences": [{ "line": 1, "specifier": "./types.js", "kind": "import" }]
       },
       {
         "from": "f_a7d181fef622",
@@ -9335,6 +9554,13 @@
         "weight": 1,
         "typeOnly": true,
         "occurrences": [{ "line": 2, "specifier": "../ir/types.js", "kind": "type-only" }]
+      },
+      {
+        "from": "f_afd80eafb3c0",
+        "to": "f_3b9c02094236",
+        "weight": 1,
+        "typeOnly": false,
+        "occurrences": [{ "line": 1, "specifier": "./paths.js", "kind": "import" }]
       },
       {
         "from": "f_b253b28dff63",
@@ -9607,7 +9833,7 @@
         "to": "f_0ef5b1a802ef",
         "weight": 1,
         "typeOnly": false,
-        "occurrences": [{ "line": 7, "specifier": "./sections/structure", "kind": "import" }]
+        "occurrences": [{ "line": 8, "specifier": "./sections/structure", "kind": "import" }]
       },
       {
         "from": "f_e3c2864638b1",
@@ -9615,7 +9841,16 @@
         "weight": 1,
         "typeOnly": false,
         "occurrences": [
-          { "line": 6, "specifier": "./sections/rules-compare-export", "kind": "import" }
+          { "line": 7, "specifier": "./sections/rules-compare-export", "kind": "import" }
+        ]
+      },
+      {
+        "from": "f_e3c2864638b1",
+        "to": "f_8162f93f794b",
+        "weight": 1,
+        "typeOnly": false,
+        "occurrences": [
+          { "line": 6, "specifier": "./sections/practices-history", "kind": "import" }
         ]
       },
       {
@@ -9788,17 +10023,17 @@
       },
       {
         "from": "f_f66a14a2c380",
-        "to": "f_46f84cf68a3a",
-        "weight": 1,
-        "typeOnly": false,
-        "occurrences": [{ "line": 6, "specifier": "@/components/charts", "kind": "import" }]
-      },
-      {
-        "from": "f_f66a14a2c380",
         "to": "f_697d94f35967",
         "weight": 1,
         "typeOnly": false,
         "occurrences": [{ "line": 3, "specifier": "@repolens/core/browser", "kind": "import" }]
+      },
+      {
+        "from": "f_f66a14a2c380",
+        "to": "f_f9c25e19a441",
+        "weight": 1,
+        "typeOnly": false,
+        "occurrences": [{ "line": 6, "specifier": "@/components/proof-panel", "kind": "import" }]
       },
       {
         "from": "f_f76775b93f0e",
@@ -9813,6 +10048,41 @@
         "weight": 1,
         "typeOnly": true,
         "occurrences": [{ "line": 1, "specifier": "../ir/types.js", "kind": "type-only" }]
+      },
+      {
+        "from": "f_f9c25e19a441",
+        "to": "f_02d493a30ae5",
+        "weight": 1,
+        "typeOnly": false,
+        "occurrences": [{ "line": 7, "specifier": "./ui", "kind": "import" }]
+      },
+      {
+        "from": "f_f9c25e19a441",
+        "to": "f_24690aea149f",
+        "weight": 1,
+        "typeOnly": false,
+        "occurrences": [{ "line": 6, "specifier": "./report-context", "kind": "import" }]
+      },
+      {
+        "from": "f_f9c25e19a441",
+        "to": "f_3bd2a3c5fb5c",
+        "weight": 1,
+        "typeOnly": false,
+        "occurrences": [{ "line": 4, "specifier": "@/lib/format", "kind": "import" }]
+      },
+      {
+        "from": "f_f9c25e19a441",
+        "to": "f_697d94f35967",
+        "weight": 1,
+        "typeOnly": true,
+        "occurrences": [{ "line": 3, "specifier": "@repolens/core/browser", "kind": "type-only" }]
+      },
+      {
+        "from": "f_f9c25e19a441",
+        "to": "f_f3b6515ccf2f",
+        "weight": 1,
+        "typeOnly": false,
+        "occurrences": [{ "line": 5, "specifier": "@/lib/svg", "kind": "import" }]
       },
       {
         "from": "f_fac0aa47ca5a",
@@ -9913,7 +10183,7 @@
         "path": "apps/web/src/app",
         "kind": "package",
         "fileCount": 12,
-        "loc": 682,
+        "loc": 684,
         "fanIn": 0,
         "fanOut": 3,
         "instability": 1,
@@ -9923,8 +10193,8 @@
         "id": "m_8f7fe79585d8",
         "path": "apps/web/src/components",
         "kind": "package",
-        "fileCount": 22,
-        "loc": 4719,
+        "fileCount": 24,
+        "loc": 4888,
         "fanIn": 1,
         "fanOut": 2,
         "instability": 0.667,
@@ -9935,7 +10205,7 @@
         "path": "apps/web/src/lib",
         "kind": "package",
         "fileCount": 7,
-        "loc": 543,
+        "loc": 545,
         "fanIn": 2,
         "fanOut": 1,
         "instability": 0.333,
@@ -9957,7 +10227,7 @@
         "path": "packages/core/src",
         "kind": "package",
         "fileCount": 3,
-        "loc": 61,
+        "loc": 63,
         "fanIn": 3,
         "fanOut": 17,
         "instability": 0.85,
@@ -9968,10 +10238,10 @@
         "path": "packages/core/src/acquire",
         "kind": "package",
         "fileCount": 5,
-        "loc": 735,
+        "loc": 746,
         "fanIn": 8,
-        "fanOut": 4,
-        "instability": 0.333,
+        "fanOut": 3,
+        "instability": 0.273,
         "origin": "observed"
       },
       {
@@ -9979,7 +10249,7 @@
         "path": "packages/core/src/analyzers",
         "kind": "package",
         "fileCount": 4,
-        "loc": 974,
+        "loc": 975,
         "fanIn": 2,
         "fanOut": 5,
         "instability": 0.714,
@@ -10001,10 +10271,10 @@
         "path": "packages/core/src/detect",
         "kind": "package",
         "fileCount": 3,
-        "loc": 480,
-        "fanIn": 6,
+        "loc": 443,
+        "fanIn": 5,
         "fanOut": 3,
-        "instability": 0.333,
+        "instability": 0.375,
         "origin": "observed"
       },
       {
@@ -10066,8 +10336,8 @@
         "id": "m_e709837b1d15",
         "path": "packages/core/src/ir",
         "kind": "package",
-        "fileCount": 2,
-        "loc": 1034,
+        "fileCount": 3,
+        "loc": 1069,
         "fanIn": 18,
         "fanOut": 0,
         "instability": 0,
@@ -10089,7 +10359,7 @@
         "path": "packages/core/src/pipeline",
         "kind": "package",
         "fileCount": 4,
-        "loc": 925,
+        "loc": 944,
         "fanIn": 3,
         "fanOut": 17,
         "instability": 0.85,
@@ -10111,7 +10381,7 @@
         "path": "packages/core/src/practices",
         "kind": "package",
         "fileCount": 1,
-        "loc": 203,
+        "loc": 219,
         "fanIn": 1,
         "fanOut": 4,
         "instability": 0.8,
@@ -10166,7 +10436,7 @@
         "path": "packages/core/src/security",
         "kind": "package",
         "fileCount": 3,
-        "loc": 734,
+        "loc": 772,
         "fanIn": 1,
         "fanOut": 4,
         "instability": 0.8,
@@ -10187,8 +10457,8 @@
         "id": "m_d5822bad58de",
         "path": "packages/core/src/util",
         "kind": "package",
-        "fileCount": 4,
-        "loc": 163,
+        "fileCount": 5,
+        "loc": 202,
         "fanIn": 13,
         "fanOut": 0,
         "instability": 0,
@@ -10199,7 +10469,7 @@
         "path": "scripts",
         "kind": "directory",
         "fileCount": 3,
-        "loc": 174,
+        "loc": 163,
         "fanIn": 0,
         "fanOut": 0,
         "instability": null,
@@ -10210,13 +10480,12 @@
       { "from": "m_86e91c039b41", "to": "m_8f7fe79585d8", "weight": 9 },
       { "from": "m_86e91c039b41", "to": "m_f7d0b3a9fb56", "weight": 2 },
       { "from": "m_86e91c039b41", "to": "m_e9c909d4bd4a", "weight": 1 },
-      { "from": "m_8f7fe79585d8", "to": "m_f7d0b3a9fb56", "weight": 33 },
-      { "from": "m_8f7fe79585d8", "to": "m_e9c909d4bd4a", "weight": 12 },
+      { "from": "m_8f7fe79585d8", "to": "m_f7d0b3a9fb56", "weight": 36 },
+      { "from": "m_8f7fe79585d8", "to": "m_e9c909d4bd4a", "weight": 13 },
       { "from": "m_f7d0b3a9fb56", "to": "m_e9c909d4bd4a", "weight": 3 },
       { "from": "m_9980e3845b9b", "to": "m_d30e7d63b0d3", "weight": 1 },
-      { "from": "m_9980e3845b9b", "to": "m_0d464f19f383", "weight": 1 },
       { "from": "m_9980e3845b9b", "to": "m_e709837b1d15", "weight": 1 },
-      { "from": "m_9980e3845b9b", "to": "m_d5822bad58de", "weight": 3 },
+      { "from": "m_9980e3845b9b", "to": "m_d5822bad58de", "weight": 4 },
       { "from": "m_102196451a6b", "to": "m_9980e3845b9b", "weight": 2 },
       { "from": "m_102196451a6b", "to": "m_d30e7d63b0d3", "weight": 1 },
       { "from": "m_102196451a6b", "to": "m_0d464f19f383", "weight": 1 },
@@ -10225,7 +10494,7 @@
       { "from": "m_d30e7d63b0d3", "to": "m_d5822bad58de", "weight": 1 },
       { "from": "m_0d464f19f383", "to": "m_9980e3845b9b", "weight": 1 },
       { "from": "m_0d464f19f383", "to": "m_e709837b1d15", "weight": 2 },
-      { "from": "m_0d464f19f383", "to": "m_d5822bad58de", "weight": 4 },
+      { "from": "m_0d464f19f383", "to": "m_d5822bad58de", "weight": 5 },
       { "from": "m_9ec5ffea2de0", "to": "m_9980e3845b9b", "weight": 1 },
       { "from": "m_9ec5ffea2de0", "to": "m_d30e7d63b0d3", "weight": 1 },
       { "from": "m_9ec5ffea2de0", "to": "m_e709837b1d15", "weight": 1 },
@@ -10291,7 +10560,7 @@
       { "from": "m_e9c909d4bd4a", "to": "m_351f7ce69080", "weight": 3 },
       { "from": "m_e9c909d4bd4a", "to": "m_eec3479d609b", "weight": 2 },
       { "from": "m_e9c909d4bd4a", "to": "m_d8ea6164001d", "weight": 2 },
-      { "from": "m_e9c909d4bd4a", "to": "m_e709837b1d15", "weight": 5 },
+      { "from": "m_e9c909d4bd4a", "to": "m_e709837b1d15", "weight": 7 },
       { "from": "m_e9c909d4bd4a", "to": "m_4e0402b084be", "weight": 1 },
       { "from": "m_e9c909d4bd4a", "to": "m_9da582ab6eeb", "weight": 5 },
       { "from": "m_e9c909d4bd4a", "to": "m_27f93c83b0a1", "weight": 1 },
@@ -10302,44 +10571,37 @@
       { "from": "m_e9c909d4bd4a", "to": "m_9f6ec17403b5", "weight": 1 },
       { "from": "m_e9c909d4bd4a", "to": "m_d5822bad58de", "weight": 1 }
     ],
-    "cycles": [
-      {
-        "scope": "module",
-        "members": ["packages/core/src/acquire", "packages/core/src/detect"],
-        "size": 2,
-        "typeOnly": false
-      }
-    ],
+    "cycles": [],
     "levels": [
-      { "moduleId": "m_329acb2eac8d", "level": 0, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_3dcb44becf3a", "level": 0, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_86e91c039b41", "level": 9, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_8f7fe79585d8", "level": 8, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_f7d0b3a9fb56", "level": 7, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_b73edeff9caa", "level": 0, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_e9c909d4bd4a", "level": 6, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_9980e3845b9b", "level": 2, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_102196451a6b", "level": 3, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_d30e7d63b0d3", "level": 1, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_0d464f19f383", "level": 2, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_9ec5ffea2de0", "level": 5, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_550b631724b6", "level": 2, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_351f7ce69080", "level": 1, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_eec3479d609b", "level": 0, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_d8ea6164001d", "level": 2, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_e709837b1d15", "level": 0, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_4e0402b084be", "level": 3, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_9da582ab6eeb", "level": 4, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_27f93c83b0a1", "level": 3, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_df3ccf6df78e", "level": 3, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_5613d6667972", "level": 1, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_397a16065bcd", "level": 3, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_2c12635c5aba", "level": 1, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_4a7d61216c4a", "level": 3, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_e11872136108", "level": 3, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_9f6ec17403b5", "level": 5, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_d5822bad58de", "level": 0, "origin": "inferred", "confidence": "low" },
-      { "moduleId": "m_97762e76cba3", "level": 0, "origin": "inferred", "confidence": "low" }
+      { "moduleId": "m_329acb2eac8d", "level": 0, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_3dcb44becf3a", "level": 0, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_86e91c039b41", "level": 10, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_8f7fe79585d8", "level": 9, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_f7d0b3a9fb56", "level": 8, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_b73edeff9caa", "level": 0, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_e9c909d4bd4a", "level": 7, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_9980e3845b9b", "level": 2, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_102196451a6b", "level": 4, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_d30e7d63b0d3", "level": 1, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_0d464f19f383", "level": 3, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_9ec5ffea2de0", "level": 6, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_550b631724b6", "level": 2, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_351f7ce69080", "level": 1, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_eec3479d609b", "level": 0, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_d8ea6164001d", "level": 2, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_e709837b1d15", "level": 0, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_4e0402b084be", "level": 4, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_9da582ab6eeb", "level": 5, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_27f93c83b0a1", "level": 3, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_df3ccf6df78e", "level": 4, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_5613d6667972", "level": 1, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_397a16065bcd", "level": 3, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_2c12635c5aba", "level": 1, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_4a7d61216c4a", "level": 3, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_e11872136108", "level": 4, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_9f6ec17403b5", "level": 6, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_d5822bad58de", "level": 0, "origin": "inferred", "confidence": "medium" },
+      { "moduleId": "m_97762e76cba3", "level": 0, "origin": "inferred", "confidence": "medium" }
     ],
     "entrypointReachable": {
       "analyzable": false,
@@ -10347,8 +10609,8 @@
       "unreachableFiles": null
     },
     "resolution": {
-      "internalImports": 330,
-      "resolved": 330,
+      "internalImports": 344,
+      "resolved": 344,
       "unresolved": 0,
       "external": 103,
       "ratio": 1
@@ -10390,12 +10652,12 @@
       {
         "fileId": "f_0733228f329f",
         "path": "apps/web/src/app/api/analyze/route.ts",
-        "codeLines": 122,
-        "commentLines": 4,
+        "codeLines": 124,
+        "commentLines": 5,
         "blankLines": 11,
         "functions": 11,
-        "maxComplexity": 9,
-        "totalComplexity": 30
+        "maxComplexity": 8,
+        "totalComplexity": 32
       },
       {
         "fileId": "f_a47da1a6efd2",
@@ -10510,22 +10772,22 @@
       {
         "fileId": "f_a2983e547d0b",
         "path": "apps/web/src/components/analyze-form.tsx",
-        "codeLines": 250,
+        "codeLines": 258,
         "commentLines": 0,
         "blankLines": 13,
         "functions": 23,
         "maxComplexity": 14,
-        "totalComplexity": 54
+        "totalComplexity": 55
       },
       {
         "fileId": "f_46f84cf68a3a",
         "path": "apps/web/src/components/charts.tsx",
-        "codeLines": 263,
-        "commentLines": 2,
-        "blankLines": 8,
-        "functions": 32,
-        "maxComplexity": 15,
-        "totalComplexity": 57
+        "codeLines": 221,
+        "commentLines": 1,
+        "blankLines": 7,
+        "functions": 27,
+        "maxComplexity": 4,
+        "totalComplexity": 37
       },
       {
         "fileId": "f_ca1617d10e0e",
@@ -10618,14 +10880,24 @@
         "totalComplexity": 4
       },
       {
+        "fileId": "f_f9c25e19a441",
+        "path": "apps/web/src/components/proof-panel.tsx",
+        "codeLines": 276,
+        "commentLines": 4,
+        "blankLines": 8,
+        "functions": 24,
+        "maxComplexity": 27,
+        "totalComplexity": 87
+      },
+      {
         "fileId": "f_24690aea149f",
         "path": "apps/web/src/components/report-context.tsx",
-        "codeLines": 142,
+        "codeLines": 152,
         "commentLines": 1,
         "blankLines": 11,
         "functions": 14,
-        "maxComplexity": 8,
-        "totalComplexity": 26
+        "maxComplexity": 9,
+        "totalComplexity": 27
       },
       {
         "fileId": "f_db0a04895ae0",
@@ -10640,7 +10912,7 @@
       {
         "fileId": "f_e3c2864638b1",
         "path": "apps/web/src/components/section-view.tsx",
-        "codeLines": 36,
+        "codeLines": 37,
         "commentLines": 0,
         "blankLines": 2,
         "functions": 1,
@@ -10650,22 +10922,22 @@
       {
         "fileId": "f_f66a14a2c380",
         "path": "apps/web/src/components/sections/briefing.tsx",
-        "codeLines": 291,
+        "codeLines": 199,
         "commentLines": 0,
         "blankLines": 10,
-        "functions": 16,
-        "maxComplexity": 11,
-        "totalComplexity": 41
+        "functions": 13,
+        "maxComplexity": 9,
+        "totalComplexity": 26
       },
       {
         "fileId": "f_878313845331",
         "path": "apps/web/src/components/sections/findings-pages.tsx",
-        "codeLines": 720,
-        "commentLines": 6,
-        "blankLines": 9,
-        "functions": 68,
-        "maxComplexity": 17,
-        "totalComplexity": 129
+        "codeLines": 411,
+        "commentLines": 4,
+        "blankLines": 5,
+        "functions": 46,
+        "maxComplexity": 8,
+        "totalComplexity": 73
       },
       {
         "fileId": "f_e4f3cc75bd55",
@@ -10678,14 +10950,24 @@
         "totalComplexity": 67
       },
       {
+        "fileId": "f_8162f93f794b",
+        "path": "apps/web/src/components/sections/practices-history.tsx",
+        "codeLines": 308,
+        "commentLines": 2,
+        "blankLines": 3,
+        "functions": 21,
+        "maxComplexity": 17,
+        "totalComplexity": 55
+      },
+      {
         "fileId": "f_50821c70ea80",
         "path": "apps/web/src/components/sections/rules-compare-export.tsx",
-        "codeLines": 403,
+        "codeLines": 412,
         "commentLines": 3,
         "blankLines": 6,
         "functions": 41,
         "maxComplexity": 11,
-        "totalComplexity": 83
+        "totalComplexity": 84
       },
       {
         "fileId": "f_0ef5b1a802ef",
@@ -10790,7 +11072,7 @@
       {
         "fileId": "f_f3b6515ccf2f",
         "path": "apps/web/src/lib/svg.ts",
-        "codeLines": 164,
+        "codeLines": 166,
         "commentLines": 6,
         "blankLines": 11,
         "functions": 15,
@@ -10800,12 +11082,12 @@
       {
         "fileId": "f_022742dbe4df",
         "path": "apps/web/src/lib/web.test.ts",
-        "codeLines": 155,
+        "codeLines": 198,
         "commentLines": 0,
-        "blankLines": 6,
-        "functions": 26,
+        "blankLines": 7,
+        "functions": 30,
         "maxComplexity": 5,
-        "totalComplexity": 40
+        "totalComplexity": 48
       },
       {
         "fileId": "f_41b6a1d43440",
@@ -10910,12 +11192,12 @@
       {
         "fileId": "f_2d687c227de7",
         "path": "packages/core/src/acquire/tar-stream.ts",
-        "codeLines": 214,
-        "commentLines": 10,
+        "codeLines": 224,
+        "commentLines": 11,
         "blankLines": 11,
-        "functions": 11,
+        "functions": 12,
         "maxComplexity": 29,
-        "totalComplexity": 70
+        "totalComplexity": 72
       },
       {
         "fileId": "f_71fa9ccf7301",
@@ -10940,8 +11222,8 @@
       {
         "fileId": "f_b7f6b31ce801",
         "path": "packages/core/src/acquire/types.ts",
-        "codeLines": 20,
-        "commentLines": 2,
+        "codeLines": 21,
+        "commentLines": 6,
         "blankLines": 3,
         "functions": 0,
         "maxComplexity": 0,
@@ -10970,22 +11252,22 @@
       {
         "fileId": "f_3085f611bd2e",
         "path": "packages/core/src/analyzers/python.test.ts",
-        "codeLines": 98,
+        "codeLines": 127,
         "commentLines": 0,
-        "blankLines": 5,
-        "functions": 21,
+        "blankLines": 6,
+        "functions": 25,
         "maxComplexity": 2,
-        "totalComplexity": 23
+        "totalComplexity": 27
       },
       {
         "fileId": "f_489f08bedcd5",
         "path": "packages/core/src/analyzers/python.ts",
-        "codeLines": 357,
-        "commentLines": 1,
-        "blankLines": 15,
-        "functions": 18,
-        "maxComplexity": 24,
-        "totalComplexity": 118
+        "codeLines": 358,
+        "commentLines": 3,
+        "blankLines": 16,
+        "functions": 19,
+        "maxComplexity": 32,
+        "totalComplexity": 127
       },
       {
         "fileId": "f_670f1e4ae25e",
@@ -11010,7 +11292,7 @@
       {
         "fileId": "f_697d94f35967",
         "path": "packages/core/src/browser.ts",
-        "codeLines": 10,
+        "codeLines": 11,
         "commentLines": 4,
         "blankLines": 1,
         "functions": 0,
@@ -11060,22 +11342,22 @@
       {
         "fileId": "f_6d7336a4a799",
         "path": "packages/core/src/detect/detect.test.ts",
-        "codeLines": 201,
+        "codeLines": 219,
         "commentLines": 0,
         "blankLines": 5,
-        "functions": 22,
+        "functions": 23,
         "maxComplexity": 2,
-        "totalComplexity": 28
+        "totalComplexity": 29
       },
       {
         "fileId": "f_027bb6fab35d",
         "path": "packages/core/src/detect/languages.ts",
-        "codeLines": 139,
+        "codeLines": 102,
         "commentLines": 1,
-        "blankLines": 7,
-        "functions": 3,
+        "blankLines": 6,
+        "functions": 2,
         "maxComplexity": 2,
-        "totalComplexity": 4
+        "totalComplexity": 3
       },
       {
         "fileId": "f_6c11c7599591",
@@ -11144,14 +11426,14 @@
         "commentLines": 10,
         "blankLines": 14,
         "functions": 22,
-        "maxComplexity": 38,
-        "totalComplexity": 89
+        "maxComplexity": 37,
+        "totalComplexity": 88
       },
       {
         "fileId": "f_d4329b5782ff",
         "path": "packages/core/src/git/history.test.ts",
-        "codeLines": 180,
-        "commentLines": 4,
+        "codeLines": 178,
+        "commentLines": 3,
         "blankLines": 11,
         "functions": 24,
         "maxComplexity": 3,
@@ -11280,7 +11562,7 @@
       {
         "fileId": "f_9a4ceebe7c6f",
         "path": "packages/core/src/index.ts",
-        "codeLines": 46,
+        "codeLines": 47,
         "commentLines": 0,
         "blankLines": 1,
         "functions": 1,
@@ -11316,6 +11598,16 @@
         "functions": 0,
         "maxComplexity": 0,
         "totalComplexity": 0
+      },
+      {
+        "fileId": "f_a6397e777ed4",
+        "path": "packages/core/src/ir/upgrade.ts",
+        "codeLines": 35,
+        "commentLines": 5,
+        "blankLines": 2,
+        "functions": 1,
+        "maxComplexity": 19,
+        "totalComplexity": 19
       },
       {
         "fileId": "f_4e056d12e158",
@@ -11400,22 +11692,22 @@
       {
         "fileId": "f_240bbd3ddbc3",
         "path": "packages/core/src/pipeline/files.ts",
-        "codeLines": 65,
-        "commentLines": 1,
+        "codeLines": 80,
+        "commentLines": 2,
         "blankLines": 1,
         "functions": 2,
-        "maxComplexity": 18,
-        "totalComplexity": 19
+        "maxComplexity": 21,
+        "totalComplexity": 22
       },
       {
         "fileId": "f_5e7d45088b4c",
         "path": "packages/core/src/pipeline/phase15.test.ts",
-        "codeLines": 342,
+        "codeLines": 367,
         "commentLines": 0,
-        "blankLines": 8,
-        "functions": 61,
+        "blankLines": 9,
+        "functions": 64,
         "maxComplexity": 5,
-        "totalComplexity": 79
+        "totalComplexity": 82
       },
       {
         "fileId": "f_4f0f7e579233",
@@ -11430,12 +11722,12 @@
       {
         "fileId": "f_5de96c9a124b",
         "path": "packages/core/src/pipeline/target.ts",
-        "codeLines": 126,
+        "codeLines": 130,
         "commentLines": 1,
         "blankLines": 4,
         "functions": 6,
-        "maxComplexity": 12,
-        "totalComplexity": 18
+        "maxComplexity": 11,
+        "totalComplexity": 17
       },
       {
         "fileId": "f_a155fcf99a51",
@@ -11460,12 +11752,12 @@
       {
         "fileId": "f_5cb6b5190f5e",
         "path": "packages/core/src/practices/detect.ts",
-        "codeLines": 203,
-        "commentLines": 2,
-        "blankLines": 11,
-        "functions": 30,
+        "codeLines": 219,
+        "commentLines": 5,
+        "blankLines": 13,
+        "functions": 32,
         "maxComplexity": 53,
-        "totalComplexity": 93
+        "totalComplexity": 102
       },
       {
         "fileId": "f_d0adcd853d14",
@@ -11650,12 +11942,12 @@
       {
         "fileId": "f_c34ef1a84acc",
         "path": "packages/core/src/security/osv.ts",
-        "codeLines": 365,
-        "commentLines": 3,
-        "blankLines": 14,
-        "functions": 27,
-        "maxComplexity": 35,
-        "totalComplexity": 113
+        "codeLines": 395,
+        "commentLines": 8,
+        "blankLines": 15,
+        "functions": 36,
+        "maxComplexity": 34,
+        "totalComplexity": 129
       },
       {
         "fileId": "f_fac0aa47ca5a",
@@ -11670,22 +11962,22 @@
       {
         "fileId": "f_c5f7ca0e3a31",
         "path": "packages/core/src/security/security.test.ts",
-        "codeLines": 262,
+        "codeLines": 305,
         "commentLines": 2,
-        "blankLines": 9,
-        "functions": 43,
+        "blankLines": 11,
+        "functions": 54,
         "maxComplexity": 4,
-        "totalComplexity": 53
+        "totalComplexity": 64
       },
       {
         "fileId": "f_0d7674544b8c",
         "path": "packages/core/src/security/workflows.ts",
-        "codeLines": 194,
-        "commentLines": 0,
+        "codeLines": 202,
+        "commentLines": 1,
         "blankLines": 3,
-        "functions": 5,
+        "functions": 6,
         "maxComplexity": 23,
-        "totalComplexity": 37
+        "totalComplexity": 42
       },
       {
         "fileId": "f_c7c70a9ed64d",
@@ -11716,6 +12008,16 @@
         "functions": 38,
         "maxComplexity": 28,
         "totalComplexity": 80
+      },
+      {
+        "fileId": "f_afd80eafb3c0",
+        "path": "packages/core/src/util/binary.ts",
+        "codeLines": 39,
+        "commentLines": 0,
+        "blankLines": 2,
+        "functions": 1,
+        "maxComplexity": 1,
+        "totalComplexity": 1
       },
       {
         "fileId": "f_2866ac629af8",
@@ -11810,7 +12112,7 @@
       {
         "fileId": "f_ecd33a6a9575",
         "path": "scripts/make-sample-report.mjs",
-        "codeLines": 37,
+        "codeLines": 26,
         "commentLines": 2,
         "blankLines": 1,
         "functions": 0,
@@ -11878,8 +12180,8 @@
         "fileId": "f_5cb6b5190f5e",
         "path": "packages/core/src/practices/detect.ts",
         "name": "detectPractices",
-        "line": 37,
-        "endLine": 207,
+        "line": 58,
+        "endLine": 228,
         "complexity": 53,
         "approximate": false
       },
@@ -11920,21 +12222,21 @@
         "approximate": false
       },
       {
-        "fileId": "f_3c3430ec8596",
-        "path": "packages/core/src/git/activity.ts",
-        "name": "fetchGitHubActivity",
-        "line": 148,
-        "endLine": 273,
-        "complexity": 38,
-        "approximate": false
-      },
-      {
         "fileId": "f_0cc3011eca1c",
         "path": "packages/core/src/metrics/loc.ts",
         "name": "countLines",
         "line": 16,
         "endLine": 124,
         "complexity": 38,
+        "approximate": false
+      },
+      {
+        "fileId": "f_3c3430ec8596",
+        "path": "packages/core/src/git/activity.ts",
+        "name": "fetchGitHubActivity",
+        "line": 148,
+        "endLine": 273,
+        "complexity": 37,
         "approximate": false
       },
       {
@@ -11950,9 +12252,9 @@
         "fileId": "f_c34ef1a84acc",
         "path": "packages/core/src/security/osv.ts",
         "name": "queryOsv",
-        "line": 214,
-        "endLine": 382,
-        "complexity": 35,
+        "line": 249,
+        "endLine": 418,
+        "complexity": 34,
         "approximate": false
       },
       {
@@ -11980,6 +12282,15 @@
         "line": 213,
         "endLine": 335,
         "complexity": 33,
+        "approximate": false
+      },
+      {
+        "fileId": "f_489f08bedcd5",
+        "path": "packages/core/src/analyzers/python.ts",
+        "name": "analyzePythonFile",
+        "line": 205,
+        "endLine": 339,
+        "complexity": 32,
         "approximate": false
       },
       {
@@ -12013,8 +12324,8 @@
         "fileId": "f_2d687c227de7",
         "path": "packages/core/src/acquire/tar-stream.ts",
         "name": "readHeader",
-        "line": 96,
-        "endLine": 165,
+        "line": 102,
+        "endLine": 175,
         "complexity": 29,
         "approximate": false
       },
@@ -12028,6 +12339,15 @@
         "approximate": false
       },
       {
+        "fileId": "f_f9c25e19a441",
+        "path": "apps/web/src/components/proof-panel.tsx",
+        "name": "Scale",
+        "line": 35,
+        "endLine": 131,
+        "complexity": 27,
+        "approximate": false
+      },
+      {
         "fileId": "f_b253b28dff63",
         "path": "packages/core/src/ir/schema.ts",
         "name": "validateAgainst",
@@ -12035,40 +12355,37 @@
         "endLine": 538,
         "complexity": 27,
         "approximate": false
-      },
-      {
-        "fileId": "f_c0f4fce7bd5c",
-        "path": "packages/core/src/acquire/github.ts",
-        "name": "openGitHubArchive",
-        "line": 184,
-        "endLine": 247,
-        "complexity": 26,
-        "approximate": false
-      },
-      {
-        "fileId": "f_2eaedc5e5c8b",
-        "path": "apps/web/src/components/drawer.tsx",
-        "name": "DrawerBody",
-        "line": 62,
-        "endLine": 326,
-        "complexity": 25,
-        "approximate": false
       }
     ],
-    "functionCount": 2312,
-    "complexityDistribution": { "low": 1577, "moderate": 50, "high": 26, "veryHigh": 6 },
+    "functionCount": 2365,
+    "complexityDistribution": { "low": 1605, "moderate": 50, "high": 28, "veryHigh": 6 },
     "duplication": {
       "assessed": true,
       "reason": null,
-      "duplicatedLines": 138,
-      "totalLines": 16364,
-      "ratio": 0.0084,
+      "duplicatedLines": 162,
+      "totalLines": 16619,
+      "ratio": 0.0097,
       "groups": [
         {
           "lines": 15,
           "occurrences": [
             { "path": "packages/core/src/report/html.ts", "startLine": 239, "endLine": 254 },
             { "path": "packages/core/src/report/markdown.ts", "startLine": 254, "endLine": 269 }
+          ]
+        },
+        {
+          "lines": 12,
+          "occurrences": [
+            {
+              "path": "apps/web/src/components/analyze-form.tsx",
+              "startLine": 115,
+              "endLine": 128
+            },
+            {
+              "path": "apps/web/src/components/sections/rules-compare-export.tsx",
+              "startLine": 116,
+              "endLine": 129
+            }
           ]
         },
         {
@@ -12081,8 +12398,8 @@
         {
           "lines": 11,
           "occurrences": [
-            { "path": "packages/core/src/security/workflows.ts", "startLine": 114, "endLine": 124 },
-            { "path": "packages/core/src/security/workflows.ts", "startLine": 128, "endLine": 138 }
+            { "path": "packages/core/src/security/workflows.ts", "startLine": 105, "endLine": 115 },
+            { "path": "packages/core/src/security/workflows.ts", "startLine": 119, "endLine": 129 }
           ]
         },
         {
@@ -12095,7 +12412,7 @@
         {
           "lines": 8,
           "occurrences": [
-            { "path": "packages/core/src/acquire/tar-stream.ts", "startLine": 125, "endLine": 132 },
+            { "path": "packages/core/src/acquire/tar-stream.ts", "startLine": 131, "endLine": 138 },
             { "path": "packages/core/src/acquire/tar.ts", "startLine": 122, "endLine": 129 }
           ]
         },
@@ -12112,17 +12429,10 @@
             { "path": "packages/core/src/report/html.ts", "startLine": 332, "endLine": 339 },
             { "path": "packages/core/src/report/markdown.ts", "startLine": 438, "endLine": 445 }
           ]
-        },
-        {
-          "lines": 8,
-          "occurrences": [
-            { "path": "packages/core/src/security/workflows.ts", "startLine": 117, "endLine": 124 },
-            { "path": "packages/core/src/security/workflows.ts", "startLine": 131, "endLine": 138 }
-          ]
         }
       ]
     },
-    "totals": { "codeLines": 23315, "commentLines": 295, "blankLines": 960 }
+    "totals": { "codeLines": 23757, "commentLines": 320, "blankLines": 978 }
   },
   "findings": [
     {
@@ -12222,7 +12532,7 @@
       "tags": ["complexity"]
     },
     {
-      "id": "RL-QUAL-COMPLEXITY-a915bdc5",
+      "id": "RL-QUAL-COMPLEXITY-7925a9f7",
       "title": "Function detectPractices has complexity 53",
       "category": "quality",
       "ruleId": "quality.function-complexity",
@@ -12239,7 +12549,7 @@
         }
       ],
       "locations": [
-        { "path": "packages/core/src/practices/detect.ts", "startLine": 37, "endLine": 207 }
+        { "path": "packages/core/src/practices/detect.ts", "startLine": 58, "endLine": 228 }
       ],
       "remediation": "Extract independent branches into named functions and cover each with tests.",
       "limitations": ["Thresholds 20 and 50 are conventions."],
@@ -12312,60 +12622,29 @@
       "tags": ["complexity"]
     },
     {
-      "id": "RL-RULE-NO-MODULE-CYCLES-7fb75db2",
-      "title": "Circular dependency among 2 modules",
-      "category": "architecture",
-      "ruleId": "rule.no-module-cycles",
+      "id": "RL-SEC-SECRET-f596b68e",
+      "title": "Possible GitHub token committed in apps/web/.env.local",
+      "category": "security",
+      "ruleId": "security.secret.github-token",
       "severity": "high",
-      "confidence": "high",
+      "confidence": "medium",
       "origin": "observed",
-      "classification": null,
-      "explanation": "packages/core/src/acquire, packages/core/src/detect depend on each other in a cycle.",
+      "classification": "probable",
+      "explanation": "A value matching the GitHub token format was found. The matched value is deliberately not stored in this report.",
       "evidence": [
         {
-          "kind": "graph-path",
-          "refs": [
-            "packages/core/src/acquire",
-            "packages/core/src/detect",
-            "packages/core/src/acquire"
-          ],
-          "note": null
+          "kind": "tool-output",
+          "refs": ["apps/web/.env.local"],
+          "note": "builtin-patterns rule github-token"
         }
       ],
-      "locations": [
-        { "path": "packages/core/src/acquire", "startLine": null, "endLine": null },
-        { "path": "packages/core/src/detect", "startLine": null, "endLine": null }
-      ],
-      "remediation": "Break the cycle by extracting shared code into a module that both sides depend on.",
+      "locations": [{ "path": "apps/web/.env.local", "startLine": 3, "endLine": 3 }],
+      "remediation": "Revoke and rotate the credential, remove it from the repository and its history, and load it from a secret store or environment variable.",
       "limitations": [
-        "Only statically resolved imports are evaluated. Dynamic imports with non-literal arguments are not."
+        "Pattern based detection can match test fixtures or documentation examples.",
+        "Removing the value from the latest commit does not remove it from Git history."
       ],
-      "tags": ["rule", "no-cycles"]
-    },
-    {
-      "id": "RL-ARCH-MODCYCLE-7b5a8915",
-      "title": "Circular dependency among 2 modules",
-      "category": "architecture",
-      "ruleId": "arch.cycle.module",
-      "severity": "medium",
-      "confidence": "high",
-      "origin": "observed",
-      "classification": null,
-      "explanation": "Modules packages/core/src/acquire, packages/core/src/detect depend on each other. Module boundaries are derived from directory structure, so this is an observed dependency pattern, not a statement about intended design.",
-      "evidence": [
-        {
-          "kind": "graph-path",
-          "refs": ["packages/core/src/acquire", "packages/core/src/detect"],
-          "note": "Strongly connected component in the module graph"
-        }
-      ],
-      "locations": [
-        { "path": "packages/core/src/acquire", "startLine": null, "endLine": null },
-        { "path": "packages/core/src/detect", "startLine": null, "endLine": null }
-      ],
-      "remediation": "Decide which module owns the shared concept and make the other depend on it only.",
-      "limitations": ["Module boundaries are inferred from directories."],
-      "tags": ["coupling", "modules"]
+      "tags": ["secret", "builtin-patterns"]
     },
     {
       "id": "RL-QUAL-COMPLEXITY-532b88b3",
@@ -12563,7 +12842,7 @@
     },
     {
       "id": "RL-ARCH-FANOUT-c5101edf",
-      "title": "packages/core/src/index.ts depends on 30 other files",
+      "title": "packages/core/src/index.ts depends on 31 other files",
       "category": "architecture",
       "ruleId": "arch.high-fan-out",
       "severity": "low",
@@ -12572,7 +12851,7 @@
       "classification": null,
       "explanation": "A file that imports many other files is sensitive to changes across the codebase. Thresholds are conventions, not universal limits.",
       "evidence": [
-        { "kind": "metric", "refs": ["packages/core/src/index.ts"], "note": "fanOut=30" }
+        { "kind": "metric", "refs": ["packages/core/src/index.ts"], "note": "fanOut=31" }
       ],
       "locations": [{ "path": "packages/core/src/index.ts", "startLine": null, "endLine": null }],
       "remediation": "Split the file by responsibility or introduce a facade for the group of imports.",
@@ -12600,6 +12879,36 @@
       "tags": ["coupling"]
     },
     {
+      "id": "RL-HIST-HOTSPOT-11764bd1",
+      "title": "packages/core/src/report/markdown.ts changes often and is complex",
+      "category": "history",
+      "ruleId": "history.hotspot",
+      "severity": "low",
+      "confidence": "medium",
+      "origin": "observed",
+      "classification": null,
+      "explanation": "packages/core/src/report/markdown.ts appears in 7 commits with 1297 changed lines and a maximum function complexity of 43. Files that are both complex and frequently changed concentrate maintenance cost.",
+      "evidence": [
+        {
+          "kind": "metric",
+          "refs": ["packages/core/src/report/markdown.ts"],
+          "note": "commits=7, churn=1297, complexity=43, score=88"
+        }
+      ],
+      "locations": [
+        { "path": "packages/core/src/report/markdown.ts", "startLine": null, "endLine": null }
+      ],
+      "remediation": "Prioritize refactoring and test coverage here.",
+      "limitations": [
+        "File renames are not followed, so a renamed file starts a new history.",
+        "Squash merges attribute the whole change to the squasher, which can hide real authorship.",
+        "Author identity is the commit author name. The same person under different names is counted separately.",
+        "Churn and commit counts measure change activity, not quality or effort.",
+        "28 of 67 commits are merge commits or do not touch analyzed paths, so they are counted in the total but not in the file level details."
+      ],
+      "tags": ["hotspot"]
+    },
+    {
       "id": "RL-HIST-HOTSPOT-2deae5c5",
       "title": "packages/core/src/pipeline/analyze.ts changes often and is complex",
       "category": "history",
@@ -12608,12 +12917,12 @@
       "confidence": "medium",
       "origin": "observed",
       "classification": null,
-      "explanation": "packages/core/src/pipeline/analyze.ts appears in 6 commits with 1861 changed lines and a maximum function complexity of 114. Files that are both complex and frequently changed concentrate maintenance cost.",
+      "explanation": "packages/core/src/pipeline/analyze.ts appears in 7 commits with 1905 changed lines and a maximum function complexity of 114. Files that are both complex and frequently changed concentrate maintenance cost.",
       "evidence": [
         {
           "kind": "metric",
           "refs": ["packages/core/src/pipeline/analyze.ts"],
-          "note": "commits=6, churn=1861, complexity=114, score=92"
+          "note": "commits=7, churn=1905, complexity=114, score=95"
         }
       ],
       "locations": [
@@ -12625,7 +12934,7 @@
         "Squash merges attribute the whole change to the squasher, which can hide real authorship.",
         "Author identity is the commit author name. The same person under different names is counted separately.",
         "Churn and commit counts measure change activity, not quality or effort.",
-        "28 of 65 commits are merge commits or do not touch analyzed paths, so they are counted in the total but not in the file level details."
+        "28 of 67 commits are merge commits or do not touch analyzed paths, so they are counted in the total but not in the file level details."
       ],
       "tags": ["hotspot"]
     },
@@ -12638,12 +12947,12 @@
       "confidence": "medium",
       "origin": "observed",
       "classification": null,
-      "explanation": "packages/core/src/scoring/score.ts appears in 7 commits with 1092 changed lines and a maximum function complexity of 82. Files that are both complex and frequently changed concentrate maintenance cost.",
+      "explanation": "packages/core/src/scoring/score.ts appears in 8 commits with 1104 changed lines and a maximum function complexity of 82. Files that are both complex and frequently changed concentrate maintenance cost.",
       "evidence": [
         {
           "kind": "metric",
           "refs": ["packages/core/src/scoring/score.ts"],
-          "note": "commits=7, churn=1092, complexity=82, score=98"
+          "note": "commits=8, churn=1104, complexity=82, score=98"
         }
       ],
       "locations": [
@@ -12655,37 +12964,7 @@
         "Squash merges attribute the whole change to the squasher, which can hide real authorship.",
         "Author identity is the commit author name. The same person under different names is counted separately.",
         "Churn and commit counts measure change activity, not quality or effort.",
-        "28 of 65 commits are merge commits or do not touch analyzed paths, so they are counted in the total but not in the file level details."
-      ],
-      "tags": ["hotspot"]
-    },
-    {
-      "id": "RL-HIST-HOTSPOT-7fef616a",
-      "title": "packages/core/src/practices/detect.ts changes often and is complex",
-      "category": "history",
-      "ruleId": "history.hotspot",
-      "severity": "low",
-      "confidence": "medium",
-      "origin": "observed",
-      "classification": null,
-      "explanation": "packages/core/src/practices/detect.ts appears in 6 commits with 546 changed lines and a maximum function complexity of 53. Files that are both complex and frequently changed concentrate maintenance cost.",
-      "evidence": [
-        {
-          "kind": "metric",
-          "refs": ["packages/core/src/practices/detect.ts"],
-          "note": "commits=6, churn=546, complexity=53, score=88"
-        }
-      ],
-      "locations": [
-        { "path": "packages/core/src/practices/detect.ts", "startLine": null, "endLine": null }
-      ],
-      "remediation": "Prioritize refactoring and test coverage here.",
-      "limitations": [
-        "File renames are not followed, so a renamed file starts a new history.",
-        "Squash merges attribute the whole change to the squasher, which can hide real authorship.",
-        "Author identity is the commit author name. The same person under different names is counted separately.",
-        "Churn and commit counts measure change activity, not quality or effort.",
-        "28 of 65 commits are merge commits or do not touch analyzed paths, so they are counted in the total but not in the file level details."
+        "28 of 67 commits are merge commits or do not touch analyzed paths, so they are counted in the total but not in the file level details."
       ],
       "tags": ["hotspot"]
     },
@@ -12698,12 +12977,12 @@
       "confidence": "medium",
       "origin": "observed",
       "classification": null,
-      "explanation": "packages/cli/src/main.ts appears in 6 commits with 1344 changed lines and a maximum function complexity of 65. Files that are both complex and frequently changed concentrate maintenance cost.",
+      "explanation": "packages/cli/src/main.ts appears in 7 commits with 1346 changed lines and a maximum function complexity of 65. Files that are both complex and frequently changed concentrate maintenance cost.",
       "evidence": [
         {
           "kind": "metric",
           "refs": ["packages/cli/src/main.ts"],
-          "note": "commits=6, churn=1344, complexity=65, score=91"
+          "note": "commits=7, churn=1346, complexity=65, score=93"
         }
       ],
       "locations": [{ "path": "packages/cli/src/main.ts", "startLine": null, "endLine": null }],
@@ -12713,7 +12992,7 @@
         "Squash merges attribute the whole change to the squasher, which can hide real authorship.",
         "Author identity is the commit author name. The same person under different names is counted separately.",
         "Churn and commit counts measure change activity, not quality or effort.",
-        "28 of 65 commits are merge commits or do not touch analyzed paths, so they are counted in the total but not in the file level details."
+        "28 of 67 commits are merge commits or do not touch analyzed paths, so they are counted in the total but not in the file level details."
       ],
       "tags": ["hotspot"]
     },
@@ -12731,7 +13010,7 @@
         {
           "kind": "metric",
           "refs": ["packages/core/src/findings/generate.ts"],
-          "note": "commits=6, churn=2073, complexity=64, score=90"
+          "note": "commits=6, churn=2073, complexity=64, score=87"
         }
       ],
       "locations": [
@@ -12743,7 +13022,7 @@
         "Squash merges attribute the whole change to the squasher, which can hide real authorship.",
         "Author identity is the commit author name. The same person under different names is counted separately.",
         "Churn and commit counts measure change activity, not quality or effort.",
-        "28 of 65 commits are merge commits or do not touch analyzed paths, so they are counted in the total but not in the file level details."
+        "28 of 67 commits are merge commits or do not touch analyzed paths, so they are counted in the total but not in the file level details."
       ],
       "tags": ["hotspot"]
     },
@@ -12756,12 +13035,12 @@
       "confidence": "high",
       "origin": "observed",
       "classification": null,
-      "explanation": "Ranked high because of: high complexity (highest function complexity 82); frequently changed (changed in 7 commits). The risk index blends complexity, how many files depend on the file, how often it changes and how well tests reach it. It ranks where a change is most costly, it does not predict bugs.",
+      "explanation": "Ranked high because of: high complexity (highest function complexity 82); frequently changed (changed in 8 commits). The risk index blends complexity, how many files depend on the file, how often it changes and how well tests reach it. It ranks where a change is most costly, it does not predict bugs.",
       "evidence": [
         {
           "kind": "metric",
           "refs": ["packages/core/src/scoring/score.ts"],
-          "note": "complexity=82, dependents=8, churn=7, tests=0.5"
+          "note": "complexity=82, dependents=8, churn=8, tests=0.5"
         }
       ],
       "locations": [
@@ -12774,24 +13053,24 @@
       "tags": ["risk-index"]
     },
     {
-      "id": "RL-RISK-88b044a7",
-      "title": "packages/core/src/git/history.ts ranks high on the risk index (67 of 100)",
+      "id": "RL-RISK-71906bca",
+      "title": "apps/web/src/components/report-context.tsx ranks high on the risk index (74 of 100)",
       "category": "quality",
       "ruleId": "risk.high-risk-file",
       "severity": "low",
       "confidence": "high",
       "origin": "observed",
       "classification": null,
-      "explanation": "Ranked high because of: high complexity (highest function complexity 32); frequently changed (changed in 6 commits); 11 files depend on it directly or indirectly. The risk index blends complexity, how many files depend on the file, how often it changes and how well tests reach it. It ranks where a change is most costly, it does not predict bugs.",
+      "explanation": "Ranked high because of: 14 files depend on it directly or indirectly; weak test linkage (no test file imports it, directly or indirectly); frequently changed (changed in 3 commits). The risk index blends complexity, how many files depend on the file, how often it changes and how well tests reach it. It ranks where a change is most costly, it does not predict bugs.",
       "evidence": [
         {
           "kind": "metric",
-          "refs": ["packages/core/src/git/history.ts"],
-          "note": "complexity=32, dependents=11, churn=6, tests=0"
+          "refs": ["apps/web/src/components/report-context.tsx"],
+          "note": "complexity=9, dependents=14, churn=3, tests=1"
         }
       ],
       "locations": [
-        { "path": "packages/core/src/git/history.ts", "startLine": null, "endLine": null }
+        { "path": "apps/web/src/components/report-context.tsx", "startLine": null, "endLine": null }
       ],
       "remediation": "Reduce the dominant driver: simplify the file, add tests around it, or reduce how many files depend on it.",
       "limitations": [
@@ -12834,12 +13113,12 @@
       "confidence": "high",
       "origin": "observed",
       "classification": null,
-      "explanation": "Ranked high because of: frequently changed (changed in 7 commits); high complexity (highest function complexity 27); 28 files depend on it directly or indirectly. The risk index blends complexity, how many files depend on the file, how often it changes and how well tests reach it. It ranks where a change is most costly, it does not predict bugs.",
+      "explanation": "Ranked high because of: frequently changed (changed in 8 commits); high complexity (highest function complexity 27); 30 files depend on it directly or indirectly. The risk index blends complexity, how many files depend on the file, how often it changes and how well tests reach it. It ranks where a change is most costly, it does not predict bugs.",
       "evidence": [
         {
           "kind": "metric",
           "refs": ["packages/core/src/ir/schema.ts"],
-          "note": "complexity=27, dependents=28, churn=7, tests=0"
+          "note": "complexity=27, dependents=30, churn=8, tests=0"
         }
       ],
       "locations": [
@@ -12860,12 +13139,12 @@
       "confidence": "high",
       "origin": "observed",
       "classification": null,
-      "explanation": "Ranked high because of: high complexity (highest function complexity 55); frequently changed (changed in 4 commits). The risk index blends complexity, how many files depend on the file, how often it changes and how well tests reach it. It ranks where a change is most costly, it does not predict bugs.",
+      "explanation": "Ranked high because of: high complexity (highest function complexity 55); frequently changed (changed in 5 commits). The risk index blends complexity, how many files depend on the file, how often it changes and how well tests reach it. It ranks where a change is most costly, it does not predict bugs.",
       "evidence": [
         {
           "kind": "metric",
           "refs": ["packages/core/src/report/summary.ts"],
-          "note": "complexity=55, dependents=8, churn=4, tests=0.5"
+          "note": "complexity=55, dependents=8, churn=5, tests=0.5"
         }
       ],
       "locations": [
@@ -12876,36 +13155,6 @@
         "Risk index = weighted mean of available factors: complexity percentile (0.30), dependents percentile (0.25), change frequency percentile (0.25), lack of test linkage or coverage (0.20). At least 2 factors are required. It ranks files by how costly a change could be. It does not predict defects."
       ],
       "tags": ["risk-index"]
-    },
-    {
-      "id": "RL-RULE-FILE-SIZE-ae40e712",
-      "title": "File exceeds 700 code lines",
-      "category": "architecture",
-      "ruleId": "rule.file-size",
-      "severity": "low",
-      "confidence": "high",
-      "origin": "observed",
-      "classification": null,
-      "explanation": "apps/web/src/components/sections/findings-pages.tsx has 720 code lines.",
-      "evidence": [
-        {
-          "kind": "metric",
-          "refs": ["apps/web/src/components/sections/findings-pages.tsx"],
-          "note": "codeLines=720"
-        }
-      ],
-      "locations": [
-        {
-          "path": "apps/web/src/components/sections/findings-pages.tsx",
-          "startLine": null,
-          "endLine": null
-        }
-      ],
-      "remediation": "Split the file by responsibility.",
-      "limitations": [
-        "Only statically resolved imports are evaluated. Dynamic imports with non-literal arguments are not."
-      ],
-      "tags": ["rule", "limit"]
     },
     {
       "id": "RL-SEC-WF-UNPINNED-ACTION-1412de19",
@@ -13037,7 +13286,7 @@
       "origin": "observed",
       "classification": null,
       "explanation": "Concentrated authorship is a continuity signal (bus factor). It says nothing about code quality.",
-      "evidence": [{ "kind": "metric", "refs": ["Author 1"], "note": "37 commits analyzed" }],
+      "evidence": [{ "kind": "metric", "refs": ["Author 1"], "note": "39 commits analyzed" }],
       "locations": [],
       "remediation": "Share ownership through reviews and documentation if continuity matters.",
       "limitations": [
@@ -13045,7 +13294,7 @@
         "Squash merges attribute the whole change to the squasher, which can hide real authorship.",
         "Author identity is the commit author name. The same person under different names is counted separately.",
         "Churn and commit counts measure change activity, not quality or effort.",
-        "28 of 65 commits are merge commits or do not touch analyzed paths, so they are counted in the total but not in the file level details."
+        "28 of 67 commits are merge commits or do not touch analyzed paths, so they are counted in the total but not in the file level details."
       ],
       "tags": ["ownership"]
     }
@@ -13069,8 +13318,8 @@
         "RL-QUAL-COMPLEXITY-08634836",
         "RL-QUAL-COMPLEXITY-532b88b3",
         "RL-QUAL-COMPLEXITY-6f8ccd03",
+        "RL-QUAL-COMPLEXITY-7925a9f7",
         "RL-QUAL-COMPLEXITY-89c928ab",
-        "RL-QUAL-COMPLEXITY-a915bdc5",
         "RL-QUAL-COMPLEXITY-ae3e7d01",
         "RL-QUAL-COMPLEXITY-b59d41ed",
         "RL-QUAL-COMPLEXITY-cfff413d",
@@ -13080,11 +13329,11 @@
     },
     {
       "rank": 3,
-      "title": "Fix 1 violation of architecture rule no-module-cycles",
+      "title": "Revoke and remove 1 possible committed secret",
       "rationale": "Highest severity high, 1 finding. Priority = severity weight times confidence weight, plus 5 times the natural log of the finding count.",
-      "priority": 60,
-      "findingIds": ["RL-RULE-NO-MODULE-CYCLES-7fb75db2"],
-      "effort": "medium"
+      "priority": 42,
+      "findingIds": ["RL-SEC-SECRET-f596b68e"],
+      "effort": "low"
     },
     {
       "rank": 4,
@@ -13096,14 +13345,6 @@
     },
     {
       "rank": 5,
-      "title": "Resolve 1 module cycle",
-      "rationale": "Highest severity medium, 1 finding. Priority = severity weight times confidence weight, plus 5 times the natural log of the finding count.",
-      "priority": 30,
-      "findingIds": ["RL-ARCH-MODCYCLE-7b5a8915"],
-      "effort": "high"
-    },
-    {
-      "rank": 6,
       "title": "Upgrade vitest to 4.1.11 (fixes 1 advisory, major update)",
       "rationale": "Highest severity medium, 1 finding. Priority = severity weight times confidence weight, plus 5 times the natural log of the finding count.",
       "priority": 30,
@@ -13111,7 +13352,7 @@
       "effort": "high"
     },
     {
-      "rank": 7,
+      "rank": 6,
       "title": "Pin 6 GitHub Actions to commit SHAs",
       "rationale": "Highest severity medium, 6 findings. Priority = severity weight times confidence weight, plus 5 times the natural log of the finding count.",
       "priority": 21,
@@ -13126,13 +13367,13 @@
       "effort": "low"
     },
     {
-      "rank": 8,
+      "rank": 7,
       "title": "Reduce risk in 5 high-risk files (simplify and add tests)",
       "rationale": "Highest severity low, 5 findings. Priority = severity weight times confidence weight, plus 5 times the natural log of the finding count.",
       "priority": 18,
       "findingIds": [
         "RL-RISK-62793eca",
-        "RL-RISK-88b044a7",
+        "RL-RISK-71906bca",
         "RL-RISK-baa543d3",
         "RL-RISK-d69fcfa2",
         "RL-RISK-db25e8b2"
@@ -13140,33 +13381,25 @@
       "effort": "high"
     },
     {
-      "rank": 9,
+      "rank": 8,
       "title": "Refactor 5 change-prone complex files",
       "rationale": "Highest severity low, 5 findings. Priority = severity weight times confidence weight, plus 5 times the natural log of the finding count.",
       "priority": 15,
       "findingIds": [
+        "RL-HIST-HOTSPOT-11764bd1",
         "RL-HIST-HOTSPOT-2deae5c5",
         "RL-HIST-HOTSPOT-3c6df8c2",
-        "RL-HIST-HOTSPOT-7fef616a",
         "RL-HIST-HOTSPOT-9861c07a",
         "RL-HIST-HOTSPOT-bb46eacd"
       ],
       "effort": "high"
     },
     {
-      "rank": 10,
+      "rank": 9,
       "title": "Reduce dependencies of 2 files that import many others",
       "rationale": "Highest severity low, 2 findings. Priority = severity weight times confidence weight, plus 5 times the natural log of the finding count.",
       "priority": 13.5,
       "findingIds": ["RL-ARCH-FANOUT-c5101edf", "RL-ARCH-FANOUT-c80d93ee"],
-      "effort": "medium"
-    },
-    {
-      "rank": 11,
-      "title": "Fix 1 violation of architecture rule file-size",
-      "rationale": "Highest severity low, 1 finding. Priority = severity weight times confidence weight, plus 5 times the natural log of the finding count.",
-      "priority": 10,
-      "findingIds": ["RL-RULE-FILE-SIZE-ae40e712"],
       "effort": "medium"
     }
   ],
@@ -13174,12 +13407,12 @@
     {
       "dimension": "architecture",
       "state": "assessed",
-      "value": 92,
+      "value": 98,
       "confidence": "high",
       "coverage": 1,
       "weightCoverage": 1,
       "reason": null,
-      "basis": "Score 92 is the weighted average of 5 inputs: file-cycle-ratio 100 (weight 0.35: 0 of 110 files in runtime cycles); module-cycle-ratio 79.3 (weight 0.15: 2 of 29 modules in cycles); rule-violations-per-100-edges 87.2 (weight 0.25: 2 violations over 313 edges); unresolved-import-ratio 100 (weight 0.15: 0 of 330 internal imports unresolved); high-fan-out-share 81.8 (weight 0.1: 2 of 110 files with fan-out above 20).",
+      "basis": "Score 98 is the weighted average of 5 inputs: file-cycle-ratio 100 (weight 0.35: 0 of 114 files in runtime cycles); module-cycle-ratio 100 (weight 0.15: 0 of 29 modules in cycles); rule-violations-per-100-edges 100 (weight 0.25: 0 violations over 327 edges); unresolved-import-ratio 100 (weight 0.15: 0 of 344 internal imports unresolved); high-fan-out-share 82.5 (weight 0.1: 2 of 114 files with fan-out above 20).",
       "inputs": [
         {
           "name": "file-cycle-ratio",
@@ -13188,7 +13421,7 @@
           "normalized": 100,
           "weight": 0.35,
           "available": true,
-          "note": "0 of 110 files in runtime cycles",
+          "note": "0 of 114 files in runtime cycles",
           "description": "Share of source files that sit in a runtime import cycle",
           "curve": [[0, 100], [0.02, 85], [0.1, 50], [0.3, 0]],
           "origin": "provisional",
@@ -13197,31 +13430,31 @@
         },
         {
           "name": "module-cycle-ratio",
-          "impact": 3.1,
-          "raw": 0.069,
-          "normalized": 79.3,
+          "impact": 0,
+          "raw": 0,
+          "normalized": 100,
           "weight": 0.15,
           "available": true,
-          "note": "2 of 29 modules in cycles",
+          "note": "0 of 29 modules in cycles",
           "description": "Share of modules that sit in a module cycle",
           "curve": [[0, 100], [0.1, 70], [0.4, 0]],
           "origin": "provisional",
-          "contribution": 11.9,
-          "evidence": ["packages/core/src/acquire", "packages/core/src/detect"]
+          "contribution": 15,
+          "evidence": []
         },
         {
           "name": "rule-violations-per-100-edges",
-          "impact": 3.2,
-          "raw": 0.639,
-          "normalized": 87.2,
+          "impact": 0,
+          "raw": 0,
+          "normalized": 100,
           "weight": 0.25,
           "available": true,
-          "note": "2 violations over 313 edges",
+          "note": "0 violations over 327 edges",
           "description": "Architecture rule violations per 100 dependency edges (needs a rules file)",
           "curve": [[0, 100], [1, 80], [5, 40], [15, 0]],
           "origin": "provisional",
-          "contribution": 21.8,
-          "evidence": ["Circular dependency among 2 modules", "File exceeds 700 code lines"]
+          "contribution": 25,
+          "evidence": []
         },
         {
           "name": "unresolved-import-ratio",
@@ -13230,7 +13463,7 @@
           "normalized": 100,
           "weight": 0.15,
           "available": true,
-          "note": "0 of 330 internal imports unresolved",
+          "note": "0 of 344 internal imports unresolved",
           "description": "Internal imports that could not be resolved",
           "curve": [[0, 100], [0.02, 90], [0.1, 60], [0.3, 0]],
           "origin": "provisional",
@@ -13240,15 +13473,15 @@
         {
           "name": "high-fan-out-share",
           "impact": 1.8,
-          "raw": 0.0182,
-          "normalized": 81.8,
+          "raw": 0.0175,
+          "normalized": 82.5,
           "weight": 0.1,
           "available": true,
-          "note": "2 of 110 files with fan-out above 20",
+          "note": "2 of 114 files with fan-out above 20",
           "description": "Share of files importing more than 20 files",
           "curve": [[0, 100], [0.02, 80], [0.1, 30]],
           "origin": "convention",
-          "contribution": 8.2,
+          "contribution": 8.3,
           "evidence": ["packages/core/src/index.ts", "packages/core/src/pipeline/analyze.ts"]
         }
       ]
@@ -13261,20 +13494,20 @@
       "coverage": 1,
       "weightCoverage": 1,
       "reason": null,
-      "basis": "Score 75 is the weighted average of 4 inputs: high-complexity-function-share 80.7 (weight 0.35: 32 of 1659 functions above the high threshold); duplication-ratio 95.8 (weight 0.3: 138 of 16364 lines); oversized-file-share 75.5 (weight 0.2: source files above 500 code lines); hotspot-share 20 (weight 0.15: 15 hotspots with score at least 50).",
+      "basis": "Score 75 is the weighted average of 4 inputs: high-complexity-function-share 79.9 (weight 0.35: 34 of 1689 functions above the high threshold); duplication-ratio 95.2 (weight 0.3: 162 of 16619 lines); oversized-file-share 79.1 (weight 0.2: source files above 500 code lines); hotspot-share 20 (weight 0.15: 15 hotspots with score at least 50).",
       "inputs": [
         {
           "name": "high-complexity-function-share",
-          "impact": 6.8,
-          "raw": 0.0193,
-          "normalized": 80.7,
+          "impact": 7,
+          "raw": 0.0201,
+          "normalized": 79.9,
           "weight": 0.35,
           "available": true,
-          "note": "32 of 1659 functions above the high threshold",
+          "note": "34 of 1689 functions above the high threshold",
           "description": "Share of functions above the high complexity threshold",
           "curve": [[0, 100], [0.02, 80], [0.1, 40], [0.25, 0]],
           "origin": "convention",
-          "contribution": 28.2,
+          "contribution": 28,
           "evidence": [
             "Function analyze has complexity 114",
             "Function buildExecutiveSummary has complexity 55",
@@ -13285,42 +13518,42 @@
         },
         {
           "name": "duplication-ratio",
-          "impact": 1.3,
-          "raw": 0.0084,
-          "normalized": 95.8,
+          "impact": 1.4,
+          "raw": 0.0097,
+          "normalized": 95.2,
           "weight": 0.3,
           "available": true,
-          "note": "138 of 16364 lines",
+          "note": "162 of 16619 lines",
           "description": "Duplicated normalized lines divided by all normalized lines",
           "curve": [[0, 100], [0.03, 85], [0.1, 50], [0.25, 0]],
           "origin": "provisional",
-          "contribution": 28.7,
+          "contribution": 28.6,
           "evidence": []
         },
         {
           "name": "oversized-file-share",
-          "impact": 4.9,
-          "raw": 0.0636,
-          "normalized": 75.5,
+          "impact": 4.2,
+          "raw": 0.0526,
+          "normalized": 79.1,
           "weight": 0.2,
           "available": true,
           "note": "source files above 500 code lines",
           "description": "Share of source files above 500 code lines",
           "curve": [[0, 100], [0.05, 80], [0.2, 30]],
           "origin": "convention",
-          "contribution": 15.1,
+          "contribution": 15.8,
           "evidence": [
-            "apps/web/src/components/sections/findings-pages.tsx",
             "packages/cli/src/main.ts",
             "packages/core/src/analyzers/js-ts.ts",
             "packages/core/src/findings/generate.ts",
-            "packages/core/src/glossary/glossary.ts"
+            "packages/core/src/glossary/glossary.ts",
+            "packages/core/src/ir/schema.ts"
           ]
         },
         {
           "name": "hotspot-share",
           "impact": 12,
-          "raw": 0.1364,
+          "raw": 0.1316,
           "normalized": 20,
           "weight": 0.15,
           "available": true,
@@ -13333,8 +13566,8 @@
             "packages/core/src/scoring/score.ts",
             "packages/core/src/pipeline/analyze.ts",
             "packages/cli/src/main.ts",
-            "packages/core/src/findings/generate.ts",
-            "packages/core/src/practices/detect.ts"
+            "packages/core/src/report/markdown.ts",
+            "packages/core/src/findings/generate.ts"
           ]
         }
       ]
@@ -13342,12 +13575,12 @@
     {
       "dimension": "security-hygiene",
       "state": "assessed",
-      "value": 55,
+      "value": 43,
       "confidence": "high",
       "coverage": 1,
       "weightCoverage": 1,
       "reason": null,
-      "basis": "Score 55 is the weighted average of 4 inputs: vulnerable-dependency-weight 8 (weight 0.4: 5 known vulnerabilities (0 in development-only packages, counted at 40 percent)); secret-findings 100 (weight 0.25: 0 possible secrets); workflow-risk-weight 59.2 (weight 0.2: 6 workflow findings); lockfile-present 100 (weight 0.15: lockfile found).",
+      "basis": "Score 43 is the weighted average of 4 inputs: vulnerable-dependency-weight 8 (weight 0.4: 5 known vulnerabilities (0 in development-only packages, counted at 40 percent)); secret-findings 50 (weight 0.25: 1 possible secrets); workflow-risk-weight 59.2 (weight 0.2: 6 workflow findings); lockfile-present 100 (weight 0.15: lockfile found).",
       "inputs": [
         {
           "name": "vulnerable-dependency-weight",
@@ -13371,17 +13604,17 @@
         },
         {
           "name": "secret-findings",
-          "impact": 0,
-          "raw": 0,
-          "normalized": 100,
+          "impact": 12.5,
+          "raw": 1,
+          "normalized": 50,
           "weight": 0.25,
           "available": true,
-          "note": "0 possible secrets",
+          "note": "1 possible secrets",
           "description": "Possible committed secrets",
           "curve": [[0, 100], [1, 50], [3, 10], [5, 0]],
           "origin": "provisional",
-          "contribution": 25,
-          "evidence": []
+          "contribution": 12.5,
+          "evidence": ["apps/web/.env.local"]
         },
         {
           "name": "workflow-risk-weight",
@@ -13427,20 +13660,20 @@
       "coverage": 1,
       "weightCoverage": 0.75,
       "reason": null,
-      "basis": "Score 97 is the weighted average of 4 inputs: test-to-source-file-ratio 90.6 (weight 0.25: 35 test files, 110 source files); ci-present 100 (weight 0.2: GitHub Actions); lint-or-format 100 (weight 0.15: Biome, Biome); type-checking 100 (weight 0.15: TypeScript). 1 input was unavailable and excluded, not counted as zero.",
+      "basis": "Score 97 is the weighted average of 4 inputs: test-to-source-file-ratio 90.2 (weight 0.25: 35 test files, 114 source files); ci-present 100 (weight 0.2: GitHub Actions); lint-or-format 100 (weight 0.15: Biome, Biome); type-checking 100 (weight 0.15: TypeScript). 1 input was unavailable and excluded, not counted as zero.",
       "inputs": [
         {
           "name": "test-to-source-file-ratio",
-          "impact": 3.1,
-          "raw": 0.318,
-          "normalized": 90.6,
+          "impact": 3.3,
+          "raw": 0.307,
+          "normalized": 90.2,
           "weight": 0.25,
           "available": true,
-          "note": "35 test files, 110 source files",
+          "note": "35 test files, 114 source files",
           "description": "Test files per source file. File presence is not test effectiveness",
           "curve": [[0, 0], [0.1, 50], [0.3, 90], [0.6, 100]],
           "origin": "provisional",
-          "contribution": 30.2,
+          "contribution": 30.1,
           "evidence": []
         },
         {
@@ -13577,7 +13810,7 @@
       "coverage": 1,
       "weightCoverage": 1,
       "reason": null,
-      "basis": "Score 57 is the weighted average of 2 inputs: author-concentration 13 (weight 0.5: top author share of commits); commits-per-month 100 (weight 0.5: 65 commits in the whole history).",
+      "basis": "Score 57 is the weighted average of 2 inputs: author-concentration 13 (weight 0.5: top author share of commits); commits-per-month 100 (weight 0.5: 67 commits in the whole history).",
       "inputs": [
         {
           "name": "author-concentration",
@@ -13596,11 +13829,11 @@
         {
           "name": "commits-per-month",
           "impact": 0,
-          "raw": 65,
+          "raw": 67,
           "normalized": 100,
           "weight": 0.5,
           "available": true,
-          "note": "65 commits in the whole history",
+          "note": "67 commits in the whole history",
           "description": "Commit density over the analyzed window (activity signal)",
           "curve": [[0, 0], [1, 30], [4, 70], [10, 100]],
           "origin": "provisional",
@@ -13618,8 +13851,8 @@
     "tests": {
       "frameworks": ["Vitest"],
       "testFiles": 35,
-      "sourceFiles": 110,
-      "testToSourceFileRatio": 0.318,
+      "sourceFiles": 114,
+      "testToSourceFileRatio": 0.307,
       "coverageReport": "not-ingested"
     },
     "quality": {
@@ -13663,130 +13896,130 @@
     "reason": null,
     "source": "git",
     "commitQuality": {
-      "sampled": 36,
+      "sampled": 38,
       "conventionalShare": 1,
       "descriptiveShare": 1,
       "genericShare": 0,
-      "avgSubjectLength": 60.5
+      "avgSubjectLength": 63
     },
     "pullRequests": { "sampled": 12, "merged": 7, "exact": true, "medianHoursToMerge": 0.1 },
     "releases": { "count": 0, "exact": true, "latestDate": null },
     "shallow": false,
-    "totalCommits": 65,
+    "totalCommits": 67,
     "totalContributors": 2,
     "totalContributorsAtLeast": false,
     "exactTotals": true,
-    "commitsAnalyzed": 37,
-    "window": { "first": "2026-10-19T17:25:46+05:30", "last": "2026-10-25T21:13:41+05:30" },
+    "commitsAnalyzed": 39,
+    "window": { "first": "2026-10-19T17:25:46+05:30", "last": "2026-10-25T23:35:40+05:30" },
     "contributors": [
-      { "name": "Author 1", "commits": 64, "share": 0.985 },
+      { "name": "Author 1", "commits": 66, "share": 0.985 },
       { "name": "Author 2", "commits": 1, "share": 0.015 }
     ],
     "topAuthorShare": 0.985,
     "hotspots": [
       {
         "path": "packages/core/src/scoring/score.ts",
-        "commits": 7,
-        "churn": 1092,
+        "commits": 8,
+        "churn": 1104,
         "complexity": 82,
         "score": 98
       },
       {
         "path": "packages/core/src/pipeline/analyze.ts",
-        "commits": 6,
-        "churn": 1861,
+        "commits": 7,
+        "churn": 1905,
         "complexity": 114,
-        "score": 92
+        "score": 95
       },
       {
         "path": "packages/cli/src/main.ts",
-        "commits": 6,
-        "churn": 1344,
+        "commits": 7,
+        "churn": 1346,
         "complexity": 65,
-        "score": 91
+        "score": 93
+      },
+      {
+        "path": "packages/core/src/report/markdown.ts",
+        "commits": 7,
+        "churn": 1297,
+        "complexity": 43,
+        "score": 88
       },
       {
         "path": "packages/core/src/findings/generate.ts",
         "commits": 6,
         "churn": 2073,
         "complexity": 64,
-        "score": 90
+        "score": 87
+      },
+      {
+        "path": "packages/core/src/security/osv.ts",
+        "commits": 7,
+        "churn": 854,
+        "complexity": 34,
+        "score": 85
       },
       {
         "path": "packages/core/src/practices/detect.ts",
         "commits": 6,
         "churn": 546,
         "complexity": 53,
-        "score": 88
+        "score": 85
       },
       {
-        "path": "packages/core/src/report/markdown.ts",
-        "commits": 6,
-        "churn": 1293,
-        "complexity": 43,
-        "score": 86
+        "path": "packages/core/src/git/history.ts",
+        "commits": 7,
+        "churn": 949,
+        "complexity": 32,
+        "score": 82
       },
       {
-        "path": "packages/core/src/security/osv.ts",
-        "commits": 6,
-        "churn": 813,
-        "complexity": 35,
+        "path": "packages/core/src/report/summary.ts",
+        "commits": 5,
+        "churn": 241,
+        "complexity": 55,
         "score": 82
       },
       {
         "path": "packages/core/src/ir/schema.ts",
-        "commits": 7,
-        "churn": 860,
+        "commits": 8,
+        "churn": 884,
         "complexity": 27,
-        "score": 81
+        "score": 80
+      },
+      {
+        "path": "packages/core/src/report/html.ts",
+        "commits": 7,
+        "churn": 716,
+        "complexity": 30,
+        "score": 80
       },
       {
         "path": "packages/core/src/analyzers/js-ts.ts",
         "commits": 6,
         "churn": 1293,
         "complexity": 33,
-        "score": 81
-      },
-      {
-        "path": "packages/core/src/report/summary.ts",
-        "commits": 4,
-        "churn": 239,
-        "complexity": 55,
-        "score": 81
-      },
-      {
-        "path": "packages/core/src/git/history.ts",
-        "commits": 6,
-        "churn": 873,
-        "complexity": 32,
-        "score": 80
-      },
-      {
-        "path": "packages/core/src/report/html.ts",
-        "commits": 6,
-        "churn": 714,
-        "complexity": 30,
         "score": 78
       },
       {
         "path": "packages/core/src/git/activity.ts",
+        "commits": 5,
+        "churn": 451,
+        "complexity": 37,
+        "score": 77
+      },
+      {
+        "path": "packages/core/src/acquire/tar.ts",
         "commits": 4,
-        "churn": 196,
-        "complexity": 38,
-        "score": 76
+        "churn": 211,
+        "complexity": 30,
+        "score": 70
       },
       {
         "path": "packages/core/src/detect/manifests.ts",
         "commits": 3,
         "churn": 261,
         "complexity": 43,
-        "score": 71
-      },
-      {
-        "path": "packages/core/src/eval/harness.ts",
-        "commits": 6,
-        "churn": 752,
-        "complexity": 20,
         "score": 69
       }
     ],
@@ -13810,14 +14043,14 @@
         "path": "apps/web/src/app",
         "topAuthor": "Author 1",
         "share": 1,
-        "commits": 12
+        "commits": 13
       },
       {
         "moduleId": "m_8f7fe79585d8",
         "path": "apps/web/src/components",
         "topAuthor": "Author 1",
         "share": 1,
-        "commits": 22
+        "commits": 30
       },
       {
         "moduleId": "m_f7d0b3a9fb56",
@@ -13831,21 +14064,21 @@
         "path": "packages/cli/src",
         "topAuthor": "Author 1",
         "share": 1,
-        "commits": 10
+        "commits": 11
       },
       {
         "moduleId": "m_e9c909d4bd4a",
         "path": "packages/core/src",
         "topAuthor": "Author 1",
         "share": 1,
-        "commits": 8
+        "commits": 10
       },
       {
         "moduleId": "m_9980e3845b9b",
         "path": "packages/core/src/acquire",
         "topAuthor": "Author 1",
         "share": 1,
-        "commits": 9
+        "commits": 13
       },
       {
         "moduleId": "m_102196451a6b",
@@ -13859,14 +14092,14 @@
         "path": "packages/core/src/config",
         "topAuthor": "Author 1",
         "share": 1,
-        "commits": 3
+        "commits": 4
       },
       {
         "moduleId": "m_0d464f19f383",
         "path": "packages/core/src/detect",
         "topAuthor": "Author 1",
         "share": 1,
-        "commits": 7
+        "commits": 9
       },
       {
         "moduleId": "m_9ec5ffea2de0",
@@ -13887,7 +14120,7 @@
         "path": "packages/core/src/git",
         "topAuthor": "Author 1",
         "share": 1,
-        "commits": 14
+        "commits": 16
       },
       {
         "moduleId": "m_eec3479d609b",
@@ -13908,7 +14141,7 @@
         "path": "packages/core/src/ir",
         "topAuthor": "Author 1",
         "share": 1,
-        "commits": 12
+        "commits": 15
       },
       {
         "moduleId": "m_4e0402b084be",
@@ -13922,7 +14155,7 @@
         "path": "packages/core/src/pipeline",
         "topAuthor": "Author 1",
         "share": 1,
-        "commits": 13
+        "commits": 15
       },
       {
         "moduleId": "m_27f93c83b0a1",
@@ -13943,7 +14176,7 @@
         "path": "packages/core/src/report",
         "topAuthor": "Author 1",
         "share": 1,
-        "commits": 25
+        "commits": 28
       },
       {
         "moduleId": "m_397a16065bcd",
@@ -13964,14 +14197,14 @@
         "path": "packages/core/src/scoring",
         "topAuthor": "Author 1",
         "share": 1,
-        "commits": 17
+        "commits": 18
       },
       {
         "moduleId": "m_e11872136108",
         "path": "packages/core/src/security",
         "topAuthor": "Author 1",
         "share": 1,
-        "commits": 10
+        "commits": 11
       },
       {
         "moduleId": "m_9f6ec17403b5",
@@ -13985,14 +14218,14 @@
         "path": "packages/core/src/util",
         "topAuthor": "Author 1",
         "share": 1,
-        "commits": 5
+        "commits": 6
       },
       {
         "moduleId": "m_97762e76cba3",
         "path": "scripts",
         "topAuthor": "Author 1",
         "share": 1,
-        "commits": 5
+        "commits": 6
       }
     ],
     "limitations": [
@@ -14000,7 +14233,7 @@
       "Squash merges attribute the whole change to the squasher, which can hide real authorship.",
       "Author identity is the commit author name. The same person under different names is counted separately.",
       "Churn and commit counts measure change activity, not quality or effort.",
-      "28 of 65 commits are merge commits or do not touch analyzed paths, so they are counted in the total but not in the file level details."
+      "28 of 67 commits are merge commits or do not touch analyzed paths, so they are counted in the total but not in the file level details."
     ]
   },
   "security": {
@@ -14016,7 +14249,7 @@
         "assessed": true,
         "reason": "Limited built-in token patterns. Install Gitleaks for broader coverage.",
         "tool": "builtin-patterns",
-        "findings": 0
+        "findings": 1
       },
       {
         "assessed": false,
@@ -14034,33 +14267,31 @@
     "statement": "Security results are signals from specific checks. They do not show that the repository is secure. Dynamic behavior, logic flaws and issues outside the listed checks are not assessed."
   },
   "executiveSummary": {
-    "headline": "Repository-Intelligence-Platform is a TypeScript repository with 23,315 lines of code in 29 modules, using Next.js and React.",
+    "headline": "Repository-Intelligence-Platform is a TypeScript repository with 23,757 lines of code in 29 modules, using Next.js and React.",
     "overview": [
-      "The analysis processed 145 of 145 code files (110 production, 35 test) out of 562 files in total. 100 percent of internal imports were resolved, which is the main reliability number for the dependency graph.",
-      "The dependency graph has 0 runtime file cycles and 1 module cycle.",
-      "Scores: Architecture 92 (high confidence), Maintainability 75 (high confidence), Security hygiene 55 (high confidence), Testing and CI 97 (high confidence), Documentation 89 (high confidence), Maintenance activity 57 (high confidence).",
-      "History (Git): 65 commits from 2 contributors, 7 merged pull requests, 0 releases."
+      "The analysis processed 149 of 149 code files (114 production, 35 test) out of 574 files in total. 100 percent of internal imports were resolved, which is the main reliability number for the dependency graph.",
+      "The 114 production files form a dependency graph with 327 edges and no circular dependencies.",
+      "Scores: Architecture 98 (high confidence), Maintainability 75 (high confidence), Security hygiene 43 (high confidence), Testing and CI 97 (high confidence), Documentation 89 (high confidence), Maintenance activity 57 (high confidence).",
+      "History (Git): 67 commits from 2 contributors, 7 merged pull requests, 0 releases."
     ],
     "strengths": [
+      "No circular dependencies between files or modules.",
       "Almost all internal imports resolve (100 percent), so graph conclusions are well supported.",
       "Continuous integration is configured (GitHub Actions).",
       "21 architecture decision records document design choices.",
-      "Low code duplication (0.8 percent).",
-      "No committed secrets were detected by the checks that ran.",
+      "Low code duplication (1 percent).",
       "A dependency lockfile pins exact versions."
     ],
     "concerns": [
       "5 known vulnerabilities affect 3 packages (2 critical or high). Reachability is not assessed.",
       "6 risky GitHub Actions settings found, for example unpinned actions.",
-      "1 circular dependency detected.",
-      "2 architecture rule violations.",
-      "7 files rank high on the risk index, the top one is packages/core/src/findings/generate.ts.",
-      "32 functions have high or very high complexity."
+      "9 files rank high on the risk index, the top one is packages/core/src/findings/generate.ts.",
+      "34 functions have high or very high complexity."
     ],
     "nextSteps": [
       "Upgrade tinypool to 2.1.2 (fixes 2 advisories, major update)",
       "Simplify 10 highly complex functions",
-      "Fix 1 violation of architecture rule no-module-cycles"
+      "Revoke and remove 1 possible committed secret"
     ]
   },
   "testCoverage": {
@@ -14085,16 +14316,16 @@
           {
             "name": "complexity",
             "value": 64,
-            "percentile": 0.964,
+            "percentile": 0.965,
             "note": "highest function complexity 64"
           },
           {
             "name": "dependents",
             "value": 9,
-            "percentile": 0.682,
+            "percentile": 0.684,
             "note": "9 files depend on it directly or indirectly"
           },
-          { "name": "churn", "value": 6, "percentile": 0.873, "note": "changed in 6 commits" },
+          { "name": "churn", "value": 6, "percentile": 0.868, "note": "changed in 6 commits" },
           {
             "name": "tests",
             "value": 0.5,
@@ -14124,10 +14355,10 @@
           {
             "name": "dependents",
             "value": 8,
-            "percentile": 0.527,
+            "percentile": 0.518,
             "note": "8 files depend on it directly or indirectly"
           },
-          { "name": "churn", "value": 7, "percentile": 0.982, "note": "changed in 7 commits" },
+          { "name": "churn", "value": 8, "percentile": 0.982, "note": "changed in 8 commits" },
           {
             "name": "tests",
             "value": 0.5,
@@ -14137,9 +14368,42 @@
         ],
         "drivers": [
           "high complexity (highest function complexity 82)",
-          "frequently changed (changed in 7 commits)"
+          "frequently changed (changed in 8 commits)"
         ],
-        "explanation": "Ranked high because of: high complexity (highest function complexity 82); frequently changed (changed in 7 commits)."
+        "explanation": "Ranked high because of: high complexity (highest function complexity 82); frequently changed (changed in 8 commits)."
+      },
+      {
+        "path": "apps/web/src/components/report-context.tsx",
+        "moduleId": "m_8f7fe79585d8",
+        "risk": 74,
+        "confidence": "high",
+        "factors": [
+          {
+            "name": "complexity",
+            "value": 9,
+            "percentile": 0.526,
+            "note": "highest function complexity 9"
+          },
+          {
+            "name": "dependents",
+            "value": 14,
+            "percentile": 0.833,
+            "note": "14 files depend on it directly or indirectly"
+          },
+          { "name": "churn", "value": 3, "percentile": 0.675, "note": "changed in 3 commits" },
+          {
+            "name": "tests",
+            "value": 1,
+            "percentile": null,
+            "note": "no test file imports it, directly or indirectly"
+          }
+        ],
+        "drivers": [
+          "14 files depend on it directly or indirectly",
+          "weak test linkage (no test file imports it, directly or indirectly)",
+          "frequently changed (changed in 3 commits)"
+        ],
+        "explanation": "Ranked high because of: 14 files depend on it directly or indirectly; weak test linkage (no test file imports it, directly or indirectly); frequently changed (changed in 3 commits)."
       },
       {
         "path": "packages/core/src/report/summary.ts",
@@ -14150,16 +14414,16 @@
           {
             "name": "complexity",
             "value": 55,
-            "percentile": 0.955,
+            "percentile": 0.956,
             "note": "highest function complexity 55"
           },
           {
             "name": "dependents",
             "value": 8,
-            "percentile": 0.527,
+            "percentile": 0.518,
             "note": "8 files depend on it directly or indirectly"
           },
-          { "name": "churn", "value": 4, "percentile": 0.827, "note": "changed in 4 commits" },
+          { "name": "churn", "value": 5, "percentile": 0.851, "note": "changed in 5 commits" },
           {
             "name": "tests",
             "value": 0.5,
@@ -14169,9 +14433,9 @@
         ],
         "drivers": [
           "high complexity (highest function complexity 55)",
-          "frequently changed (changed in 4 commits)"
+          "frequently changed (changed in 5 commits)"
         ],
-        "explanation": "Ranked high because of: high complexity (highest function complexity 55); frequently changed (changed in 4 commits)."
+        "explanation": "Ranked high because of: high complexity (highest function complexity 55); frequently changed (changed in 5 commits)."
       },
       {
         "path": "packages/core/src/ir/schema.ts",
@@ -14182,16 +14446,16 @@
           {
             "name": "complexity",
             "value": 27,
-            "percentile": 0.809,
+            "percentile": 0.798,
             "note": "highest function complexity 27"
           },
           {
             "name": "dependents",
-            "value": 28,
-            "percentile": 0.945,
-            "note": "28 files depend on it directly or indirectly"
+            "value": 30,
+            "percentile": 0.956,
+            "note": "30 files depend on it directly or indirectly"
           },
-          { "name": "churn", "value": 7, "percentile": 0.982, "note": "changed in 7 commits" },
+          { "name": "churn", "value": 8, "percentile": 0.982, "note": "changed in 8 commits" },
           {
             "name": "tests",
             "value": 0,
@@ -14200,31 +14464,31 @@
           }
         ],
         "drivers": [
-          "frequently changed (changed in 7 commits)",
+          "frequently changed (changed in 8 commits)",
           "high complexity (highest function complexity 27)",
-          "28 files depend on it directly or indirectly"
+          "30 files depend on it directly or indirectly"
         ],
-        "explanation": "Ranked high because of: frequently changed (changed in 7 commits); high complexity (highest function complexity 27); 28 files depend on it directly or indirectly."
+        "explanation": "Ranked high because of: frequently changed (changed in 8 commits); high complexity (highest function complexity 27); 30 files depend on it directly or indirectly."
       },
       {
         "path": "packages/core/src/git/history.ts",
         "moduleId": "m_351f7ce69080",
-        "risk": 67,
+        "risk": 68,
         "confidence": "high",
         "factors": [
           {
             "name": "complexity",
             "value": 32,
-            "percentile": 0.855,
+            "percentile": 0.851,
             "note": "highest function complexity 32"
           },
           {
             "name": "dependents",
             "value": 11,
-            "percentile": 0.782,
+            "percentile": 0.772,
             "note": "11 files depend on it directly or indirectly"
           },
-          { "name": "churn", "value": 6, "percentile": 0.873, "note": "changed in 6 commits" },
+          { "name": "churn", "value": 7, "percentile": 0.921, "note": "changed in 7 commits" },
           {
             "name": "tests",
             "value": 0,
@@ -14234,43 +14498,10 @@
         ],
         "drivers": [
           "high complexity (highest function complexity 32)",
-          "frequently changed (changed in 6 commits)",
+          "frequently changed (changed in 7 commits)",
           "11 files depend on it directly or indirectly"
         ],
-        "explanation": "Ranked high because of: high complexity (highest function complexity 32); frequently changed (changed in 6 commits); 11 files depend on it directly or indirectly."
-      },
-      {
-        "path": "packages/core/src/detect/manifests.ts",
-        "moduleId": "m_0d464f19f383",
-        "risk": 66,
-        "confidence": "high",
-        "factors": [
-          {
-            "name": "complexity",
-            "value": 43,
-            "percentile": 0.918,
-            "note": "highest function complexity 43"
-          },
-          {
-            "name": "dependents",
-            "value": 12,
-            "percentile": 0.809,
-            "note": "12 files depend on it directly or indirectly"
-          },
-          { "name": "churn", "value": 3, "percentile": 0.718, "note": "changed in 3 commits" },
-          {
-            "name": "tests",
-            "value": 0,
-            "percentile": null,
-            "note": "imported directly by a test file"
-          }
-        ],
-        "drivers": [
-          "high complexity (highest function complexity 43)",
-          "12 files depend on it directly or indirectly",
-          "frequently changed (changed in 3 commits)"
-        ],
-        "explanation": "Ranked high because of: high complexity (highest function complexity 43); 12 files depend on it directly or indirectly; frequently changed (changed in 3 commits)."
+        "explanation": "Ranked high because of: high complexity (highest function complexity 32); frequently changed (changed in 7 commits); 11 files depend on it directly or indirectly."
       },
       {
         "path": "packages/core/src/analyzers/js-ts.ts",
@@ -14281,16 +14512,16 @@
           {
             "name": "complexity",
             "value": 33,
-            "percentile": 0.864,
+            "percentile": 0.868,
             "note": "highest function complexity 33"
           },
           {
             "name": "dependents",
             "value": 9,
-            "percentile": 0.682,
+            "percentile": 0.684,
             "note": "9 files depend on it directly or indirectly"
           },
-          { "name": "churn", "value": 6, "percentile": 0.873, "note": "changed in 6 commits" },
+          { "name": "churn", "value": 6, "percentile": 0.868, "note": "changed in 6 commits" },
           {
             "name": "tests",
             "value": 0,
@@ -14306,9 +14537,42 @@
         "explanation": "Ranked high because of: high complexity (highest function complexity 33); frequently changed (changed in 6 commits); 9 files depend on it directly or indirectly."
       },
       {
+        "path": "packages/core/src/detect/manifests.ts",
+        "moduleId": "m_0d464f19f383",
+        "risk": 65,
+        "confidence": "high",
+        "factors": [
+          {
+            "name": "complexity",
+            "value": 43,
+            "percentile": 0.921,
+            "note": "highest function complexity 43"
+          },
+          {
+            "name": "dependents",
+            "value": 12,
+            "percentile": 0.807,
+            "note": "12 files depend on it directly or indirectly"
+          },
+          { "name": "churn", "value": 3, "percentile": 0.675, "note": "changed in 3 commits" },
+          {
+            "name": "tests",
+            "value": 0,
+            "percentile": null,
+            "note": "imported directly by a test file"
+          }
+        ],
+        "drivers": [
+          "high complexity (highest function complexity 43)",
+          "12 files depend on it directly or indirectly",
+          "frequently changed (changed in 3 commits)"
+        ],
+        "explanation": "Ranked high because of: high complexity (highest function complexity 43); 12 files depend on it directly or indirectly; frequently changed (changed in 3 commits)."
+      },
+      {
         "path": "packages/core/src/pipeline/analyze.ts",
         "moduleId": "m_9da582ab6eeb",
-        "risk": 64,
+        "risk": 65,
         "confidence": "high",
         "factors": [
           {
@@ -14320,10 +14584,10 @@
           {
             "name": "dependents",
             "value": 7,
-            "percentile": 0.491,
+            "percentile": 0.5,
             "note": "7 files depend on it directly or indirectly"
           },
-          { "name": "churn", "value": 6, "percentile": 0.873, "note": "changed in 6 commits" },
+          { "name": "churn", "value": 7, "percentile": 0.921, "note": "changed in 7 commits" },
           {
             "name": "tests",
             "value": 0,
@@ -14333,9 +14597,9 @@
         ],
         "drivers": [
           "high complexity (highest function complexity 114)",
-          "frequently changed (changed in 6 commits)"
+          "frequently changed (changed in 7 commits)"
         ],
-        "explanation": "Ranked high because of: high complexity (highest function complexity 114); frequently changed (changed in 6 commits)."
+        "explanation": "Ranked high because of: high complexity (highest function complexity 114); frequently changed (changed in 7 commits)."
       },
       {
         "path": "packages/core/src/practices/detect.ts",
@@ -14346,16 +14610,16 @@
           {
             "name": "complexity",
             "value": 53,
-            "percentile": 0.945,
+            "percentile": 0.947,
             "note": "highest function complexity 53"
           },
           {
             "name": "dependents",
             "value": 8,
-            "percentile": 0.527,
+            "percentile": 0.518,
             "note": "8 files depend on it directly or indirectly"
           },
-          { "name": "churn", "value": 6, "percentile": 0.873, "note": "changed in 6 commits" },
+          { "name": "churn", "value": 6, "percentile": 0.868, "note": "changed in 6 commits" },
           {
             "name": "tests",
             "value": 0,
@@ -14370,24 +14634,24 @@
         "explanation": "Ranked high because of: high complexity (highest function complexity 53); frequently changed (changed in 6 commits)."
       },
       {
-        "path": "packages/core/src/report/diagram.ts",
-        "moduleId": "m_5613d6667972",
-        "risk": 62,
+        "path": "packages/core/src/security/osv.ts",
+        "moduleId": "m_e11872136108",
+        "risk": 63,
         "confidence": "high",
         "factors": [
           {
             "name": "complexity",
-            "value": 16,
-            "percentile": 0.691,
-            "note": "highest function complexity 16"
+            "value": 34,
+            "percentile": 0.886,
+            "note": "highest function complexity 34"
           },
           {
             "name": "dependents",
-            "value": 28,
-            "percentile": 0.945,
-            "note": "28 files depend on it directly or indirectly"
+            "value": 8,
+            "percentile": 0.518,
+            "note": "8 files depend on it directly or indirectly"
           },
-          { "name": "churn", "value": 3, "percentile": 0.718, "note": "changed in 3 commits" },
+          { "name": "churn", "value": 7, "percentile": 0.921, "note": "changed in 7 commits" },
           {
             "name": "tests",
             "value": 0,
@@ -14396,11 +14660,42 @@
           }
         ],
         "drivers": [
-          "28 files depend on it directly or indirectly",
-          "high complexity (highest function complexity 16)",
+          "high complexity (highest function complexity 34)",
+          "frequently changed (changed in 7 commits)"
+        ],
+        "explanation": "Ranked high because of: high complexity (highest function complexity 34); frequently changed (changed in 7 commits)."
+      },
+      {
+        "path": "apps/web/src/components/sections/rules-compare-export.tsx",
+        "moduleId": "m_8f7fe79585d8",
+        "risk": 61,
+        "confidence": "high",
+        "factors": [
+          {
+            "name": "complexity",
+            "value": 11,
+            "percentile": 0.561,
+            "note": "highest function complexity 11"
+          },
+          {
+            "name": "dependents",
+            "value": 2,
+            "percentile": 0.298,
+            "note": "2 files depend on it directly or indirectly"
+          },
+          { "name": "churn", "value": 3, "percentile": 0.675, "note": "changed in 3 commits" },
+          {
+            "name": "tests",
+            "value": 1,
+            "percentile": null,
+            "note": "no test file imports it, directly or indirectly"
+          }
+        ],
+        "drivers": [
+          "weak test linkage (no test file imports it, directly or indirectly)",
           "frequently changed (changed in 3 commits)"
         ],
-        "explanation": "Ranked high because of: 28 files depend on it directly or indirectly; high complexity (highest function complexity 16); frequently changed (changed in 3 commits)."
+        "explanation": "Ranked high because of: weak test linkage (no test file imports it, directly or indirectly); frequently changed (changed in 3 commits)."
       },
       {
         "path": "packages/core/src/git/activity.ts",
@@ -14410,17 +14705,17 @@
         "factors": [
           {
             "name": "complexity",
-            "value": 38,
-            "percentile": 0.891,
-            "note": "highest function complexity 38"
+            "value": 37,
+            "percentile": 0.895,
+            "note": "highest function complexity 37"
           },
           {
             "name": "dependents",
             "value": 8,
-            "percentile": 0.527,
+            "percentile": 0.518,
             "note": "8 files depend on it directly or indirectly"
           },
-          { "name": "churn", "value": 4, "percentile": 0.827, "note": "changed in 4 commits" },
+          { "name": "churn", "value": 5, "percentile": 0.851, "note": "changed in 5 commits" },
           {
             "name": "tests",
             "value": 0,
@@ -14429,30 +14724,30 @@
           }
         ],
         "drivers": [
-          "high complexity (highest function complexity 38)",
-          "frequently changed (changed in 4 commits)"
+          "high complexity (highest function complexity 37)",
+          "frequently changed (changed in 5 commits)"
         ],
-        "explanation": "Ranked high because of: high complexity (highest function complexity 38); frequently changed (changed in 4 commits)."
+        "explanation": "Ranked high because of: high complexity (highest function complexity 37); frequently changed (changed in 5 commits)."
       },
       {
-        "path": "packages/core/src/security/osv.ts",
-        "moduleId": "m_e11872136108",
+        "path": "packages/core/src/report/diagram.ts",
+        "moduleId": "m_5613d6667972",
         "risk": 61,
         "confidence": "high",
         "factors": [
           {
             "name": "complexity",
-            "value": 35,
-            "percentile": 0.882,
-            "note": "highest function complexity 35"
+            "value": 16,
+            "percentile": 0.684,
+            "note": "highest function complexity 16"
           },
           {
             "name": "dependents",
-            "value": 8,
-            "percentile": 0.527,
-            "note": "8 files depend on it directly or indirectly"
+            "value": 30,
+            "percentile": 0.956,
+            "note": "30 files depend on it directly or indirectly"
           },
-          { "name": "churn", "value": 6, "percentile": 0.873, "note": "changed in 6 commits" },
+          { "name": "churn", "value": 3, "percentile": 0.675, "note": "changed in 3 commits" },
           {
             "name": "tests",
             "value": 0,
@@ -14461,30 +14756,31 @@
           }
         ],
         "drivers": [
-          "high complexity (highest function complexity 35)",
-          "frequently changed (changed in 6 commits)"
+          "30 files depend on it directly or indirectly",
+          "high complexity (highest function complexity 16)",
+          "frequently changed (changed in 3 commits)"
         ],
-        "explanation": "Ranked high because of: high complexity (highest function complexity 35); frequently changed (changed in 6 commits)."
+        "explanation": "Ranked high because of: 30 files depend on it directly or indirectly; high complexity (highest function complexity 16); frequently changed (changed in 3 commits)."
       },
       {
         "path": "packages/core/src/analyzers/python.ts",
         "moduleId": "m_102196451a6b",
-        "risk": 58,
+        "risk": 60,
         "confidence": "high",
         "factors": [
           {
             "name": "complexity",
-            "value": 24,
-            "percentile": 0.755,
-            "note": "highest function complexity 24"
+            "value": 32,
+            "percentile": 0.851,
+            "note": "highest function complexity 32"
           },
           {
             "name": "dependents",
             "value": 9,
-            "percentile": 0.682,
+            "percentile": 0.684,
             "note": "9 files depend on it directly or indirectly"
           },
-          { "name": "churn", "value": 3, "percentile": 0.718, "note": "changed in 3 commits" },
+          { "name": "churn", "value": 3, "percentile": 0.675, "note": "changed in 3 commits" },
           {
             "name": "tests",
             "value": 0,
@@ -14493,84 +14789,20 @@
           }
         ],
         "drivers": [
-          "high complexity (highest function complexity 24)",
-          "frequently changed (changed in 3 commits)",
-          "9 files depend on it directly or indirectly"
-        ],
-        "explanation": "Ranked high because of: high complexity (highest function complexity 24); frequently changed (changed in 3 commits); 9 files depend on it directly or indirectly."
-      },
-      {
-        "path": "packages/core/src/risk/risk.ts",
-        "moduleId": "m_397a16065bcd",
-        "risk": 57,
-        "confidence": "high",
-        "factors": [
-          {
-            "name": "complexity",
-            "value": 33,
-            "percentile": 0.864,
-            "note": "highest function complexity 33"
-          },
-          {
-            "name": "dependents",
-            "value": 8,
-            "percentile": 0.527,
-            "note": "8 files depend on it directly or indirectly"
-          },
-          { "name": "churn", "value": 3, "percentile": 0.718, "note": "changed in 3 commits" },
-          {
-            "name": "tests",
-            "value": 0,
-            "percentile": null,
-            "note": "imported directly by a test file"
-          }
-        ],
-        "drivers": [
-          "high complexity (highest function complexity 33)",
+          "high complexity (highest function complexity 32)",
+          "9 files depend on it directly or indirectly",
           "frequently changed (changed in 3 commits)"
         ],
-        "explanation": "Ranked high because of: high complexity (highest function complexity 33); frequently changed (changed in 3 commits)."
-      },
-      {
-        "path": "packages/cli/src/main.ts",
-        "moduleId": "m_b73edeff9caa",
-        "risk": 56,
-        "confidence": "high",
-        "factors": [
-          {
-            "name": "complexity",
-            "value": 65,
-            "percentile": 0.973,
-            "note": "highest function complexity 65"
-          },
-          {
-            "name": "dependents",
-            "value": 1,
-            "percentile": 0.191,
-            "note": "1 files depend on it directly or indirectly"
-          },
-          { "name": "churn", "value": 6, "percentile": 0.873, "note": "changed in 6 commits" },
-          {
-            "name": "tests",
-            "value": 0,
-            "percentile": null,
-            "note": "imported directly by a test file"
-          }
-        ],
-        "drivers": [
-          "high complexity (highest function complexity 65)",
-          "frequently changed (changed in 6 commits)"
-        ],
-        "explanation": "Ranked high because of: high complexity (highest function complexity 65); frequently changed (changed in 6 commits)."
+        "explanation": "Ranked high because of: high complexity (highest function complexity 32); 9 files depend on it directly or indirectly; frequently changed (changed in 3 commits)."
       }
     ]
   },
   "blastRadius": [
     {
       "path": "packages/core/src/ir/types.ts",
-      "directDependents": 38,
-      "transitiveDependents": 70,
-      "runtimeTransitive": 31,
+      "directDependents": 39,
+      "transitiveDependents": 73,
+      "runtimeTransitive": 34,
       "modulesAffected": [
         "apps/web/src/app",
         "apps/web/src/components",
@@ -14601,8 +14833,8 @@
     {
       "path": "packages/core/src/glossary/glossary.ts",
       "directDependents": 9,
-      "transitiveDependents": 38,
-      "runtimeTransitive": 35,
+      "transitiveDependents": 40,
+      "runtimeTransitive": 37,
       "modulesAffected": [
         "apps/web/src/app",
         "apps/web/src/components",
@@ -14621,8 +14853,8 @@
     {
       "path": "packages/core/src/graph/impact.ts",
       "directDependents": 4,
-      "transitiveDependents": 34,
-      "runtimeTransitive": 31,
+      "transitiveDependents": 36,
+      "runtimeTransitive": 33,
       "modulesAffected": [
         "apps/web/src/app",
         "apps/web/src/components",
@@ -14633,6 +14865,36 @@
         "packages/core/src/pipeline",
         "packages/core/src/risk",
         "packages/core/src/trend"
+      ],
+      "entrypointsAffected": [],
+      "maxDepth": 4
+    },
+    {
+      "path": "packages/core/src/report/diagram.ts",
+      "directDependents": 4,
+      "transitiveDependents": 30,
+      "runtimeTransitive": 27,
+      "modulesAffected": [
+        "apps/web/src/app",
+        "apps/web/src/components",
+        "apps/web/src/lib",
+        "packages/core/src",
+        "packages/core/src/report"
+      ],
+      "entrypointsAffected": [],
+      "maxDepth": 4
+    },
+    {
+      "path": "packages/core/src/ir/schema.ts",
+      "directDependents": 3,
+      "transitiveDependents": 30,
+      "runtimeTransitive": 27,
+      "modulesAffected": [
+        "apps/web/src/app",
+        "apps/web/src/components",
+        "apps/web/src/lib",
+        "packages/core/src",
+        "packages/core/src/ir"
       ],
       "entrypointsAffected": [],
       "maxDepth": 4
@@ -14664,23 +14926,8 @@
       "maxDepth": 3
     },
     {
-      "path": "packages/core/src/report/diagram.ts",
-      "directDependents": 4,
-      "transitiveDependents": 28,
-      "runtimeTransitive": 25,
-      "modulesAffected": [
-        "apps/web/src/app",
-        "apps/web/src/components",
-        "apps/web/src/lib",
-        "packages/core/src",
-        "packages/core/src/report"
-      ],
-      "entrypointsAffected": [],
-      "maxDepth": 4
-    },
-    {
-      "path": "packages/core/src/ir/schema.ts",
-      "directDependents": 3,
+      "path": "packages/core/src/ir/upgrade.ts",
+      "directDependents": 2,
       "transitiveDependents": 28,
       "runtimeTransitive": 25,
       "modulesAffected": [
@@ -14696,8 +14943,8 @@
     {
       "path": "packages/core/src/report/diff.ts",
       "directDependents": 2,
-      "transitiveDependents": 26,
-      "runtimeTransitive": 23,
+      "transitiveDependents": 28,
+      "runtimeTransitive": 25,
       "modulesAffected": [
         "apps/web/src/app",
         "apps/web/src/components",
@@ -14710,9 +14957,9 @@
     },
     {
       "path": "packages/core/src/browser.ts",
-      "directDependents": 15,
-      "transitiveDependents": 24,
-      "runtimeTransitive": 21,
+      "directDependents": 16,
+      "transitiveDependents": 26,
+      "runtimeTransitive": 23,
       "modulesAffected": [
         "apps/web/src/app",
         "apps/web/src/components",
@@ -14724,9 +14971,9 @@
     },
     {
       "path": "packages/core/src/util/paths.ts",
-      "directDependents": 13,
-      "transitiveDependents": 24,
-      "runtimeTransitive": 24,
+      "directDependents": 14,
+      "transitiveDependents": 25,
+      "runtimeTransitive": 25,
       "modulesAffected": [
         "apps/web/src/app",
         "packages/core/src",
@@ -14791,17 +15038,17 @@
     {
       "path": "apps/web/src/lib/store.ts",
       "directDependents": 3,
-      "transitiveDependents": 17,
-      "runtimeTransitive": 17,
+      "transitiveDependents": 19,
+      "runtimeTransitive": 19,
       "modulesAffected": ["apps/web/src/app", "apps/web/src/components", "apps/web/src/lib"],
       "entrypointsAffected": [],
       "maxDepth": 4
     },
     {
       "path": "apps/web/src/lib/format.ts",
-      "directDependents": 11,
-      "transitiveDependents": 15,
-      "runtimeTransitive": 15,
+      "directDependents": 13,
+      "transitiveDependents": 17,
+      "runtimeTransitive": 17,
       "modulesAffected": ["apps/web/src/app", "apps/web/src/components", "apps/web/src/lib"],
       "entrypointsAffected": [],
       "maxDepth": 3
@@ -14809,11 +15056,29 @@
     {
       "path": "apps/web/src/lib/glossary.ts",
       "directDependents": 3,
-      "transitiveDependents": 15,
-      "runtimeTransitive": 15,
+      "transitiveDependents": 17,
+      "runtimeTransitive": 17,
       "modulesAffected": ["apps/web/src/app", "apps/web/src/components", "apps/web/src/lib"],
       "entrypointsAffected": [],
       "maxDepth": 4
+    },
+    {
+      "path": "apps/web/src/components/ui.tsx",
+      "directDependents": 10,
+      "transitiveDependents": 15,
+      "runtimeTransitive": 15,
+      "modulesAffected": ["apps/web/src/app", "apps/web/src/components"],
+      "entrypointsAffected": [],
+      "maxDepth": 3
+    },
+    {
+      "path": "apps/web/src/components/report-context.tsx",
+      "directDependents": 11,
+      "transitiveDependents": 14,
+      "runtimeTransitive": 14,
+      "modulesAffected": ["apps/web/src/app", "apps/web/src/components"],
+      "entrypointsAffected": [],
+      "maxDepth": 3
     },
     {
       "path": "packages/core/src/util/glob.ts",
@@ -14835,19 +15100,10 @@
       "maxDepth": 4
     },
     {
-      "path": "apps/web/src/components/ui.tsx",
-      "directDependents": 8,
-      "transitiveDependents": 13,
-      "runtimeTransitive": 13,
-      "modulesAffected": ["apps/web/src/app", "apps/web/src/components"],
-      "entrypointsAffected": [],
-      "maxDepth": 3
-    },
-    {
-      "path": "packages/core/src/detect/languages.ts",
-      "directDependents": 4,
-      "transitiveDependents": 13,
-      "runtimeTransitive": 13,
+      "path": "packages/core/src/util/binary.ts",
+      "directDependents": 2,
+      "transitiveDependents": 14,
+      "runtimeTransitive": 14,
       "modulesAffected": [
         "apps/web/src/app",
         "packages/core/src",
@@ -14856,45 +15112,18 @@
         "packages/core/src/eval",
         "packages/core/src/metrics",
         "packages/core/src/pipeline",
-        "packages/core/src/trend"
+        "packages/core/src/trend",
+        "packages/core/src/util"
       ],
       "entrypointsAffected": [],
-      "maxDepth": 3
-    },
-    {
-      "path": "apps/web/src/components/report-context.tsx",
-      "directDependents": 9,
-      "transitiveDependents": 12,
-      "runtimeTransitive": 12,
-      "modulesAffected": ["apps/web/src/app", "apps/web/src/components"],
-      "entrypointsAffected": [],
-      "maxDepth": 3
+      "maxDepth": 4
     },
     {
       "path": "apps/web/src/lib/svg.ts",
-      "directDependents": 7,
-      "transitiveDependents": 12,
-      "runtimeTransitive": 12,
+      "directDependents": 8,
+      "transitiveDependents": 13,
+      "runtimeTransitive": 13,
       "modulesAffected": ["apps/web/src/app", "apps/web/src/components", "apps/web/src/lib"],
-      "entrypointsAffected": [],
-      "maxDepth": 3
-    },
-    {
-      "path": "packages/core/src/detect/manifests.ts",
-      "directDependents": 4,
-      "transitiveDependents": 12,
-      "runtimeTransitive": 12,
-      "modulesAffected": [
-        "apps/web/src/app",
-        "packages/core/src",
-        "packages/core/src/analyzers",
-        "packages/core/src/detect",
-        "packages/core/src/eval",
-        "packages/core/src/pipeline",
-        "packages/core/src/practices",
-        "packages/core/src/security",
-        "packages/core/src/trend"
-      ],
       "entrypointsAffected": [],
       "maxDepth": 3
     }
@@ -14948,7 +15177,7 @@
         "description": "Keep files reviewable"
       }
     ],
-    "violations": 2,
+    "violations": 0,
     "baseline": null
   },
   "methodology": {
@@ -14961,12 +15190,12 @@
   "reproducibility": {
     "toolVersion": "0.1.0",
     "schemaVersion": "0.4.0",
-    "commitSha": "5d0a47a1b8035d9f25321c6e977bb77026787076",
+    "commitSha": "eeca4b624ce7a04c2abd903f1d16d1bb5fa6900e",
     "toolVersions": { "node": "v24.10.0", "typescript": "6.0.3" },
-    "startedAt": "2026-10-25T16:49:03.216Z",
-    "finishedAt": "2026-10-25T16:49:07.070Z",
-    "inputDigest": "9b6b703355bcb4738ac3da26eca75b8e12a1f4415846b34b723c0332aa962610",
-    "contentHash": "a9a21e785b3d0798f44b66887869f1c68cb89d2c4460a9d4f800523fc1cc3d34"
+    "startedAt": "2026-10-25T18:28:59.374Z",
+    "finishedAt": "2026-10-25T18:29:03.931Z",
+    "inputDigest": "eed80e449253311557410034cfed8fe66dd5e249ebdce0d48d3a6b14714ca069",
+    "contentHash": "1f327fdf72e80b3eb39e790c408aa8065c7da90994271da5cd05350e0b03f4cf"
   },
   "limitations": [
     "Static analysis cannot recover runtime behavior, developer intent, or undocumented design decisions.",
@@ -14985,6 +15214,6 @@
     "Squash merges attribute the whole change to the squasher, which can hide real authorship.",
     "Author identity is the commit author name. The same person under different names is counted separately.",
     "Churn and commit counts measure change activity, not quality or effort.",
-    "28 of 65 commits are merge commits or do not touch analyzed paths, so they are counted in the total but not in the file level details."
+    "28 of 67 commits are merge commits or do not touch analyzed paths, so they are counted in the total but not in the file level details."
   ]
 }

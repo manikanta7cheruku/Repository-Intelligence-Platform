@@ -51,6 +51,8 @@ export function checkWorkflows(ws: Workspace): { run: ToolRun; findings: Finding
     let prTargetLine: number | null = null;
     let checkoutHead: number | null = null;
     let inRun: { indent: number } | null = null;
+    // The same action used several times is one finding with every line, not one finding that hides the rest.
+    const unpinned = new Map<string, { name: string; ref: string; lines: number[] }>();
     lines.forEach((raw, i) => {
       const no = i + 1;
       const noComment = raw.replace(/\s+#.*$/, "");
@@ -89,20 +91,9 @@ export function checkWorkflows(ws: Workspace): { run: ToolRun; findings: Finding
         if (!spec.startsWith("./") && !spec.startsWith("docker://")) {
           const [name, ref] = spec.split("@");
           if (ref !== undefined && !/^[0-9a-f]{40}$/.test(ref)) {
-            const firstParty = /^(actions|github)\//.test(name as string);
-            findings.push(
-              mk(
-                "unpinned-action",
-                f.path,
-                no,
-                firstParty ? "low" : "medium",
-                `Action ${name} is not pinned to a commit SHA`,
-                `The action is referenced by the mutable ref ${ref}. A moved tag would change what runs in this workflow.`,
-                "Pin the action to a full commit SHA and let Dependabot update it.",
-                "heuristic",
-                spec,
-              ),
-            );
+            const rec = unpinned.get(spec) ?? { name: name as string, ref, lines: [] };
+            rec.lines.push(no);
+            unpinned.set(spec, rec);
           }
         }
       }
@@ -140,6 +131,24 @@ export function checkWorkflows(ws: Workspace): { run: ToolRun; findings: Finding
         );
       }
     });
+    for (const [spec, rec] of unpinned) {
+      const firstParty = /^(actions|github)\//.test(rec.name);
+      const f1 = mk(
+        "unpinned-action",
+        f.path,
+        rec.lines[0] ?? null,
+        firstParty ? "low" : "medium",
+        `Action ${rec.name} is not pinned to a commit SHA`,
+        `The action is referenced by the mutable ref ${rec.ref}${rec.lines.length > 1 ? ` in ${rec.lines.length} places (lines ${rec.lines.join(", ")})` : ""}. A moved tag would change what runs in this workflow.`,
+        "Pin the action to a full commit SHA and let Dependabot update it.",
+        "heuristic",
+        spec,
+      );
+      f1.locations = rec.lines
+        .slice(0, 10)
+        .map((l) => ({ path: f.path, startLine: l, endLine: l }));
+      findings.push(f1);
+    }
     if (prTarget && checkoutHead !== null)
       findings.push(
         mk(

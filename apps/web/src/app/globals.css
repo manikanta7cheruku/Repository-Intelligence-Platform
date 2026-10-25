@@ -1371,16 +1371,6 @@ kbd {
 .score-main .na {
   grid-column: 2 / 4;
 }
-.proof {
-  padding: 0 0 18px;
-}
-.proof-basis {
-  margin: 0 0 12px;
-  padding: 12px 14px;
-  background: var(--surface);
-  border-radius: var(--r);
-  font-size: 13.5px;
-}
 .spark {
   width: 132px;
   height: 40px;
@@ -2343,4 +2333,131 @@ kbd {
     background: #fff;
     color: #000;
   }
+}
+
+/* Score proof */
+.proof {
+  padding: 4px 0 24px;
+  display: grid;
+  gap: 18px;
+}
+.proof-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px 32px;
+  align-items: start;
+  padding: 16px 18px;
+  background: var(--surface);
+  border-radius: var(--r-lg);
+}
+.proof-sentence {
+  margin: 0;
+  max-width: 70ch;
+}
+.proof-gain {
+  margin: 0;
+  display: grid;
+  gap: 2px;
+  text-align: right;
+}
+.pins {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+.pin {
+  border: 1px solid var(--hair);
+  border-radius: var(--r-lg);
+  padding: 16px 18px;
+  display: grid;
+  gap: 10px;
+}
+.pin-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.pin-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.pin-points {
+  font-weight: 600;
+}
+.pin-desc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.pin-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+.pin-bar-fill {
+  height: 100%;
+  background: var(--strong);
+  border-radius: 4px;
+}
+.pin-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px 24px;
+  margin: 0;
+}
+.pin-facts dt {
+  font-size: 12px;
+  color: var(--muted);
+}
+.pin-facts dd {
+  margin: 0;
+  font-size: 14px;
+}
+.scale {
+  width: 100%;
+  max-width: 440px;
+  height: auto;
+  display: block;
+}
+.pin-origin {
+  margin: -4px 0 0;
+}
+.pin-evidence {
+  display: grid;
+  gap: 4px;
+}
+.pin-unused {
+  border: 1px dashed var(--line);
+  border-radius: var(--r-lg);
+  padding: 14px 18px;
+}
+.proof-exact summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+.proof-exact p {
+  margin: 8px 0 0;
+}
+@media (max-width: 880px) {
+  .proof-top {
+    grid-template-columns: 1fr;
+  }
+  .proof-gain {
+    text-align: left;
+  }
+  .pin {
+    padding: 14px;
+  }
+}
+
+.pin-evidence .chips {
+  display: grid;
+  gap: 4px;
 }
