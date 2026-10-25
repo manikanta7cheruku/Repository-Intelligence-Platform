@@ -20,7 +20,7 @@ Update this file at the end of every working session. A new AI chat can resume f
   ADR 0017 and 0018, docs and learning files, Phase 2 and Phase 3 prompts, handoff guide.
 - Verified on the owner's Windows machine (2026-10-25, Node 24.10.0, pnpm 10): `pnpm check` passes (Biome lint, build, typecheck, 238 tests in 33 files), `pnpm eval` has no failures, `pnpm analyze:self` exits 0.
   Smoke run of `analyze`, `impact`, `graph`, `trend` and `pr` on this repository worked; `pr --base "--upload-pack=x"` and a lookalike GitHub host are refused. Live network items in DOTEST.md (sections 2, 3, 9 to 11) are still unverified.
-- Fixes made while verifying: lint warnings (optional chains, one test-only suppression), formatter drift, a Windows-invalid hostile file name in report tests (now `a'c&d.ts` on win32), and two files over the 700-line self-rule (`pipeline/files.ts` and `cli/help.ts` extracted). Test count is 237, not the 238 reported by the earlier shim.
+- Fixes made while verifying: lint warnings (optional chains, one test-only suppression), formatter drift, a Windows-invalid hostile file name in report tests (now `a'c&d.ts` on win32), and two files over the 700-line self-rule (`pipeline/files.ts` and `cli/help.ts` extracted). The count was 237 on first real run and is 238 after one added test.
 - Academic docs added: `docs/academic/how-the-engine-reads-and-analyzes-code.md` and `docs/academic/viva-questions.md`.
 
 - DOTEST sections 2 to 8 and 10 (built-in scan) were run on Provenance on 2026-10-25, see `docs/evaluation/results/p15-provenance.md`. Windows CRLF checkout caused 50 Biome format errors on `main`; fixed with `.gitattributes`.
