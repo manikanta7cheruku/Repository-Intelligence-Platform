@@ -1,17 +1,21 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://repolens.dev/schema/report-0.1.0.json",
+  "$id": "https://repolens.dev/schema/report-0.2.0.json",
   "title": "RepoLens report",
   "description": "Evidence-based repository analysis report. Missing values are null with a reason, never zero.",
   "type": "object",
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "pattern": "^0\\.1\\.[0-9]+$"
+      "pattern": "^0\\.2\\.[0-9]+$"
     },
     "status": {
       "type": "string",
-      "enum": ["complete", "partial", "failed"]
+      "enum": [
+        "complete",
+        "partial",
+        "failed"
+      ]
     },
     "repository": {
       "type": "object",
@@ -21,26 +25,42 @@
           "properties": {
             "type": {
               "type": "string",
-              "enum": ["local", "github"]
+              "enum": [
+                "local",
+                "github"
+              ]
             },
             "location": {
               "type": "string"
             },
             "ref": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
-          "required": ["type", "location", "ref"],
+          "required": [
+            "type",
+            "location",
+            "ref"
+          ],
           "additionalProperties": false
         },
         "name": {
           "type": "string"
         },
         "commitSha": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "defaultBranch": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "totalFiles": {
           "type": "integer",
@@ -56,6 +76,22 @@
         },
         "truncated": {
           "type": "boolean"
+        },
+        "codeFiles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "analyzedCodeFiles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "productionFiles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "testFiles": {
+          "type": "integer",
+          "minimum": 0
         }
       },
       "required": [
@@ -66,7 +102,11 @@
         "totalFiles",
         "analyzedFiles",
         "totalBytes",
-        "truncated"
+        "truncated",
+        "codeFiles",
+        "analyzedCodeFiles",
+        "productionFiles",
+        "testFiles"
       ],
       "additionalProperties": false
     },
@@ -89,13 +129,28 @@
               },
               "supportLevel": {
                 "type": "integer",
-                "enum": [1, 2, 3, 4, 5]
+                "enum": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5
+                ]
               },
               "analyzerId": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
-            "required": ["language", "files", "codeLines", "supportLevel", "analyzerId"],
+            "required": [
+              "language",
+              "files",
+              "codeLines",
+              "supportLevel",
+              "analyzerId"
+            ],
             "additionalProperties": false
           }
         },
@@ -111,7 +166,10 @@
                 "type": "integer"
               }
             },
-            "required": ["reason", "count"],
+            "required": [
+              "reason",
+              "count"
+            ],
             "additionalProperties": false
           }
         },
@@ -122,7 +180,11 @@
           }
         }
       },
-      "required": ["languages", "excluded", "budgets"],
+      "required": [
+        "languages",
+        "excluded",
+        "budgets"
+      ],
       "additionalProperties": false
     },
     "detection": {
@@ -158,7 +220,10 @@
                 "type": "string"
               }
             },
-            "required": ["name", "evidence"],
+            "required": [
+              "name",
+              "evidence"
+            ],
             "additionalProperties": false
           }
         },
@@ -174,7 +239,10 @@
                 "type": "string"
               }
             },
-            "required": ["path", "reason"],
+            "required": [
+              "path",
+              "reason"
+            ],
             "additionalProperties": false
           }
         },
@@ -194,13 +262,22 @@
           "type": "object",
           "properties": {
             "file": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "spdxGuess": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
-          "required": ["file", "spdxGuess"],
+          "required": [
+            "file",
+            "spdxGuess"
+          ],
           "additionalProperties": false
         }
       },
@@ -229,7 +306,13 @@
           },
           "supportLevel": {
             "type": "integer",
-            "enum": [1, 2, 3, 4, 5]
+            "enum": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
           },
           "filesEligible": {
             "type": "integer"
@@ -238,7 +321,10 @@
             "type": "integer"
           },
           "ratio": {
-            "type": ["number", "null"],
+            "type": [
+              "number",
+              "null"
+            ],
             "minimum": 0,
             "maximum": 1
           },
@@ -274,11 +360,23 @@
             "type": "string"
           },
           "language": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "kind": {
             "type": "string",
-            "enum": ["source", "test", "config", "docs", "generated", "vendored", "binary", "other"]
+            "enum": [
+              "source",
+              "test",
+              "config",
+              "docs",
+              "generated",
+              "vendored",
+              "binary",
+              "other"
+            ]
           },
           "kindReason": {
             "type": "string"
@@ -287,16 +385,25 @@
             "type": "integer"
           },
           "lines": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           },
           "codeLines": {
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           },
           "analyzed": {
             "type": "boolean"
           },
           "notAnalyzedReason": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
         "required": [
@@ -338,7 +445,13 @@
                 "type": "integer"
               }
             },
-            "required": ["id", "path", "moduleId", "fanIn", "fanOut"],
+            "required": [
+              "id",
+              "path",
+              "moduleId",
+              "fanIn",
+              "fanOut"
+            ],
             "additionalProperties": false
           }
         },
@@ -372,15 +485,31 @@
                     },
                     "kind": {
                       "type": "string",
-                      "enum": ["import", "require", "dynamic", "type-only", "reexport"]
+                      "enum": [
+                        "import",
+                        "require",
+                        "dynamic",
+                        "type-only",
+                        "reexport"
+                      ]
                     }
                   },
-                  "required": ["line", "specifier", "kind"],
+                  "required": [
+                    "line",
+                    "specifier",
+                    "kind"
+                  ],
                   "additionalProperties": false
                 }
               }
             },
-            "required": ["from", "to", "weight", "typeOnly", "occurrences"],
+            "required": [
+              "from",
+              "to",
+              "weight",
+              "typeOnly",
+              "occurrences"
+            ],
             "additionalProperties": false
           }
         },
@@ -397,7 +526,10 @@
               },
               "kind": {
                 "type": "string",
-                "enum": ["directory", "package"]
+                "enum": [
+                  "directory",
+                  "package"
+                ]
               },
               "fileCount": {
                 "type": "integer"
@@ -406,19 +538,32 @@
                 "type": "integer"
               },
               "fanIn": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "fanOut": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "instability": {
-                "type": ["number", "null"],
+                "type": [
+                  "number",
+                  "null"
+                ],
                 "minimum": 0,
                 "maximum": 1
               },
               "origin": {
                 "type": "string",
-                "enum": ["observed", "inferred", "documented"]
+                "enum": [
+                  "observed",
+                  "inferred",
+                  "documented"
+                ]
               }
             },
             "required": [
@@ -450,7 +595,11 @@
                 "type": "integer"
               }
             },
-            "required": ["from", "to", "weight"],
+            "required": [
+              "from",
+              "to",
+              "weight"
+            ],
             "additionalProperties": false
           }
         },
@@ -461,7 +610,10 @@
             "properties": {
               "scope": {
                 "type": "string",
-                "enum": ["file", "module"]
+                "enum": [
+                  "file",
+                  "module"
+                ]
               },
               "members": {
                 "type": "array",
@@ -476,7 +628,12 @@
                 "type": "boolean"
               }
             },
-            "required": ["scope", "members", "size", "typeOnly"],
+            "required": [
+              "scope",
+              "members",
+              "size",
+              "typeOnly"
+            ],
             "additionalProperties": false
           }
         },
@@ -493,14 +650,27 @@
               },
               "origin": {
                 "type": "string",
-                "enum": ["observed", "inferred", "documented"]
+                "enum": [
+                  "observed",
+                  "inferred",
+                  "documented"
+                ]
               },
               "confidence": {
                 "type": "string",
-                "enum": ["high", "medium", "low"]
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
               }
             },
-            "required": ["moduleId", "level", "origin", "confidence"],
+            "required": [
+              "moduleId",
+              "level",
+              "origin",
+              "confidence"
+            ],
             "additionalProperties": false
           }
         },
@@ -511,13 +681,23 @@
               "type": "boolean"
             },
             "reachableFiles": {
-              "type": ["integer", "null"]
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "unreachableFiles": {
-              "type": ["integer", "null"]
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           },
-          "required": ["analyzable", "reachableFiles", "unreachableFiles"],
+          "required": [
+            "analyzable",
+            "reachableFiles",
+            "unreachableFiles"
+          ],
           "additionalProperties": false
         },
         "resolution": {
@@ -536,12 +716,21 @@
               "type": "integer"
             },
             "ratio": {
-              "type": ["number", "null"],
+              "type": [
+                "number",
+                "null"
+              ],
               "minimum": 0,
               "maximum": 1
             }
           },
-          "required": ["internalImports", "resolved", "unresolved", "external", "ratio"],
+          "required": [
+            "internalImports",
+            "resolved",
+            "unresolved",
+            "external",
+            "ratio"
+          ],
           "additionalProperties": false
         }
       },
@@ -575,7 +764,12 @@
             "type": "integer"
           }
         },
-        "required": ["name", "builtin", "importingFiles", "importCount"],
+        "required": [
+          "name",
+          "builtin",
+          "importingFiles",
+          "importCount"
+        ],
         "additionalProperties": false
       }
     },
@@ -592,26 +786,46 @@
           },
           "kind": {
             "type": "string",
-            "enum": ["import", "require", "dynamic", "type-only", "reexport"]
+            "enum": [
+              "import",
+              "require",
+              "dynamic",
+              "type-only",
+              "reexport"
+            ]
           },
           "line": {
             "type": "integer"
           },
           "resolution": {
             "type": "string",
-            "enum": ["resolved", "external", "unresolved", "ignored"]
+            "enum": [
+              "resolved",
+              "external",
+              "unresolved",
+              "ignored"
+            ]
           },
           "toPath": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "externalPackage": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "builtin": {
             "type": "boolean"
           },
           "reason": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
         "required": [
@@ -655,10 +869,16 @@
                 "type": "integer"
               },
               "maxComplexity": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "totalComplexity": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               }
             },
             "required": [
@@ -701,7 +921,15 @@
                 "type": "boolean"
               }
             },
-            "required": ["fileId", "path", "name", "line", "endLine", "complexity", "approximate"],
+            "required": [
+              "fileId",
+              "path",
+              "name",
+              "line",
+              "endLine",
+              "complexity",
+              "approximate"
+            ],
             "additionalProperties": false
           }
         },
@@ -709,7 +937,10 @@
           "type": "integer"
         },
         "complexityDistribution": {
-          "type": ["object", "null"],
+          "type": [
+            "object",
+            "null"
+          ],
           "properties": {
             "low": {
               "type": "integer"
@@ -724,7 +955,12 @@
               "type": "integer"
             }
           },
-          "required": ["low", "moderate", "high", "veryHigh"],
+          "required": [
+            "low",
+            "moderate",
+            "high",
+            "veryHigh"
+          ],
           "additionalProperties": false
         },
         "duplication": {
@@ -734,16 +970,28 @@
               "type": "boolean"
             },
             "reason": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "duplicatedLines": {
-              "type": ["integer", "null"]
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "totalLines": {
-              "type": ["integer", "null"]
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "ratio": {
-              "type": ["number", "null"],
+              "type": [
+                "number",
+                "null"
+              ],
               "minimum": 0,
               "maximum": 1
             },
@@ -770,17 +1018,31 @@
                           "type": "integer"
                         }
                       },
-                      "required": ["path", "startLine", "endLine"],
+                      "required": [
+                        "path",
+                        "startLine",
+                        "endLine"
+                      ],
                       "additionalProperties": false
                     }
                   }
                 },
-                "required": ["lines", "occurrences"],
+                "required": [
+                  "lines",
+                  "occurrences"
+                ],
                 "additionalProperties": false
               }
             }
           },
-          "required": ["assessed", "reason", "duplicatedLines", "totalLines", "ratio", "groups"],
+          "required": [
+            "assessed",
+            "reason",
+            "duplicatedLines",
+            "totalLines",
+            "ratio",
+            "groups"
+          ],
           "additionalProperties": false
         },
         "totals": {
@@ -796,7 +1058,11 @@
               "type": "integer"
             }
           },
-          "required": ["codeLines", "commentLines", "blankLines"],
+          "required": [
+            "codeLines",
+            "commentLines",
+            "blankLines"
+          ],
           "additionalProperties": false
         }
       },
@@ -839,19 +1105,42 @@
           },
           "severity": {
             "type": "string",
-            "enum": ["critical", "high", "medium", "low", "info"]
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low",
+              "info"
+            ]
           },
           "confidence": {
             "type": "string",
-            "enum": ["high", "medium", "low"]
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
           },
           "origin": {
             "type": "string",
-            "enum": ["observed", "inferred", "documented"]
+            "enum": [
+              "observed",
+              "inferred",
+              "documented"
+            ]
           },
           "classification": {
-            "type": ["string", "null"],
-            "enum": ["confirmed", "probable", "heuristic", "needs-manual-review", null]
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "confirmed",
+              "probable",
+              "heuristic",
+              "needs-manual-review",
+              null
+            ]
           },
           "explanation": {
             "type": "string"
@@ -863,7 +1152,13 @@
               "properties": {
                 "kind": {
                   "type": "string",
-                  "enum": ["location", "graph-path", "tool-output", "doc-reference", "metric"]
+                  "enum": [
+                    "location",
+                    "graph-path",
+                    "tool-output",
+                    "doc-reference",
+                    "metric"
+                  ]
                 },
                 "refs": {
                   "type": "array",
@@ -872,10 +1167,17 @@
                   }
                 },
                 "note": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               },
-              "required": ["kind", "refs", "note"],
+              "required": [
+                "kind",
+                "refs",
+                "note"
+              ],
               "additionalProperties": false
             }
           },
@@ -888,13 +1190,23 @@
                   "type": "string"
                 },
                 "startLine": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "endLine": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 }
               },
-              "required": ["path", "startLine", "endLine"],
+              "required": [
+                "path",
+                "startLine",
+                "endLine"
+              ],
               "additionalProperties": false
             }
           },
@@ -958,11 +1270,26 @@
             }
           },
           "effort": {
-            "type": ["string", "null"],
-            "enum": ["low", "medium", "high", null]
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              null
+            ]
           }
         },
-        "required": ["rank", "title", "rationale", "priority", "findingIds", "effort"],
+        "required": [
+          "rank",
+          "title",
+          "rationale",
+          "priority",
+          "findingIds",
+          "effort"
+        ],
         "additionalProperties": false
       }
     },
@@ -984,24 +1311,52 @@
           },
           "state": {
             "type": "string",
-            "enum": ["assessed", "not-assessed"]
+            "enum": [
+              "assessed",
+              "not-assessed"
+            ]
           },
           "value": {
-            "type": ["number", "null"],
+            "type": [
+              "number",
+              "null"
+            ],
             "minimum": 0,
             "maximum": 100
           },
           "confidence": {
-            "type": ["string", "null"],
-            "enum": ["high", "medium", "low", null]
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "high",
+              "medium",
+              "low",
+              null
+            ]
           },
           "coverage": {
-            "type": ["number", "null"],
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1
+          },
+          "weightCoverage": {
+            "type": [
+              "number",
+              "null"
+            ],
             "minimum": 0,
             "maximum": 1
           },
           "reason": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "inputs": {
             "type": "array",
@@ -1011,11 +1366,25 @@
                 "name": {
                   "type": "string"
                 },
+                "impact": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 100
+                },
                 "raw": {
-                  "type": ["number", "null"]
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
                 "normalized": {
-                  "type": ["number", "null"]
+                  "type": [
+                    "number",
+                    "null"
+                  ]
                 },
                 "weight": {
                   "type": "number"
@@ -1027,12 +1396,29 @@
                   "type": "string"
                 }
               },
-              "required": ["name", "raw", "normalized", "weight", "available", "note"],
+              "required": [
+                "name",
+                "impact",
+                "raw",
+                "normalized",
+                "weight",
+                "available",
+                "note"
+              ],
               "additionalProperties": false
             }
           }
         },
-        "required": ["dimension", "state", "value", "confidence", "coverage", "reason", "inputs"],
+        "required": [
+          "dimension",
+          "state",
+          "value",
+          "confidence",
+          "coverage",
+          "weightCoverage",
+          "reason",
+          "inputs"
+        ],
         "additionalProperties": false
       }
     },
@@ -1055,7 +1441,10 @@
               }
             }
           },
-          "required": ["providers", "workflowFiles"],
+          "required": [
+            "providers",
+            "workflowFiles"
+          ],
           "additionalProperties": false
         },
         "tests": {
@@ -1074,11 +1463,17 @@
               "type": "integer"
             },
             "testToSourceFileRatio": {
-              "type": ["number", "null"]
+              "type": [
+                "number",
+                "null"
+              ]
             },
             "coverageReport": {
               "type": "string",
-              "enum": ["not-ingested"]
+              "enum": [
+                "ingested",
+                "not-ingested"
+              ]
             }
           },
           "required": [
@@ -1112,10 +1507,18 @@
               }
             },
             "strictTypeScript": {
-              "type": ["boolean", "null"]
+              "type": [
+                "boolean",
+                "null"
+              ]
             }
           },
-          "required": ["linters", "formatters", "typeCheckers", "strictTypeScript"],
+          "required": [
+            "linters",
+            "formatters",
+            "typeCheckers",
+            "strictTypeScript"
+          ],
           "additionalProperties": false
         },
         "documentation": {
@@ -1125,10 +1528,16 @@
               "type": "object",
               "properties": {
                 "path": {
-                  "type": ["string", "null"]
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "words": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "headings": {
                   "type": "array",
@@ -1137,13 +1546,36 @@
                   }
                 },
                 "hasInstall": {
-                  "type": ["boolean", "null"]
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
                 },
                 "hasUsage": {
-                  "type": ["boolean", "null"]
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "sections": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "links": {
+                  "type": "integer"
                 }
               },
-              "required": ["path", "words", "headings", "hasInstall", "hasUsage"],
+              "required": [
+                "path",
+                "words",
+                "headings",
+                "hasInstall",
+                "hasUsage",
+                "sections",
+                "links"
+              ],
               "additionalProperties": false
             },
             "files": {
@@ -1165,7 +1597,13 @@
                   "type": "boolean"
                 }
               },
-              "required": ["contributing", "codeOfConduct", "security", "changelog", "license"],
+              "required": [
+                "contributing",
+                "codeOfConduct",
+                "security",
+                "changelog",
+                "license"
+              ],
               "additionalProperties": false
             },
             "docsDirectory": {
@@ -1181,7 +1619,13 @@
               "type": "integer"
             }
           },
-          "required": ["readme", "files", "docsDirectory", "adrDirectories", "adrCount"],
+          "required": [
+            "readme",
+            "files",
+            "docsDirectory",
+            "adrDirectories",
+            "adrCount"
+          ],
           "additionalProperties": false
         },
         "setup": {
@@ -1200,11 +1644,22 @@
               "type": "boolean"
             }
           },
-          "required": ["dockerfile", "envExample", "makefile", "devcontainer"],
+          "required": [
+            "dockerfile",
+            "envExample",
+            "makefile",
+            "devcontainer"
+          ],
           "additionalProperties": false
         }
       },
-      "required": ["ci", "tests", "quality", "documentation", "setup"],
+      "required": [
+        "ci",
+        "tests",
+        "quality",
+        "documentation",
+        "setup"
+      ],
       "additionalProperties": false
     },
     "history": {
@@ -1214,25 +1669,133 @@
           "type": "boolean"
         },
         "reason": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "git",
+            "github-api",
+            null
+          ]
+        },
+        "commitQuality": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "sampled": {
+              "type": "integer"
+            },
+            "conventionalShare": {
+              "type": "number"
+            },
+            "descriptiveShare": {
+              "type": "number"
+            },
+            "genericShare": {
+              "type": "number"
+            },
+            "avgSubjectLength": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "sampled",
+            "conventionalShare",
+            "descriptiveShare",
+            "genericShare",
+            "avgSubjectLength"
+          ],
+          "additionalProperties": false
+        },
+        "pullRequests": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "sampled": {
+              "type": "integer"
+            },
+            "merged": {
+              "type": "integer"
+            },
+            "medianHoursToMerge": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "sampled",
+            "merged",
+            "medianHoursToMerge"
+          ],
+          "additionalProperties": false
+        },
+        "releases": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "count": {
+              "type": "integer"
+            },
+            "latestDate": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "count",
+            "latestDate"
+          ],
+          "additionalProperties": false
         },
         "shallow": {
-          "type": ["boolean", "null"]
+          "type": [
+            "boolean",
+            "null"
+          ]
         },
         "commitsAnalyzed": {
-          "type": ["integer", "null"]
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "window": {
           "type": "object",
           "properties": {
             "first": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "last": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
-          "required": ["first", "last"],
+          "required": [
+            "first",
+            "last"
+          ],
           "additionalProperties": false
         },
         "contributors": {
@@ -1250,12 +1813,19 @@
                 "type": "number"
               }
             },
-            "required": ["name", "commits", "share"],
+            "required": [
+              "name",
+              "commits",
+              "share"
+            ],
             "additionalProperties": false
           }
         },
         "topAuthorShare": {
-          "type": ["number", "null"]
+          "type": [
+            "number",
+            "null"
+          ]
         },
         "hotspots": {
           "type": "array",
@@ -1272,13 +1842,25 @@
                 "type": "integer"
               },
               "complexity": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "score": {
-                "type": ["number", "null"]
+                "type": [
+                  "number",
+                  "null"
+                ]
               }
             },
-            "required": ["path", "commits", "churn", "complexity", "score"],
+            "required": [
+              "path",
+              "commits",
+              "churn",
+              "complexity",
+              "score"
+            ],
             "additionalProperties": false
           }
         },
@@ -1303,7 +1885,13 @@
                 "type": "integer"
               }
             },
-            "required": ["moduleId", "path", "topAuthor", "share", "commits"],
+            "required": [
+              "moduleId",
+              "path",
+              "topAuthor",
+              "share",
+              "commits"
+            ],
             "additionalProperties": false
           }
         },
@@ -1317,6 +1905,10 @@
       "required": [
         "available",
         "reason",
+        "source",
+        "commitQuality",
+        "pullRequests",
+        "releases",
         "shallow",
         "commitsAnalyzed",
         "window",
@@ -1338,19 +1930,37 @@
               "type": "boolean"
             },
             "reason": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "source": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "packagesChecked": {
-              "type": ["integer", "null"]
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "vulnerabilities": {
-              "type": ["integer", "null"]
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           },
-          "required": ["assessed", "reason", "source", "packagesChecked", "vulnerabilities"],
+          "required": [
+            "assessed",
+            "reason",
+            "source",
+            "packagesChecked",
+            "vulnerabilities"
+          ],
           "additionalProperties": false
         },
         "secrets": {
@@ -1362,16 +1972,27 @@
                 "type": "boolean"
               },
               "reason": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "tool": {
                 "type": "string"
               },
               "findings": {
-                "type": ["integer", "null"]
+                "type": [
+                  "integer",
+                  "null"
+                ]
               }
             },
-            "required": ["assessed", "reason", "tool", "findings"],
+            "required": [
+              "assessed",
+              "reason",
+              "tool",
+              "findings"
+            ],
             "additionalProperties": false
           }
         },
@@ -1382,23 +2003,39 @@
               "type": "boolean"
             },
             "reason": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "tool": {
               "type": "string"
             },
             "findings": {
-              "type": ["integer", "null"]
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           },
-          "required": ["assessed", "reason", "tool", "findings"],
+          "required": [
+            "assessed",
+            "reason",
+            "tool",
+            "findings"
+          ],
           "additionalProperties": false
         },
         "statement": {
           "type": "string"
         }
       },
-      "required": ["dependencies", "secrets", "workflows", "statement"],
+      "required": [
+        "dependencies",
+        "secrets",
+        "workflows",
+        "statement"
+      ],
       "additionalProperties": false
     },
     "rules": {
@@ -1408,7 +2045,10 @@
           "type": "boolean"
         },
         "source": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "rules": {
           "type": "array",
@@ -1423,35 +2063,315 @@
               },
               "severity": {
                 "type": "string",
-                "enum": ["critical", "high", "medium", "low", "info"]
+                "enum": [
+                  "critical",
+                  "high",
+                  "medium",
+                  "low",
+                  "info"
+                ]
               },
               "description": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             },
-            "required": ["id", "type", "severity", "description"],
+            "required": [
+              "id",
+              "type",
+              "severity",
+              "description"
+            ],
             "additionalProperties": false
           }
         },
         "violations": {
-          "type": ["integer", "null"]
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "baseline": {
-          "type": ["object", "null"],
+          "type": [
+            "object",
+            "null"
+          ],
           "properties": {
             "source": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "suppressed": {
               "type": "integer"
             }
           },
-          "required": ["source", "suppressed"],
+          "required": [
+            "source",
+            "suppressed"
+          ],
           "additionalProperties": false
         }
       },
-      "required": ["evaluated", "source", "rules", "violations", "baseline"],
+      "required": [
+        "evaluated",
+        "source",
+        "rules",
+        "violations",
+        "baseline"
+      ],
       "additionalProperties": false
+    },
+    "executiveSummary": {
+      "type": "object",
+      "properties": {
+        "headline": {
+          "type": "string"
+        },
+        "overview": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "strengths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "concerns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "nextSteps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "headline",
+        "overview",
+        "strengths",
+        "concerns",
+        "nextSteps"
+      ],
+      "additionalProperties": false
+    },
+    "testCoverage": {
+      "type": "object",
+      "properties": {
+        "ingested": {
+          "type": "boolean"
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "format": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "lcov",
+            "istanbul-summary",
+            "cobertura",
+            null
+          ]
+        },
+        "lineRate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "filesMatched": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "ingested",
+        "source",
+        "format",
+        "lineRate",
+        "filesMatched",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "risk": {
+      "type": "object",
+      "properties": {
+        "assessed": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "method": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "moduleId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "risk": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "confidence": {
+                "type": "string",
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "factors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "percentile": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "note": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "value",
+                    "percentile",
+                    "note"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "drivers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "explanation": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "moduleId",
+              "risk",
+              "confidence",
+              "factors",
+              "drivers",
+              "explanation"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "assessed",
+        "reason",
+        "method",
+        "files"
+      ],
+      "additionalProperties": false
+    },
+    "blastRadius": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "directDependents": {
+            "type": "integer"
+          },
+          "transitiveDependents": {
+            "type": "integer"
+          },
+          "runtimeTransitive": {
+            "type": "integer"
+          },
+          "modulesAffected": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "entrypointsAffected": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "maxDepth": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "directDependents",
+          "transitiveDependents",
+          "runtimeTransitive",
+          "modulesAffected",
+          "entrypointsAffected",
+          "maxDepth"
+        ],
+        "additionalProperties": false
+      }
     },
     "methodology": {
       "type": "object",
@@ -1467,9 +2387,18 @@
         },
         "scoringVersion": {
           "type": "string"
+        },
+        "glossaryVersion": {
+          "type": "string"
         }
       },
-      "required": ["profile", "profileHash", "configHash", "scoringVersion"],
+      "required": [
+        "profile",
+        "profileHash",
+        "configHash",
+        "scoringVersion",
+        "glossaryVersion"
+      ],
       "additionalProperties": false
     },
     "reproducibility": {
@@ -1482,12 +2411,18 @@
           "type": "string"
         },
         "commitSha": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "toolVersions": {
           "type": "object",
           "additionalProperties": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
         "startedAt": {
@@ -1542,6 +2477,10 @@
     "history",
     "security",
     "rules",
+    "executiveSummary",
+    "testCoverage",
+    "risk",
+    "blastRadius",
     "methodology",
     "reproducibility",
     "limitations"
