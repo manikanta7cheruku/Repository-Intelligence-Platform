@@ -11,6 +11,7 @@ export { buildReverseIndex, computeBlastRadius, impactOf } from "./graph/impact.
 export type { ReportValidation, ValidationIssue } from "./ir/schema.js";
 export { reportSchema, validateAgainst, validateReport } from "./ir/schema.js";
 export * from "./ir/types.js";
+export { upgradeReport } from "./ir/upgrade.js";
 export { ingestCoverage } from "./metrics/coverage.js";
 export type { AnalyzeOptions, Stage } from "./pipeline/analyze.js";
 export { analyze, contentHashOf, TOOL_VERSION } from "./pipeline/analyze.js";

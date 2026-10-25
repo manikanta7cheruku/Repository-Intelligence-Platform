@@ -7,6 +7,7 @@ import {
   type Report,
   toDot,
   toMermaid,
+  upgradeReport,
   validateReport,
 } from "@repolens/core/browser";
 import { useMemo, useState } from "react";
@@ -115,7 +116,15 @@ export function Compare() {
     setError(null);
     if (!f) return;
     try {
-      const data = JSON.parse(await f.text()) as unknown;
+      let data = JSON.parse(await f.text()) as unknown;
+      const up = upgradeReport(data);
+      if (!up) {
+        setError(
+          "That report is from a much older version of the tool. Analyze the repository again.",
+        );
+        return;
+      }
+      data = up.report;
       const v = validateReport(data);
       if (!v.valid) {
         setOther(null);

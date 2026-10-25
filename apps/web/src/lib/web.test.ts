@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { GLOSSARY, validateReport } from "@repolens/core/browser";
+import { GLOSSARY, upgradeReport, validateReport } from "@repolens/core/browser";
 import { describe, expect, it } from "vitest";
 import { POST } from "../app/api/analyze/route";
 import { layerOf, layoutGraph, NODE_H } from "./layout";
@@ -56,6 +56,41 @@ describe("report contract", () => {
     for (const f of sourceFiles(join(webRoot, "src"))) {
       expect(readFileSync(f, "utf8").includes("\u2014"), f).toBe(false);
     }
+  });
+});
+
+describe("older saved reports", () => {
+  const old = () => {
+    const r = JSON.parse(JSON.stringify(sample));
+    r.schemaVersion = "0.3.0";
+    r.reproducibility.schemaVersion = "0.3.0";
+    for (const k of [
+      "totalCommits",
+      "totalContributors",
+      "totalContributorsAtLeast",
+      "exactTotals",
+    ])
+      delete r.history[k];
+    if (r.history.pullRequests) delete r.history.pullRequests.exact;
+    if (r.history.releases) delete r.history.releases.exact;
+    return r;
+  };
+  it("a 0.3.0 report fails validation as it is, and opens after the upgrade", () => {
+    expect(validateReport(old()).valid).toBe(false);
+    const up = upgradeReport(old());
+    expect(up?.upgradedFrom).toBe("0.3.0");
+    const check = validateReport(up?.report);
+    expect(check.issues).toEqual([]);
+    const r = up?.report as typeof sample;
+    expect(r.history.totalCommits).toBeNull();
+    expect(r.history.exactTotals).toBe(false);
+    expect(r.limitations.at(-1)).toMatch(/upgraded to 0.4.0/);
+  });
+  it("leaves current reports alone and refuses reports that are too old or not reports", () => {
+    expect(upgradeReport(sample)?.upgradedFrom).toBeNull();
+    expect(upgradeReport({ schemaVersion: "0.2.0" })).toBeNull();
+    expect(upgradeReport(null)).toBeNull();
+    expect(upgradeReport("x")).toBeNull();
   });
 });
 

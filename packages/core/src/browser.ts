@@ -10,6 +10,7 @@ export { buildReverseIndex, impactOf } from "./graph/impact.js";
 export type { ReportValidation, ValidationIssue } from "./ir/schema.js";
 export { validateReport } from "./ir/schema.js";
 export * from "./ir/types.js";
+export { upgradeReport } from "./ir/upgrade.js";
 export { toDot, toMermaid, toMermaidFiles, toSvg } from "./report/diagram.js";
 export type { ReportDiff } from "./report/diff.js";
 export { diffReports, diffToMarkdown } from "./report/diff.js";

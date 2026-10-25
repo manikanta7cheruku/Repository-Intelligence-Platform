@@ -6,6 +6,7 @@ import {
   type ModuleRecord,
   type Report,
   type ReverseIndex,
+  upgradeReport,
   validateReport,
 } from "@repolens/core/browser";
 import {
@@ -73,6 +74,15 @@ export function ReportLoader({ id, children }: { id: string; children: ReactNode
         }
         if (cancelled) return;
         if (!data) return setState({ phase: "missing" });
+        const upgraded = upgradeReport(data);
+        if (!upgraded)
+          return setState({
+            phase: "invalid",
+            issues: [
+              "This report was made by a much older version of the tool and cannot be opened. Analyze the repository again.",
+            ],
+          });
+        data = upgraded.report;
         const check = validateReport(data);
         if (!check.valid)
           return setState({
@@ -138,7 +148,7 @@ export function ReportLoader({ id, children }: { id: string; children: ReactNode
       <div className="state">
         <h1 className="h1">This file is not a valid report</h1>
         <p className="lede">
-          The report does not match schema 0.4.0. Regenerate it with the current CLI.
+          It does not match schema 0.4.0 and could not be upgraded. Analyze the repository again.
         </p>
         <ul className="plain-list mono small">
           {state.issues.map((i) => (
