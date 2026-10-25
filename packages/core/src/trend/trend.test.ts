@@ -11,7 +11,13 @@ afterEach(() => {
   for (const d of dirs) rmSync(d, { recursive: true, force: true });
   dirs = [];
 });
-const env = { ...process.env, GIT_AUTHOR_NAME: "T", GIT_AUTHOR_EMAIL: "t@x.t", GIT_COMMITTER_NAME: "T", GIT_COMMITTER_EMAIL: "t@x.t" };
+const env = {
+  ...process.env,
+  GIT_AUTHOR_NAME: "T",
+  GIT_AUTHOR_EMAIL: "t@x.t",
+  GIT_COMMITTER_NAME: "T",
+  GIT_COMMITTER_EMAIL: "t@x.t",
+};
 const g = (cwd: string, ...a: string[]) => execFileSync("git", a, { cwd, env, encoding: "utf8" });
 
 function growingRepo(commits: number): string {
@@ -21,7 +27,10 @@ function growingRepo(commits: number): string {
   mkdirSync(join(d, "src"), { recursive: true });
   for (let i = 0; i < commits; i++) {
     const imports = i > 0 ? `import { v${i - 1} } from "./f${i - 1}";\n` : "";
-    writeFileSync(join(d, "src", `f${i}.ts`), `${imports}export const v${i} = ${i > 0 ? `v${i - 1} + ` : ""}${i};\n`);
+    writeFileSync(
+      join(d, "src", `f${i}.ts`),
+      `${imports}export const v${i} = ${i > 0 ? `v${i - 1} + ` : ""}${i};\n`,
+    );
     g(d, "add", ".");
     g(d, "commit", "-q", "-m", `feat: add f${i}`);
   }

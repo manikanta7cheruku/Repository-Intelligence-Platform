@@ -8,14 +8,22 @@ export interface ReverseIndex {
   entrypointIds: Set<string>;
 }
 
-export function buildReverseIndex(graph: GraphModel, entrypointPaths: readonly string[]): ReverseIndex {
+export function buildReverseIndex(
+  graph: GraphModel,
+  entrypointPaths: readonly string[],
+): ReverseIndex {
   const idByPath = new Map(graph.nodes.map((n) => [n.path, n.id]));
   const pathById = new Map(graph.nodes.map((n) => [n.id, n.path]));
   const modulePath = new Map(graph.modules.map((m) => [m.id, m.path]));
-  const modulePathById = new Map(graph.nodes.map((n) => [n.id, modulePath.get(n.moduleId) ?? n.moduleId]));
+  const modulePathById = new Map(
+    graph.nodes.map((n) => [n.id, modulePath.get(n.moduleId) ?? n.moduleId]),
+  );
   const rev = new Map<string, { id: string; typeOnly: boolean }[]>();
-  for (const e of graph.edges) (rev.get(e.to) ?? rev.set(e.to, []).get(e.to))?.push({ id: e.from, typeOnly: e.typeOnly });
-  const entrypointIds = new Set(entrypointPaths.map((p) => idByPath.get(p)).filter((x): x is string => x !== undefined));
+  for (const e of graph.edges)
+    (rev.get(e.to) ?? rev.set(e.to, []).get(e.to))?.push({ id: e.from, typeOnly: e.typeOnly });
+  const entrypointIds = new Set(
+    entrypointPaths.map((p) => idByPath.get(p)).filter((x): x is string => x !== undefined),
+  );
   return { rev, idByPath, pathById, modulePathById, entrypointIds };
 }
 
@@ -52,8 +60,13 @@ export function impactOf(idx: ReverseIndex, path: string): BlastRadiusEntry | nu
     }
   }
   const affected = [...depth.keys()];
-  const modules = [...new Set(affected.map((id) => idx.modulePathById.get(id) ?? ""))].filter(Boolean).sort();
-  const entries = affected.filter((id) => idx.entrypointIds.has(id)).map((id) => idx.pathById.get(id) as string).sort();
+  const modules = [...new Set(affected.map((id) => idx.modulePathById.get(id) ?? ""))]
+    .filter(Boolean)
+    .sort();
+  const entries = affected
+    .filter((id) => idx.entrypointIds.has(id))
+    .map((id) => idx.pathById.get(id) as string)
+    .sort();
   return {
     path,
     directDependents: (idx.rev.get(start) ?? []).length,
@@ -65,14 +78,28 @@ export function impactOf(idx: ReverseIndex, path: string): BlastRadiusEntry | nu
   };
 }
 
-export function computeBlastRadius(graph: GraphModel, entrypointPaths: readonly string[], top = 20): BlastRadiusEntry[] {
+export function computeBlastRadius(
+  graph: GraphModel,
+  entrypointPaths: readonly string[],
+  top = 20,
+): BlastRadiusEntry[] {
   const idx = buildReverseIndex(graph, entrypointPaths);
-  const candidates = graph.nodes.length <= 3000 ? graph.nodes : [...graph.nodes].sort((a, b) => b.fanIn - a.fanIn || a.path.localeCompare(b.path)).slice(0, 300);
+  const candidates =
+    graph.nodes.length <= 3000
+      ? graph.nodes
+      : [...graph.nodes]
+          .sort((a, b) => b.fanIn - a.fanIn || a.path.localeCompare(b.path))
+          .slice(0, 300);
   const entries: BlastRadiusEntry[] = [];
   for (const n of candidates) {
     const e = impactOf(idx, n.path);
     if (e && e.transitiveDependents > 0) entries.push(e);
   }
-  entries.sort((a, b) => b.transitiveDependents - a.transitiveDependents || b.directDependents - a.directDependents || a.path.localeCompare(b.path));
+  entries.sort(
+    (a, b) =>
+      b.transitiveDependents - a.transitiveDependents ||
+      b.directDependents - a.directDependents ||
+      a.path.localeCompare(b.path),
+  );
   return entries.slice(0, top);
 }

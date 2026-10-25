@@ -8,7 +8,10 @@ export function parseVersion(v: string): ParsedVersion | null {
   const m = /^v?(\d+(?:\.\d+)*)(.*)$/.exec(v.trim());
   if (!m) return null;
   const rest = (m[2] as string).trim();
-  return { parts: (m[1] as string).split(".").map(Number), pre: /^[-+]?(alpha|beta|rc|dev|pre|a\d|b\d)/i.test(rest) || /^-/.test(rest) };
+  return {
+    parts: (m[1] as string).split(".").map(Number),
+    pre: /^[-+]?(alpha|beta|rc|dev|pre|a\d|b\d)/i.test(rest) || /^-/.test(rest),
+  };
 }
 
 export function compareVersions(a: string, b: string): number {
@@ -39,9 +42,16 @@ export function nearestFix(installed: string, fixed: string[]): FixChoice | null
     .filter((f) => parseVersion(f) && compareVersions(f, installed) > 0)
     .sort(compareVersions);
   if (higher.length === 0) return null;
-  const sameMajor = higher.find((f) => (parseVersion(f) as ParsedVersion).parts[0] === inst.parts[0]);
+  const sameMajor = higher.find(
+    (f) => (parseVersion(f) as ParsedVersion).parts[0] === inst.parts[0],
+  );
   const pick = sameMajor ?? (higher[0] as string);
   const p = parseVersion(pick) as ParsedVersion;
-  const jump: UpdateJump = p.parts[0] !== inst.parts[0] ? "major" : (p.parts[1] ?? 0) !== (inst.parts[1] ?? 0) ? "minor" : "patch";
+  const jump: UpdateJump =
+    p.parts[0] !== inst.parts[0]
+      ? "major"
+      : (p.parts[1] ?? 0) !== (inst.parts[1] ?? 0)
+        ? "minor"
+        : "patch";
   return { version: pick, jump };
 }

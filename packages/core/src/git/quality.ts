@@ -1,7 +1,9 @@
 import type { CommitQuality } from "../ir/types.js";
 
-const CONVENTIONAL = /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([^)]+\))?!?:\s+\S/i;
-const GENERIC = /^(fix(es|ed)?|update[sd]?|wip|changes?|misc|stuff|temp|tmp|test(ing)?|commit|initial commit|minor|small changes?|\.+|asdf+|done|save)\.?$/i;
+const CONVENTIONAL =
+  /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([^)]+\))?!?:\s+\S/i;
+const GENERIC =
+  /^(fix(es|ed)?|update[sd]?|wip|changes?|misc|stuff|temp|tmp|test(ing)?|commit|initial commit|minor|small changes?|\.+|asdf+|done|save)\.?$/i;
 const MERGE = /^(Merge (branch|pull request|remote-tracking|tag)|Revert ")/;
 
 const round = (n: number): number => Math.round(n * 1000) / 1000;
@@ -18,6 +20,7 @@ export function commitQuality(subjects: string[]): CommitQuality | null {
     conventionalShare: round(conventional / sample.length),
     descriptiveShare: round(descriptive / sample.length),
     genericShare: round(generic / sample.length),
-    avgSubjectLength: Math.round((sample.reduce((s, x) => s + x.length, 0) / sample.length) * 10) / 10,
+    avgSubjectLength:
+      Math.round((sample.reduce((s, x) => s + x.length, 0) / sample.length) * 10) / 10,
   };
 }

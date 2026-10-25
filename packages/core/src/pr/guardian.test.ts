@@ -6,7 +6,12 @@ import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 import { resolveConfig } from "../config/config.js";
 import { analyzeRef, readRulesFrom } from "../pipeline/snapshot.js";
-import { changedFiles, changedFilesWorkingTree, isSafeGitRef, withWorktree } from "../git/worktree.js";
+import {
+  changedFiles,
+  changedFilesWorkingTree,
+  isSafeGitRef,
+  withWorktree,
+} from "../git/worktree.js";
 import { assessPullRequest, prToMarkdown } from "./guardian.js";
 
 const FIXTURES = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "..", "fixtures");
@@ -15,8 +20,15 @@ afterEach(() => {
   for (const d of dirs) rmSync(d, { recursive: true, force: true });
   dirs = [];
 });
-const env = { ...process.env, GIT_AUTHOR_NAME: "T", GIT_AUTHOR_EMAIL: "t@x.t", GIT_COMMITTER_NAME: "T", GIT_COMMITTER_EMAIL: "t@x.t" };
-const g = (cwd: string, ...args: string[]) => execFileSync("git", args, { cwd, env, encoding: "utf8" });
+const env = {
+  ...process.env,
+  GIT_AUTHOR_NAME: "T",
+  GIT_AUTHOR_EMAIL: "t@x.t",
+  GIT_COMMITTER_NAME: "T",
+  GIT_COMMITTER_EMAIL: "t@x.t",
+};
+const g = (cwd: string, ...args: string[]) =>
+  execFileSync("git", args, { cwd, env, encoding: "utf8" });
 const config = resolveConfig({ security: { offline: true }, history: { enabled: false } });
 
 function repo(): string {
@@ -28,7 +40,8 @@ function repo(): string {
   g(d, "commit", "-q", "-m", "base");
   return d;
 }
-const analyze = (root: string, ref: string, over = config) => analyzeRef(root, ref, "pr-test", { config: over, rules: readRulesFrom(root) });
+const analyze = (root: string, ref: string, over = config) =>
+  analyzeRef(root, ref, "pr-test", { config: over, rules: readRulesFrom(root) });
 
 const BAD_SERVICE = `import { Repo } from "../data/repo";
 import { render } from "../ui/app";
@@ -41,7 +54,9 @@ describe("pull request guardian", () => {
     const d = repo();
     writeFileSync(join(d, "src/domain/service.ts"), BAD_SERVICE);
     g(d, "commit", "-q", "-am", "domain depends on ui");
-    const a = assessPullRequest(await analyze(d, "HEAD~1"), await analyze(d, "HEAD"), { changedFiles: await changedFiles(d, "HEAD~1", "HEAD") });
+    const a = assessPullRequest(await analyze(d, "HEAD~1"), await analyze(d, "HEAD"), {
+      changedFiles: await changedFiles(d, "HEAD~1", "HEAD"),
+    });
     expect(a.verdict).toBe("regressed");
     expect(a.reasons.join(" ")).toMatch(/rule violation/);
     expect(a.reasons.join(" ")).toMatch(/circular/);
@@ -59,7 +74,10 @@ describe("pull request guardian", () => {
     const d = repo();
     writeFileSync(join(d, "src/domain/service.ts"), BAD_SERVICE);
     g(d, "commit", "-q", "-am", "bad");
-    cpSync(join(FIXTURES, "ts-layered-clean/src/domain/service.ts"), join(d, "src/domain/service.ts"));
+    cpSync(
+      join(FIXTURES, "ts-layered-clean/src/domain/service.ts"),
+      join(d, "src/domain/service.ts"),
+    );
     g(d, "commit", "-q", "-am", "fix");
     const a = assessPullRequest(await analyze(d, "HEAD~1"), await analyze(d, "HEAD"));
     expect(a.verdict).toBe("improved");
@@ -68,7 +86,10 @@ describe("pull request guardian", () => {
   });
   it("reports unchanged for an identical analysis and for a harmless change", async () => {
     const d = repo();
-    writeFileSync(join(d, "src/ui/format.ts"), "export const fmt = (s: string): string => s.trim().toUpperCase();\n");
+    writeFileSync(
+      join(d, "src/ui/format.ts"),
+      "export const fmt = (s: string): string => s.trim().toUpperCase();\n",
+    );
     g(d, "commit", "-q", "-am", "harmless");
     const a = assessPullRequest(await analyze(d, "HEAD~1"), await analyze(d, "HEAD"));
     expect(a.verdict).toBe("unchanged");
@@ -77,7 +98,10 @@ describe("pull request guardian", () => {
   });
   it("lists new third-party packages and new cross-module edges", async () => {
     const d = repo();
-    writeFileSync(join(d, "src/ui/format.ts"), 'import _ from "lodash";\nimport { Repo } from "../data/repo";\nexport const fmt = (s: string): string => _.trim(s) + String(Repo);\n');
+    writeFileSync(
+      join(d, "src/ui/format.ts"),
+      'import _ from "lodash";\nimport { Repo } from "../data/repo";\nexport const fmt = (s: string): string => _.trim(s) + String(Repo);\n',
+    );
     g(d, "commit", "-q", "-am", "deps");
     const a = assessPullRequest(await analyze(d, "HEAD~1"), await analyze(d, "HEAD"));
     expect(a.newExternalPackages).toEqual(["lodash"]);
@@ -85,7 +109,14 @@ describe("pull request guardian", () => {
   });
   it("warns when the two analyses used different configurations", async () => {
     const d = repo();
-    const a = assessPullRequest(await analyze(d, "HEAD"), await analyze(d, "HEAD", resolveConfig({ security: { offline: true }, history: { enabled: false }, moduleDepth: 2 })));
+    const a = assessPullRequest(
+      await analyze(d, "HEAD"),
+      await analyze(
+        d,
+        "HEAD",
+        resolveConfig({ security: { offline: true }, history: { enabled: false }, moduleDepth: 2 }),
+      ),
+    );
     expect(a.configMatches).toBe(false);
     expect(prToMarkdown(a)).toMatch(/different configurations/);
   });

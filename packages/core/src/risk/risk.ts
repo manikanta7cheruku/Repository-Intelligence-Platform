@@ -1,4 +1,11 @@
-import type { Confidence, FileMetrics, GraphModel, RiskFactor, RiskFile, RiskSummary } from "../ir/types.js";
+import type {
+  Confidence,
+  FileMetrics,
+  GraphModel,
+  RiskFactor,
+  RiskFile,
+  RiskSummary,
+} from "../ir/types.js";
 import { buildReverseIndex, impactOf } from "../graph/impact.js";
 
 export const RISK_METHOD =
@@ -34,25 +41,48 @@ function rank(sorted: number[], v: number): number {
 
 export function computeRisk(i: RiskInputs): RiskSummary {
   const nodes = i.graph.nodes;
-  if (nodes.length < 5) return { assessed: false, reason: "Fewer than 5 analyzed production files, so percentiles would not be meaningful", method: RISK_METHOD, files: [] };
+  if (nodes.length < 5)
+    return {
+      assessed: false,
+      reason: "Fewer than 5 analyzed production files, so percentiles would not be meaningful",
+      method: RISK_METHOD,
+      files: [],
+    };
   const idx = buildReverseIndex(i.graph, i.entrypoints);
   const modulePath = new Map(i.graph.modules.map((m) => [m.id, m.path]));
-  const complexity = new Map(i.fileMetrics.filter((m) => m.maxComplexity !== null).map((m) => [m.path, m.maxComplexity as number]));
+  const complexity = new Map(
+    i.fileMetrics
+      .filter((m) => m.maxComplexity !== null)
+      .map((m) => [m.path, m.maxComplexity as number]),
+  );
   const useTransitive = nodes.length <= 3000;
   const dependents = new Map<string, number>();
-  for (const n of nodes) dependents.set(n.path, useTransitive ? (impactOf(idx, n.path)?.transitiveDependents ?? 0) : n.fanIn);
+  for (const n of nodes)
+    dependents.set(
+      n.path,
+      useTransitive ? (impactOf(idx, n.path)?.transitiveDependents ?? 0) : n.fanIn,
+    );
 
   // Files reachable (forward) from files that tests import directly: loaded by tests in principle.
   const fwd = new Map<string, string[]>();
   for (const e of i.graph.edges) (fwd.get(e.from) ?? fwd.set(e.from, []).get(e.from))?.push(e.to);
   const testReach = new Set<string>();
-  const stack = [...i.testDirect].map((p) => idx.idByPath.get(p)).filter((x): x is string => x !== undefined);
+  const stack = [...i.testDirect]
+    .map((p) => idx.idByPath.get(p))
+    .filter((x): x is string => x !== undefined);
   for (const s of stack) testReach.add(s);
-  while (stack.length > 0) for (const w of fwd.get(stack.pop() as string) ?? []) if (!testReach.has(w)) { testReach.add(w); stack.push(w); }
+  while (stack.length > 0)
+    for (const w of fwd.get(stack.pop() as string) ?? [])
+      if (!testReach.has(w)) {
+        testReach.add(w);
+        stack.push(w);
+      }
 
   const sortedComplexity = [...complexity.values()].sort((a, b) => a - b);
   const sortedDependents = [...dependents.values()].sort((a, b) => a - b);
-  const sortedCommits = i.fileStats ? [...nodes.map((n) => i.fileStats?.get(n.path)?.commits ?? 0)].sort((a, b) => a - b) : [];
+  const sortedCommits = i.fileStats
+    ? [...nodes.map((n) => i.fileStats?.get(n.path)?.commits ?? 0)].sort((a, b) => a - b)
+    : [];
   const testsKnown = i.hasTests || (i.coverage !== null && i.coverage.size > 0);
 
   const out: RiskFile[] = [];
@@ -62,19 +92,46 @@ export function computeRisk(i: RiskInputs): RiskSummary {
     const cx = complexity.get(n.path);
     if (cx !== undefined) {
       const p = rank(sortedComplexity, cx);
-      factors.push({ name: "complexity", value: cx, percentile: Math.round(p * 1000) / 1000, note: `highest function complexity ${cx}` });
+      factors.push({
+        name: "complexity",
+        value: cx,
+        percentile: Math.round(p * 1000) / 1000,
+        note: `highest function complexity ${cx}`,
+      });
       scored.push({ name: "complexity", s: p });
-    } else factors.push({ name: "complexity", value: null, percentile: null, note: "No complexity measurement for this file" });
+    } else
+      factors.push({
+        name: "complexity",
+        value: null,
+        percentile: null,
+        note: "No complexity measurement for this file",
+      });
     const dep = dependents.get(n.path) ?? 0;
     const dp = rank(sortedDependents, dep);
-    factors.push({ name: "dependents", value: dep, percentile: Math.round(dp * 1000) / 1000, note: `${dep} ${useTransitive ? "files depend on it directly or indirectly" : "files import it directly"}` });
+    factors.push({
+      name: "dependents",
+      value: dep,
+      percentile: Math.round(dp * 1000) / 1000,
+      note: `${dep} ${useTransitive ? "files depend on it directly or indirectly" : "files import it directly"}`,
+    });
     scored.push({ name: "dependents", s: dp });
     if (i.fileStats) {
       const c = i.fileStats.get(n.path)?.commits ?? 0;
       const p = rank(sortedCommits, c);
-      factors.push({ name: "churn", value: c, percentile: Math.round(p * 1000) / 1000, note: `changed in ${c} commits` });
+      factors.push({
+        name: "churn",
+        value: c,
+        percentile: Math.round(p * 1000) / 1000,
+        note: `changed in ${c} commits`,
+      });
       scored.push({ name: "churn", s: p });
-    } else factors.push({ name: "churn", value: null, percentile: null, note: "No Git history available" });
+    } else
+      factors.push({
+        name: "churn",
+        value: null,
+        percentile: null,
+        note: "No Git history available",
+      });
     if (testsKnown) {
       const cov = i.coverage?.get(n.path);
       let s: number;
@@ -94,23 +151,55 @@ export function computeRisk(i: RiskInputs): RiskSummary {
       }
       factors.push({ name: "tests", value: Math.round(s * 100) / 100, percentile: null, note });
       scored.push({ name: "tests", s });
-    } else factors.push({ name: "tests", value: null, percentile: null, note: "No test files or coverage report to judge test linkage" });
+    } else
+      factors.push({
+        name: "tests",
+        value: null,
+        percentile: null,
+        note: "No test files or coverage report to judge test linkage",
+      });
 
     if (scored.length < 2) continue;
     const wsum = scored.reduce((a, f) => a + WEIGHTS[f.name], 0);
     const risk = Math.round((100 * scored.reduce((a, f) => a + WEIGHTS[f.name] * f.s, 0)) / wsum);
-    const contributions = scored.map((f) => ({ ...f, c: (WEIGHTS[f.name] * f.s) / wsum })).sort((a, b) => b.c - a.c);
-    const drivers = contributions.filter((c) => c.s >= 0.6).slice(0, 3).map((c) => {
-      const f = factors.find((x) => x.name === c.name) as RiskFactor;
-      return c.name === "complexity" ? `high complexity (${f.note})` : c.name === "dependents" ? f.note : c.name === "churn" ? `frequently changed (${f.note})` : `weak test linkage (${f.note})`;
-    });
-    const confidence: Confidence = scored.length >= 4 ? "high" : scored.length === 3 ? "medium" : "low";
+    const contributions = scored
+      .map((f) => ({ ...f, c: (WEIGHTS[f.name] * f.s) / wsum }))
+      .sort((a, b) => b.c - a.c);
+    const drivers = contributions
+      .filter((c) => c.s >= 0.6)
+      .slice(0, 3)
+      .map((c) => {
+        const f = factors.find((x) => x.name === c.name) as RiskFactor;
+        return c.name === "complexity"
+          ? `high complexity (${f.note})`
+          : c.name === "dependents"
+            ? f.note
+            : c.name === "churn"
+              ? `frequently changed (${f.note})`
+              : `weak test linkage (${f.note})`;
+      });
+    const confidence: Confidence =
+      scored.length >= 4 ? "high" : scored.length === 3 ? "medium" : "low";
     out.push({
-      path: n.path, moduleId: n.moduleId ? (modulePath.has(n.moduleId) ? n.moduleId : null) : null, risk, confidence, factors, drivers,
-      explanation: drivers.length > 0 ? `Ranked high because of: ${drivers.join("; ")}.` : "No single factor stands out. The score is a blend of moderate signals.",
+      path: n.path,
+      moduleId: n.moduleId ? (modulePath.has(n.moduleId) ? n.moduleId : null) : null,
+      risk,
+      confidence,
+      factors,
+      drivers,
+      explanation:
+        drivers.length > 0
+          ? `Ranked high because of: ${drivers.join("; ")}.`
+          : "No single factor stands out. The score is a blend of moderate signals.",
     });
   }
-  if (out.length === 0) return { assessed: false, reason: "Fewer than 2 risk factors were available for every file", method: RISK_METHOD, files: [] };
+  if (out.length === 0)
+    return {
+      assessed: false,
+      reason: "Fewer than 2 risk factors were available for every file",
+      method: RISK_METHOD,
+      files: [],
+    };
   out.sort((a, b) => b.risk - a.risk || a.path.localeCompare(b.path));
   return { assessed: true, reason: null, method: RISK_METHOD, files: out.slice(0, i.limit ?? 15) };
 }

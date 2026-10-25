@@ -13,7 +13,10 @@ describe("semver helpers", () => {
     expect(parseVersion("abc123def")).toBeNull();
   });
   it("picks the nearest fix above the installed version, preferring the same major", () => {
-    expect(nearestFix("5.4.21", ["1.1.0", "6.4.4", "7.3.7", "5.4.22"])).toEqual({ version: "5.4.22", jump: "patch" });
+    expect(nearestFix("5.4.21", ["1.1.0", "6.4.4", "7.3.7", "5.4.22"])).toEqual({
+      version: "5.4.22",
+      jump: "patch",
+    });
     expect(nearestFix("5.4.21", ["6.4.4", "7.3.7"])).toEqual({ version: "6.4.4", jump: "major" });
     expect(nearestFix("0.21.5", ["0.25.0"])).toEqual({ version: "0.25.0", jump: "minor" });
   });

@@ -19,15 +19,46 @@ export function improvements(r: Report, perDimension = 3): Improvement[] {
   const out: Improvement[] = [];
   for (const s of r.scores) {
     if (s.state !== "assessed") continue;
-    const list = s.inputs.filter((i) => i.available && (i.impact ?? 0) >= 1).sort((a, b) => (b.impact ?? 0) - (a.impact ?? 0) || a.name.localeCompare(b.name)).slice(0, perDimension);
-    for (const i of list) out.push({ dimension: s.dimension, input: i.name, label: inputLabel(i.name), currentScore: i.normalized, gain: i.impact ?? 0, advice: explain(i.name)?.improve ?? "", note: i.note });
+    const list = s.inputs
+      .filter((i) => i.available && (i.impact ?? 0) >= 1)
+      .sort((a, b) => (b.impact ?? 0) - (a.impact ?? 0) || a.name.localeCompare(b.name))
+      .slice(0, perDimension);
+    for (const i of list)
+      out.push({
+        dimension: s.dimension,
+        input: i.name,
+        label: inputLabel(i.name),
+        currentScore: i.normalized,
+        gain: i.impact ?? 0,
+        advice: explain(i.name)?.improve ?? "",
+        note: i.note,
+      });
   }
   return out;
 }
 
-export const missingInputs = (s: ScoreRecord): string[] => s.inputs.filter((i) => !i.available).map((i) => `${inputLabel(i.name)} (${i.note})`);
+export const missingInputs = (s: ScoreRecord): string[] =>
+  s.inputs.filter((i) => !i.available).map((i) => `${inputLabel(i.name)} (${i.note})`);
 
-export const GLOSSARY_IDS_ALWAYS = ["confidence", "coverage", "weight-coverage", "not-assessed", "support-level", "severity", "origin", "classification", "module", "fan-in", "fan-out", "instability", "cycle", "risk-index", "blast-radius", "hotspot", "baseline"];
+export const GLOSSARY_IDS_ALWAYS = [
+  "confidence",
+  "coverage",
+  "weight-coverage",
+  "not-assessed",
+  "support-level",
+  "severity",
+  "origin",
+  "classification",
+  "module",
+  "fan-in",
+  "fan-out",
+  "instability",
+  "cycle",
+  "risk-index",
+  "blast-radius",
+  "hotspot",
+  "baseline",
+];
 
 export function glossaryIdsFor(r: Report): string[] {
   const ids = new Set<string>(GLOSSARY_IDS_ALWAYS);
@@ -40,4 +71,5 @@ export function glossaryIdsFor(r: Report): string[] {
   return [...ids];
 }
 
-export const pctText = (v: number | null): string => (v === null ? "n/a" : `${Math.round(v * 1000) / 10}%`);
+export const pctText = (v: number | null): string =>
+  v === null ? "n/a" : `${Math.round(v * 1000) / 10}%`;

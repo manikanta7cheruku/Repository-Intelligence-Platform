@@ -4,26 +4,67 @@ import { compareVersions } from "../util/semver.js";
 const SEV_W: Record<Severity, number> = { critical: 100, high: 60, medium: 30, low: 10, info: 2 };
 const CONF_W: Record<Confidence, number> = { high: 1, medium: 0.7, low: 0.4 };
 
-const TEMPLATES: Record<string, { title: (n: number) => string; effort: "low" | "medium" | "high" }> = {
-  "arch.cycle.file": { title: (n) => `Break ${n} circular ${n === 1 ? "dependency" : "dependencies"} between files`, effort: "medium" },
-  "arch.cycle.module": { title: (n) => `Resolve ${n} module ${n === 1 ? "cycle" : "cycles"}`, effort: "high" },
-  "quality.function-complexity": { title: (n) => `Simplify ${n} highly complex ${n === 1 ? "function" : "functions"}`, effort: "high" },
+const TEMPLATES: Record<
+  string,
+  { title: (n: number) => string; effort: "low" | "medium" | "high" }
+> = {
+  "arch.cycle.file": {
+    title: (n) => `Break ${n} circular ${n === 1 ? "dependency" : "dependencies"} between files`,
+    effort: "medium",
+  },
+  "arch.cycle.module": {
+    title: (n) => `Resolve ${n} module ${n === 1 ? "cycle" : "cycles"}`,
+    effort: "high",
+  },
+  "quality.function-complexity": {
+    title: (n) => `Simplify ${n} highly complex ${n === 1 ? "function" : "functions"}`,
+    effort: "high",
+  },
   "quality.duplication": { title: () => "Reduce duplicated code", effort: "medium" },
-  "quality.large-file": { title: (n) => `Split ${n} very large ${n === 1 ? "file" : "files"}`, effort: "medium" },
-  "security.workflow.script-injection": { title: (n) => `Fix ${n} script injection ${n === 1 ? "risk" : "risks"} in workflows`, effort: "low" },
-  "security.workflow.pr-target-checkout": { title: () => "Stop checking out pull request code in pull_request_target workflows", effort: "low" },
-  "security.workflow.unpinned-action": { title: (n) => `Pin ${n} GitHub ${n === 1 ? "Action" : "Actions"} to commit SHAs`, effort: "low" },
+  "quality.large-file": {
+    title: (n) => `Split ${n} very large ${n === 1 ? "file" : "files"}`,
+    effort: "medium",
+  },
+  "security.workflow.script-injection": {
+    title: (n) => `Fix ${n} script injection ${n === 1 ? "risk" : "risks"} in workflows`,
+    effort: "low",
+  },
+  "security.workflow.pr-target-checkout": {
+    title: () => "Stop checking out pull request code in pull_request_target workflows",
+    effort: "low",
+  },
+  "security.workflow.unpinned-action": {
+    title: (n) => `Pin ${n} GitHub ${n === 1 ? "Action" : "Actions"} to commit SHAs`,
+    effort: "low",
+  },
   "practice.no-ci": { title: () => "Add continuous integration", effort: "medium" },
   "practice.no-tests": { title: () => "Add automated tests", effort: "high" },
   "practice.no-license": { title: () => "Add a license", effort: "low" },
   "practice.no-readme": { title: () => "Add a README", effort: "low" },
   "practice.no-lockfile": { title: () => "Commit a dependency lockfile", effort: "low" },
-  "arch.high-fan-out": { title: (n) => `Reduce dependencies of ${n} ${n === 1 ? "file that imports" : "files that import"} many others`, effort: "medium" },
-  "risk.high-risk-file": { title: (n) => `Reduce risk in ${n} high-risk ${n === 1 ? "file" : "files"} (simplify and add tests)`, effort: "high" },
-  "practice.low-coverage": { title: () => "Raise test coverage on the riskiest files", effort: "high" },
+  "arch.high-fan-out": {
+    title: (n) =>
+      `Reduce dependencies of ${n} ${n === 1 ? "file that imports" : "files that import"} many others`,
+    effort: "medium",
+  },
+  "risk.high-risk-file": {
+    title: (n) =>
+      `Reduce risk in ${n} high-risk ${n === 1 ? "file" : "files"} (simplify and add tests)`,
+    effort: "high",
+  },
+  "practice.low-coverage": {
+    title: () => "Raise test coverage on the riskiest files",
+    effort: "high",
+  },
   "practice.readme-short": { title: () => "Expand the README", effort: "low" },
-  "history.generic-commits": { title: () => "Write more descriptive commit messages", effort: "low" },
-  "history.hotspot": { title: (n) => `Refactor ${n} change-prone complex ${n === 1 ? "file" : "files"}`, effort: "high" },
+  "history.generic-commits": {
+    title: () => "Write more descriptive commit messages",
+    effort: "low",
+  },
+  "history.hotspot": {
+    title: (n) => `Refactor ${n} change-prone complex ${n === 1 ? "file" : "files"}`,
+    effort: "high",
+  },
 };
 
 export function buildRecommendations(findings: Finding[], limit = 12): Recommendation[] {
@@ -31,7 +72,12 @@ export function buildRecommendations(findings: Finding[], limit = 12): Recommend
   for (const f of findings) {
     if (f.severity === "info" || f.category === "analysis") continue;
     const pkg = f.tags.find((t) => t.startsWith("package:"));
-    const key = f.ruleId === "security.osv" && pkg ? `security.osv|${pkg.slice(8)}` : f.ruleId.startsWith("security.secret.") ? "security.secret" : f.ruleId;
+    const key =
+      f.ruleId === "security.osv" && pkg
+        ? `security.osv|${pkg.slice(8)}`
+        : f.ruleId.startsWith("security.secret.")
+          ? "security.secret"
+          : f.ruleId;
     (groups.get(key) ?? groups.set(key, []).get(key))?.push(f);
   }
   const recs = [...groups.entries()].map(([key, list]) => {
@@ -41,22 +87,61 @@ export function buildRecommendations(findings: Finding[], limit = 12): Recommend
     let osv: { title: (n: number) => string; effort: "low" | "medium" | "high" } | null = null;
     if (key.startsWith("security.osv|")) {
       const name = key.slice(13);
-      const fixes = list.flatMap((f) => f.tags.filter((t) => t.startsWith("fix:")).map((t) => ({ v: t.slice(4), jump: (f.tags.find((x) => x.startsWith("jump:")) ?? "jump:patch").slice(5) })));
+      const fixes = list.flatMap((f) =>
+        f.tags
+          .filter((t) => t.startsWith("fix:"))
+          .map((t) => ({
+            v: t.slice(4),
+            jump: (f.tags.find((x) => x.startsWith("jump:")) ?? "jump:patch").slice(5),
+          })),
+      );
       const best = fixes.sort((a, b) => compareVersions(b.v, a.v))[0];
       const dev = list.every((f) => f.tags.includes("dev"));
       osv = {
-        title: (n) => `Upgrade ${name}${best ? ` to ${best.v}` : ""} (fixes ${n} ${n === 1 ? "advisory" : "advisories"}${dev ? ", development tool only" : ""}${best?.jump === "major" ? ", major update" : ""})`,
-        effort: best ? (best.jump === "major" ? "high" : best.jump === "minor" ? "medium" : "low") : "medium",
+        title: (n) =>
+          `Upgrade ${name}${best ? ` to ${best.v}` : ""} (fixes ${n} ${n === 1 ? "advisory" : "advisories"}${dev ? ", development tool only" : ""}${best?.jump === "major" ? ", major update" : ""})`,
+        effort: best
+          ? best.jump === "major"
+            ? "high"
+            : best.jump === "minor"
+              ? "medium"
+              : "low"
+          : "medium",
       };
     }
-    const tpl = osv ?? (key === "security.secret" ? { title: (n: number) => `Revoke and remove ${n} possible committed ${n === 1 ? "secret" : "secrets"}`, effort: "low" as const } : key.startsWith("rule.") ? { title: (n: number) => `Fix ${n} violation${n === 1 ? "" : "s"} of architecture rule ${key.slice(5)}`, effort: "medium" as const } : TEMPLATES[key]);
+    const tpl =
+      osv ??
+      (key === "security.secret"
+        ? {
+            title: (n: number) =>
+              `Revoke and remove ${n} possible committed ${n === 1 ? "secret" : "secrets"}`,
+            effort: "low" as const,
+          }
+        : key.startsWith("rule.")
+          ? {
+              title: (n: number) =>
+                `Fix ${n} violation${n === 1 ? "" : "s"} of architecture rule ${key.slice(5)}`,
+              effort: "medium" as const,
+            }
+          : TEMPLATES[key]);
     return {
-      key, priority, findingIds: list.map((f) => f.id).sort(),
+      key,
+      priority,
+      findingIds: list.map((f) => f.id).sort(),
       title: tpl ? tpl.title(list.length) : (list[0] as Finding).title,
       rationale: `Highest severity ${list.slice().sort((a, b) => SEV_W[b.severity] - SEV_W[a.severity])[0]?.severity}, ${list.length} finding${list.length === 1 ? "" : "s"}. Priority = severity weight times confidence weight, plus 5 times the natural log of the finding count.`,
       effort: tpl?.effort ?? null,
     };
   });
   recs.sort((a, b) => b.priority - a.priority || a.key.localeCompare(b.key));
-  return recs.slice(0, limit).map((r, idx) => ({ rank: idx + 1, title: r.title, rationale: r.rationale, priority: r.priority, findingIds: r.findingIds, effort: r.effort }));
+  return recs
+    .slice(0, limit)
+    .map((r, idx) => ({
+      rank: idx + 1,
+      title: r.title,
+      rationale: r.rationale,
+      priority: r.priority,
+      findingIds: r.findingIds,
+      effort: r.effort,
+    }));
 }

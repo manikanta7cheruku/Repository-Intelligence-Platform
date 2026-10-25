@@ -15,14 +15,37 @@ export interface SnapshotOptions {
 }
 
 /** Analyzes a directory exactly as it is on disk, without Git history. Used for comparisons and trends. */
-export async function analyzeDirectory(dir: string, label: string, o: SnapshotOptions): Promise<Report> {
+export async function analyzeDirectory(
+  dir: string,
+  label: string,
+  o: SnapshotOptions,
+): Promise<Report> {
   const ws = openLocalWorkspace(dir, o.config);
-  return analyze({ config: o.config, workspace: ws, source: { type: "local", location: label, ref: null, name: label }, historyRoot: null, rules: o.rules ?? null, baseline: o.baseline ?? null, ...(o.osvFetch ? { osvFetch: o.osvFetch } : {}), ...(o.signal ? { signal: o.signal } : {}) });
+  return analyze({
+    config: o.config,
+    workspace: ws,
+    source: { type: "local", location: label, ref: null, name: label },
+    historyRoot: null,
+    rules: o.rules ?? null,
+    baseline: o.baseline ?? null,
+    ...(o.osvFetch ? { osvFetch: o.osvFetch } : {}),
+    ...(o.signal ? { signal: o.signal } : {}),
+  });
 }
 
 /** Analyzes a Git ref in a temporary detached worktree. The repository's working tree is untouched. */
-export async function analyzeRef(repoRoot: string, ref: string, label: string, o: SnapshotOptions): Promise<Report> {
-  const report = await withWorktree(repoRoot, ref, (dir) => analyzeDirectory(dir, label, o), o.signal);
+export async function analyzeRef(
+  repoRoot: string,
+  ref: string,
+  label: string,
+  o: SnapshotOptions,
+): Promise<Report> {
+  const report = await withWorktree(
+    repoRoot,
+    ref,
+    (dir) => analyzeDirectory(dir, label, o),
+    o.signal,
+  );
   return report;
 }
 

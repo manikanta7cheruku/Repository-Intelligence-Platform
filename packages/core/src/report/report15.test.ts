@@ -13,7 +13,12 @@ const FIXTURES = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..",
 const gen = async (name: string): Promise<Report> => {
   const config = resolveConfig({ security: { offline: true }, history: { enabled: false } });
   const dir = join(FIXTURES, name);
-  return analyze({ config, workspace: openLocalWorkspace(dir, config), source: { type: "local", location: name, ref: null, name }, historyRoot: null });
+  return analyze({
+    config,
+    workspace: openLocalWorkspace(dir, config),
+    source: { type: "local", location: name, ref: null, name },
+    historyRoot: null,
+  });
 };
 
 describe("explanations in reports", () => {
@@ -63,7 +68,15 @@ describe("diagram exports", () => {
   });
   it("escapes hostile module names in every format", async () => {
     const r = await gen("ts-layered-clean");
-    const evil = { ...r, graph: { ...r.graph, modules: r.graph.modules.map((m, i) => (i === 0 ? { ...m, path: 'x"><script>alert(1)</script>' } : m)) } };
+    const evil = {
+      ...r,
+      graph: {
+        ...r.graph,
+        modules: r.graph.modules.map((m, i) =>
+          i === 0 ? { ...m, path: 'x"><script>alert(1)</script>' } : m,
+        ),
+      },
+    };
     const svg = toSvg(evil);
     expect(svg).not.toContain("<script>alert(1)");
     expect(svg).toContain("&lt;script&gt;");
@@ -79,7 +92,20 @@ describe("diagram exports", () => {
   });
   it("limits very large graphs and says how many modules were left out", async () => {
     const r = await gen("ts-layered-clean");
-    const many = { ...r, graph: { ...r.graph, modules: Array.from({ length: 70 }, (_, i) => ({ ...(r.graph.modules[0] as Report["graph"]["modules"][number]), id: `m_${i}`, path: `mod/${i}`, loc: 100 - i })), moduleEdges: [], levels: [] } };
+    const many = {
+      ...r,
+      graph: {
+        ...r.graph,
+        modules: Array.from({ length: 70 }, (_, i) => ({
+          ...(r.graph.modules[0] as Report["graph"]["modules"][number]),
+          id: `m_${i}`,
+          path: `mod/${i}`,
+          loc: 100 - i,
+        })),
+        moduleEdges: [],
+        levels: [],
+      },
+    };
     expect(toMermaid(many)).toContain("10 smaller modules are not shown");
   });
 });

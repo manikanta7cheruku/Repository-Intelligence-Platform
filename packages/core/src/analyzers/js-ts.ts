@@ -4,7 +4,13 @@ import { basename, dirname, joinPosix } from "../util/paths.js";
 import { readPackageJson, type PackageJson } from "../detect/manifests.js";
 import type { Workspace } from "../acquire/types.js";
 import type { Dependency, DependencyKind, Symbol } from "../ir/types.js";
-import { throwIfAborted, type AnalyzerContext, type AnalyzerPlugin, type AnalyzerResult, type FileAnalysis } from "./types.js";
+import {
+  throwIfAborted,
+  type AnalyzerContext,
+  type AnalyzerPlugin,
+  type AnalyzerResult,
+  type FileAnalysis,
+} from "./types.js";
 
 const VROOT = "/r";
 const CODE_EXTS = [".ts", ".tsx", ".mts", ".cts", ".js", ".jsx", ".mjs", ".cjs"];
@@ -32,12 +38,18 @@ interface Resolved {
 /** Resolves import specifiers using the TypeScript module resolver over an in-memory view of the repository. */
 export class JsResolver {
   private readonly dirs = new Set<string>([""]);
-  private readonly optionsCache = new Map<string, { options: ts.CompilerOptions; pathKeys: string[]; cache: ts.ModuleResolutionCache }>();
+  private readonly optionsCache = new Map<
+    string,
+    { options: ts.CompilerOptions; pathKeys: string[]; cache: ts.ModuleResolutionCache }
+  >();
   private readonly packages: WorkspacePackage[] = [];
   readonly host: ts.ModuleResolutionHost;
   readonly configNotes = new Set<string>();
 
-  constructor(private readonly ws: Workspace, private readonly allPaths: Set<string>) {
+  constructor(
+    private readonly ws: Workspace,
+    private readonly allPaths: Set<string>,
+  ) {
     for (const p of allPaths) {
       let d = dirname(p);
       while (d !== "" && !this.dirs.has(d)) {
@@ -50,7 +62,8 @@ export class JsResolver {
       const pkg = readPackageJson(ws, p);
       if (pkg?.name) this.packages.push({ name: pkg.name, dir: dirname(p), pkg });
     }
-    const strip = (p: string) => (p === VROOT ? "" : p.startsWith(`${VROOT}/`) ? p.slice(VROOT.length + 1) : null);
+    const strip = (p: string) =>
+      p === VROOT ? "" : p.startsWith(`${VROOT}/`) ? p.slice(VROOT.length + 1) : null;
     this.host = {
       fileExists: (p) => {
         const rel = strip(p);
@@ -102,14 +115,21 @@ export class JsResolver {
           `${VROOT}/${dirname(path)}`.replace(/\/$/, ""),
         );
         options = parsed.options;
-        if (parsed.errors.length > 0) this.configNotes.add(`${path}: ${parsed.errors.length} configuration diagnostics (for example an extends target that is not in the repository)`);
+        if (parsed.errors.length > 0)
+          this.configNotes.add(
+            `${path}: ${parsed.errors.length} configuration diagnostics (for example an extends target that is not in the repository)`,
+          );
       } else {
         this.configNotes.add(`${path}: could not be parsed`);
       }
     }
     const resolutionKind = options.moduleResolution;
     if (resolutionKind === undefined || resolutionKind === ts.ModuleResolutionKind.Classic) {
-      options = { ...options, moduleResolution: ts.ModuleResolutionKind.Bundler, module: ts.ModuleKind.ESNext };
+      options = {
+        ...options,
+        moduleResolution: ts.ModuleResolutionKind.Bundler,
+        module: ts.ModuleKind.ESNext,
+      };
     }
     options = { ...options, allowJs: true, resolveJsonModule: true, noEmit: true };
     const pathKeys = Object.keys(options.paths ?? {});
@@ -126,12 +146,21 @@ export class JsResolver {
   }
 
   private pathAliasMatches(keys: string[], spec: string): boolean {
-    return keys.some((k) => (k.includes("*") ? spec.startsWith(k.slice(0, k.indexOf("*"))) && spec.endsWith(k.slice(k.indexOf("*") + 1)) : k === spec));
+    return keys.some((k) =>
+      k.includes("*")
+        ? spec.startsWith(k.slice(0, k.indexOf("*"))) && spec.endsWith(k.slice(k.indexOf("*") + 1))
+        : k === spec,
+    );
   }
 
   private tryFile(base: string): string | null {
     const stripped = base.replace(/\.(m|c)?js$/, "");
-    const variants = [base, ...CODE_EXTS.map((e) => `${base}${e}`), ...CODE_EXTS.map((e) => `${stripped}${e}`), ...CODE_EXTS.map((e) => `${base}/index${e}`)];
+    const variants = [
+      base,
+      ...CODE_EXTS.map((e) => `${base}${e}`),
+      ...CODE_EXTS.map((e) => `${stripped}${e}`),
+      ...CODE_EXTS.map((e) => `${base}/index${e}`),
+    ];
     return variants.find((v) => this.allPaths.has(v)) ?? null;
   }
 
@@ -149,10 +178,12 @@ export class JsResolver {
     };
     if (typeof exp === "string") collect(exp);
     else if (exp && typeof exp === "object") collect((exp as Record<string, unknown>)["."] ?? exp);
-    for (const f of [wp.pkg.types, wp.pkg.module, wp.pkg.main]) if (typeof f === "string") candidates.push(f);
+    for (const f of [wp.pkg.types, wp.pkg.module, wp.pkg.main])
+      if (typeof f === "string") candidates.push(f);
     for (const c of candidates) {
       const clean = c.replace(/^\.\//, "");
-      const hit = this.tryFile(at(clean)) ?? this.tryFile(at(clean.replace(/^(dist|build|lib)\//, "src/")));
+      const hit =
+        this.tryFile(at(clean)) ?? this.tryFile(at(clean.replace(/^(dist|build|lib)\//, "src/")));
       if (hit) return hit;
     }
     return this.tryFile(at("src/index")) ?? this.tryFile(at("index"));
@@ -160,39 +191,108 @@ export class JsResolver {
 
   resolve(spec: string, fromPath: string): Resolved {
     if (/^(https?:|data:|file:)/.test(spec)) {
-      return { resolution: "ignored", toPath: null, externalPackage: null, builtin: false, reason: "URL specifier" };
+      return {
+        resolution: "ignored",
+        toPath: null,
+        externalPackage: null,
+        builtin: false,
+        reason: "URL specifier",
+      };
     }
     const bare = !spec.startsWith(".") && !spec.startsWith("/");
     if (bare) {
       const bareName = spec.replace(/^node:/, "");
       if (spec.startsWith("node:") || BUILTINS.has(bareName.split("/")[0] as string)) {
-        if (spec.startsWith("node:") || !this.packages.some((p) => p.name === packageNameOf(spec))) {
-          return { resolution: "external", toPath: null, externalPackage: bareName.split("/")[0] as string, builtin: true, reason: null };
+        if (
+          spec.startsWith("node:") ||
+          !this.packages.some((p) => p.name === packageNameOf(spec))
+        ) {
+          return {
+            resolution: "external",
+            toPath: null,
+            externalPackage: bareName.split("/")[0] as string,
+            builtin: true,
+            reason: null,
+          };
         }
       }
     }
     const cfg = this.configFor(fromPath);
-    const result = ts.resolveModuleName(spec, `${VROOT}/${fromPath}`, cfg.options, this.host, cfg.cache);
-    const hit = result.resolvedModule && !result.resolvedModule.isExternalLibraryImport ? this.toRepoPath(result.resolvedModule.resolvedFileName) : null;
-    if (hit) return { resolution: "resolved", toPath: hit, externalPackage: null, builtin: false, reason: null };
+    const result = ts.resolveModuleName(
+      spec,
+      `${VROOT}/${fromPath}`,
+      cfg.options,
+      this.host,
+      cfg.cache,
+    );
+    const hit =
+      result.resolvedModule && !result.resolvedModule.isExternalLibraryImport
+        ? this.toRepoPath(result.resolvedModule.resolvedFileName)
+        : null;
+    if (hit)
+      return {
+        resolution: "resolved",
+        toPath: hit,
+        externalPackage: null,
+        builtin: false,
+        reason: null,
+      };
     if (!bare) {
       const joined = spec.startsWith("/") ? spec.slice(1) : joinPosix(dirname(fromPath), spec);
       const fallback = this.tryFile(joined);
-      if (fallback) return { resolution: "resolved", toPath: fallback, externalPackage: null, builtin: false, reason: null };
-      return { resolution: "unresolved", toPath: null, externalPackage: null, builtin: false, reason: "relative module not found in repository" };
+      if (fallback)
+        return {
+          resolution: "resolved",
+          toPath: fallback,
+          externalPackage: null,
+          builtin: false,
+          reason: null,
+        };
+      return {
+        resolution: "unresolved",
+        toPath: null,
+        externalPackage: null,
+        builtin: false,
+        reason: "relative module not found in repository",
+      };
     }
     const pkgName = packageNameOf(spec);
     const wp = this.packages.find((p) => p.name === pkgName);
     if (wp) {
       const sub = spec.slice(pkgName.length + 1);
       const entry = this.workspaceEntry(wp, sub);
-      if (entry) return { resolution: "resolved", toPath: entry, externalPackage: null, builtin: false, reason: `workspace package ${pkgName}` };
-      return { resolution: "unresolved", toPath: null, externalPackage: null, builtin: false, reason: `workspace package ${pkgName} entry not found` };
+      if (entry)
+        return {
+          resolution: "resolved",
+          toPath: entry,
+          externalPackage: null,
+          builtin: false,
+          reason: `workspace package ${pkgName}`,
+        };
+      return {
+        resolution: "unresolved",
+        toPath: null,
+        externalPackage: null,
+        builtin: false,
+        reason: `workspace package ${pkgName} entry not found`,
+      };
     }
     if (this.pathAliasMatches(cfg.pathKeys, spec)) {
-      return { resolution: "unresolved", toPath: null, externalPackage: null, builtin: false, reason: "path alias target not found" };
+      return {
+        resolution: "unresolved",
+        toPath: null,
+        externalPackage: null,
+        builtin: false,
+        reason: "path alias target not found",
+      };
     }
-    return { resolution: "external", toPath: null, externalPackage: pkgName, builtin: false, reason: null };
+    return {
+      resolution: "external",
+      toPath: null,
+      externalPackage: pkgName,
+      builtin: false,
+      reason: null,
+    };
   }
 }
 
@@ -203,13 +303,22 @@ function scriptKindFor(path: string): ts.ScriptKind {
   return ts.ScriptKind.TS;
 }
 
-const hasExportModifier = (n: ts.Node): boolean => ts.canHaveModifiers(n) && (ts.getModifiers(n)?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) ?? false);
-const hasDefaultModifier = (n: ts.Node): boolean => ts.canHaveModifiers(n) && (ts.getModifiers(n)?.some((m) => m.kind === ts.SyntaxKind.DefaultKeyword) ?? false);
+const hasExportModifier = (n: ts.Node): boolean =>
+  ts.canHaveModifiers(n) &&
+  (ts.getModifiers(n)?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) ?? false);
+const hasDefaultModifier = (n: ts.Node): boolean =>
+  ts.canHaveModifiers(n) &&
+  (ts.getModifiers(n)?.some((m) => m.kind === ts.SyntaxKind.DefaultKeyword) ?? false);
 
 function isFunctionLike(n: ts.Node): n is ts.FunctionLikeDeclaration {
   return (
-    ts.isFunctionDeclaration(n) || ts.isFunctionExpression(n) || ts.isArrowFunction(n) || ts.isMethodDeclaration(n) ||
-    ts.isConstructorDeclaration(n) || ts.isGetAccessorDeclaration(n) || ts.isSetAccessorDeclaration(n)
+    ts.isFunctionDeclaration(n) ||
+    ts.isFunctionExpression(n) ||
+    ts.isArrowFunction(n) ||
+    ts.isMethodDeclaration(n) ||
+    ts.isConstructorDeclaration(n) ||
+    ts.isGetAccessorDeclaration(n) ||
+    ts.isSetAccessorDeclaration(n)
   );
 }
 
@@ -233,9 +342,14 @@ export function cyclomaticComplexity(fn: ts.FunctionLikeDeclaration): number {
       case ts.SyntaxKind.BinaryExpression: {
         const op = (n as ts.BinaryExpression).operatorToken.kind;
         if (
-          op === ts.SyntaxKind.AmpersandAmpersandToken || op === ts.SyntaxKind.BarBarToken || op === ts.SyntaxKind.QuestionQuestionToken ||
-          op === ts.SyntaxKind.AmpersandAmpersandEqualsToken || op === ts.SyntaxKind.BarBarEqualsToken || op === ts.SyntaxKind.QuestionQuestionEqualsToken
-        ) count++;
+          op === ts.SyntaxKind.AmpersandAmpersandToken ||
+          op === ts.SyntaxKind.BarBarToken ||
+          op === ts.SyntaxKind.QuestionQuestionToken ||
+          op === ts.SyntaxKind.AmpersandAmpersandEqualsToken ||
+          op === ts.SyntaxKind.BarBarEqualsToken ||
+          op === ts.SyntaxKind.QuestionQuestionEqualsToken
+        )
+          count++;
         break;
       }
       default:
@@ -249,7 +363,12 @@ export function cyclomaticComplexity(fn: ts.FunctionLikeDeclaration): number {
 
 function functionName(fn: ts.FunctionLikeDeclaration, sf: ts.SourceFile): string {
   if (ts.isConstructorDeclaration(fn)) return `${className(fn.parent) ?? "<class>"}.constructor`;
-  if ((ts.isMethodDeclaration(fn) || ts.isGetAccessorDeclaration(fn) || ts.isSetAccessorDeclaration(fn)) && fn.name) {
+  if (
+    (ts.isMethodDeclaration(fn) ||
+      ts.isGetAccessorDeclaration(fn) ||
+      ts.isSetAccessorDeclaration(fn)) &&
+    fn.name
+  ) {
     const cls = className(fn.parent);
     return cls ? `${cls}.${fn.name.getText(sf)}` : fn.name.getText(sf);
   }
@@ -276,60 +395,113 @@ export function analyzeJsTsFile(path: string, text: string, resolver: JsResolver
   const symbols: FileAnalysis["symbols"] = [];
   const functions: FileAnalysis["functions"] = [];
   let dynamicUnresolved = 0;
-  const syntaxErrors = (sf as unknown as { parseDiagnostics?: unknown[] }).parseDiagnostics?.length ?? 0;
+  const syntaxErrors =
+    (sf as unknown as { parseDiagnostics?: unknown[] }).parseDiagnostics?.length ?? 0;
   const line = (n: ts.Node) => sf.getLineAndCharacterOfPosition(n.getStart(sf)).line + 1;
   const endLine = (n: ts.Node) => sf.getLineAndCharacterOfPosition(n.getEnd()).line + 1;
 
   const addDep = (spec: string, kind: DependencyKind, at: ts.Node) => {
     const r = resolver.resolve(spec, path);
-    deps.push({ fromPath: path, specifier: spec, kind, line: line(at), resolution: r.resolution, toPath: r.toPath, externalPackage: r.externalPackage, builtin: r.builtin, reason: r.reason });
+    deps.push({
+      fromPath: path,
+      specifier: spec,
+      kind,
+      line: line(at),
+      resolution: r.resolution,
+      toPath: r.toPath,
+      externalPackage: r.externalPackage,
+      builtin: r.builtin,
+      reason: r.reason,
+    });
   };
 
   const visit = (n: ts.Node): void => {
     if (ts.isImportDeclaration(n) && ts.isStringLiteral(n.moduleSpecifier)) {
       const clause = n.importClause;
       let typeOnly = clause?.isTypeOnly ?? false;
-      if (clause && !typeOnly && !clause.name && clause.namedBindings && ts.isNamedImports(clause.namedBindings)) {
+      if (
+        clause &&
+        !typeOnly &&
+        !clause.name &&
+        clause.namedBindings &&
+        ts.isNamedImports(clause.namedBindings)
+      ) {
         const els = clause.namedBindings.elements;
         typeOnly = els.length > 0 && els.every((e) => e.isTypeOnly);
       }
       addDep(n.moduleSpecifier.text, typeOnly ? "type-only" : "import", n);
-    } else if (ts.isExportDeclaration(n) && n.moduleSpecifier && ts.isStringLiteral(n.moduleSpecifier)) {
+    } else if (
+      ts.isExportDeclaration(n) &&
+      n.moduleSpecifier &&
+      ts.isStringLiteral(n.moduleSpecifier)
+    ) {
       addDep(n.moduleSpecifier.text, n.isTypeOnly ? "type-only" : "reexport", n);
-    } else if (ts.isImportEqualsDeclaration(n) && ts.isExternalModuleReference(n.moduleReference) && ts.isStringLiteral(n.moduleReference.expression)) {
+    } else if (
+      ts.isImportEqualsDeclaration(n) &&
+      ts.isExternalModuleReference(n.moduleReference) &&
+      ts.isStringLiteral(n.moduleReference.expression)
+    ) {
       addDep(n.moduleReference.expression.text, n.isTypeOnly ? "type-only" : "require", n);
     } else if (ts.isCallExpression(n)) {
       const arg = n.arguments[0];
       if (n.expression.kind === ts.SyntaxKind.ImportKeyword) {
         if (arg && ts.isStringLiteralLike(arg)) addDep(arg.text, "dynamic", n);
         else dynamicUnresolved++;
-      } else if (ts.isIdentifier(n.expression) && n.expression.text === "require" && n.arguments.length === 1) {
+      } else if (
+        ts.isIdentifier(n.expression) &&
+        n.expression.text === "require" &&
+        n.arguments.length === 1
+      ) {
         if (arg && ts.isStringLiteralLike(arg)) addDep(arg.text, "require", n);
         else dynamicUnresolved++;
       }
-    } else if (ts.isImportTypeNode(n) && ts.isLiteralTypeNode(n.argument) && ts.isStringLiteral(n.argument.literal)) {
+    } else if (
+      ts.isImportTypeNode(n) &&
+      ts.isLiteralTypeNode(n.argument) &&
+      ts.isStringLiteral(n.argument.literal)
+    ) {
       addDep(n.argument.literal.text, "type-only", n);
     }
     if (isFunctionLike(n) && n.body) {
-      functions.push({ name: functionName(n, sf), line: line(n), endLine: endLine(n), complexity: cyclomaticComplexity(n), approximate: false });
+      functions.push({
+        name: functionName(n, sf),
+        line: line(n),
+        endLine: endLine(n),
+        complexity: cyclomaticComplexity(n),
+        approximate: false,
+      });
     }
     ts.forEachChild(n, visit);
   };
 
   const exportedNames = new Set<string>();
   const collectExports = (stmt: ts.Statement) => {
-    if (ts.isExportDeclaration(stmt) && !stmt.moduleSpecifier && stmt.exportClause && ts.isNamedExports(stmt.exportClause)) {
-      for (const el of stmt.exportClause.elements) exportedNames.add((el.propertyName ?? el.name).text);
+    if (
+      ts.isExportDeclaration(stmt) &&
+      !stmt.moduleSpecifier &&
+      stmt.exportClause &&
+      ts.isNamedExports(stmt.exportClause)
+    ) {
+      for (const el of stmt.exportClause.elements)
+        exportedNames.add((el.propertyName ?? el.name).text);
     }
-    if (ts.isExportAssignment(stmt) && ts.isIdentifier(stmt.expression)) exportedNames.add(stmt.expression.text);
+    if (ts.isExportAssignment(stmt) && ts.isIdentifier(stmt.expression))
+      exportedNames.add(stmt.expression.text);
   };
 
   const topLevel = (stmt: ts.Statement) => {
     const exported = hasExportModifier(stmt);
     const push = (name: string, kind: Omit<Symbol, "fileId">["kind"], node: ts.Node, ex: boolean) =>
       symbols.push({ name, kind, exported: ex, line: line(node), endLine: endLine(node) });
-    if (ts.isFunctionDeclaration(stmt)) push(stmt.name?.text ?? (hasDefaultModifier(stmt) ? "default" : "<anonymous>"), "function", stmt, exported);
-    else if (ts.isClassDeclaration(stmt)) push(stmt.name?.text ?? "default", "class", stmt, exported);
+    if (ts.isFunctionDeclaration(stmt))
+      push(
+        stmt.name?.text ?? (hasDefaultModifier(stmt) ? "default" : "<anonymous>"),
+        "function",
+        stmt,
+        exported,
+      );
+    else if (ts.isClassDeclaration(stmt))
+      push(stmt.name?.text ?? "default", "class", stmt, exported);
     else if (ts.isInterfaceDeclaration(stmt)) push(stmt.name.text, "interface", stmt, exported);
     else if (ts.isTypeAliasDeclaration(stmt)) push(stmt.name.text, "type", stmt, exported);
     else if (ts.isEnumDeclaration(stmt)) push(stmt.name.text, "enum", stmt, exported);
@@ -338,7 +510,8 @@ export function analyzeJsTsFile(path: string, text: string, resolver: JsResolver
       for (const d of stmt.declarationList.declarations) {
         if (!ts.isIdentifier(d.name)) continue;
         const init = d.initializer;
-        const isFn = init !== undefined && (ts.isArrowFunction(init) || ts.isFunctionExpression(init));
+        const isFn =
+          init !== undefined && (ts.isArrowFunction(init) || ts.isFunctionExpression(init));
         push(d.name.text, isFn ? "function" : "variable", d, exported);
       }
     }
@@ -351,7 +524,14 @@ export function analyzeJsTsFile(path: string, text: string, resolver: JsResolver
     }
     visit(sf);
   } catch (e) {
-    return { path, dependencies: deps, symbols: [], functions: [], dynamicUnresolved, parseError: `analysis error: ${(e as Error).message}` };
+    return {
+      path,
+      dependencies: deps,
+      symbols: [],
+      functions: [],
+      dynamicUnresolved,
+      parseError: `analysis error: ${(e as Error).message}`,
+    };
   }
   for (const s of symbols) if (!s.exported && exportedNames.has(s.name)) s.exported = true;
   return {
@@ -360,7 +540,10 @@ export function analyzeJsTsFile(path: string, text: string, resolver: JsResolver
     symbols,
     functions,
     dynamicUnresolved,
-    parseError: syntaxErrors > 0 ? `${syntaxErrors} syntax error(s); results for this file may be incomplete` : null,
+    parseError:
+      syntaxErrors > 0
+        ? `${syntaxErrors} syntax error(s); results for this file may be incomplete`
+        : null,
   };
 }
 
@@ -385,14 +568,24 @@ export const jsTsAnalyzer: AnalyzerPlugin = {
       if ((n++ & 63) === 0) throwIfAborted(ctx.signal);
       const text = ctx.ws.read(f.path);
       if (text === null) {
-        files.push({ path: f.path, dependencies: [], symbols: [], functions: [], dynamicUnresolved: 0, parseError: "file unreadable or over the per-file size budget" });
+        files.push({
+          path: f.path,
+          dependencies: [],
+          symbols: [],
+          functions: [],
+          dynamicUnresolved: 0,
+          parseError: "file unreadable or over the per-file size budget",
+        });
         continue;
       }
       files.push(analyzeJsTsFile(f.path, text, resolver));
     }
     const limitations = [...jsTsAnalyzer.limitations, ...[...resolver.configNotes].sort()];
     const dyn = files.reduce((s, x) => s + x.dynamicUnresolved, 0);
-    if (dyn > 0) limitations.push(`${dyn} dynamic import or require call(s) with non-literal arguments were not resolved.`);
+    if (dyn > 0)
+      limitations.push(
+        `${dyn} dynamic import or require call(s) with non-literal arguments were not resolved.`,
+      );
     return { files, limitations };
   },
 };

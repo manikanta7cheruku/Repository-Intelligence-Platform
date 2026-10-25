@@ -56,15 +56,31 @@ describe("classifyPath", () => {
 describe("detectProject", () => {
   it("finds package managers, frameworks, entrypoints, runtimes and the license", () => {
     const w = ws({
-      "package.json": JSON.stringify({ name: "x", main: "src/index.ts", bin: { x: "bin/cli.js" }, dependencies: { next: "1", react: "1" }, devDependencies: { vitest: "1" } }),
-      "pnpm-lock.yaml": "lockfileVersion: 9", "src/index.ts": "", "bin/cli.js": "", "Dockerfile": "FROM node",
-      "LICENSE": "Apache License\nVersion 2.0, January 2004",
-      "requirements.txt": "django==4.0\npytest\n", "manage.py": "",
+      "package.json": JSON.stringify({
+        name: "x",
+        main: "src/index.ts",
+        bin: { x: "bin/cli.js" },
+        dependencies: { next: "1", react: "1" },
+        devDependencies: { vitest: "1" },
+      }),
+      "pnpm-lock.yaml": "lockfileVersion: 9",
+      "src/index.ts": "",
+      "bin/cli.js": "",
+      Dockerfile: "FROM node",
+      LICENSE: "Apache License\nVersion 2.0, January 2004",
+      "requirements.txt": "django==4.0\npytest\n",
+      "manage.py": "",
     });
     const d = detectProject(w);
     expect(d.packageManagers).toEqual(["npm", "pip", "pnpm"]);
     expect(d.lockfiles).toEqual(["pnpm-lock.yaml"]);
-    expect(d.frameworks.map((f) => f.name)).toEqual(["Django", "Next.js", "pytest", "React", "Vitest"]);
+    expect(d.frameworks.map((f) => f.name)).toEqual([
+      "Django",
+      "Next.js",
+      "pytest",
+      "React",
+      "Vitest",
+    ]);
     expect(d.entrypoints.map((e) => e.path)).toEqual(["bin/cli.js", "manage.py", "src/index.ts"]);
     expect(d.runtimes).toEqual(["node", "python"]);
     expect(d.license).toEqual({ file: "LICENSE", spdxGuess: "Apache-2.0" });
@@ -80,18 +96,58 @@ describe("detectProject", () => {
 describe("detectPractices", () => {
   it("detects CI, tests, linters, strict TypeScript, README sections and ADRs", () => {
     const w = ws({
-      ".github/workflows/ci.yml": "name: x", "package.json": JSON.stringify({ scripts: { test: "vitest" }, devDependencies: { vitest: "1", eslint: "1", prettier: "1" } }),
-      "tsconfig.json": '{ // comment\n "compilerOptions": { "strict": true } }', "src/a.ts": "", "src/a.test.ts": "",
-      "README.md": "# Title\n\n## Installation\n\n## Usage\n\nwords", "CONTRIBUTING.md": "x", "LICENSE": "MIT License", ".env.example": "", "docs/adr/0001-x.md": "x", "docs/adr/README.md": "x",
+      ".github/workflows/ci.yml": "name: x",
+      "package.json": JSON.stringify({
+        scripts: { test: "vitest" },
+        devDependencies: { vitest: "1", eslint: "1", prettier: "1" },
+      }),
+      "tsconfig.json": '{ // comment\n "compilerOptions": { "strict": true } }',
+      "src/a.ts": "",
+      "src/a.test.ts": "",
+      "README.md": "# Title\n\n## Installation\n\n## Usage\n\nwords",
+      "CONTRIBUTING.md": "x",
+      LICENSE: "MIT License",
+      ".env.example": "",
+      "docs/adr/0001-x.md": "x",
+      "docs/adr/README.md": "x",
     });
-    const files = [...w.files].map((f) => ({ id: f.path, path: f.path, language: f.path.endsWith(".ts") ? "typescript" : null, kind: classifyPath(f.path).kind, kindReason: "", bytes: 0, lines: null, codeLines: null, analyzed: true, notAnalyzedReason: null }));
+    const files = [...w.files].map((f) => ({
+      id: f.path,
+      path: f.path,
+      language: f.path.endsWith(".ts") ? "typescript" : null,
+      kind: classifyPath(f.path).kind,
+      kindReason: "",
+      bytes: 0,
+      lines: null,
+      codeLines: null,
+      analyzed: true,
+      notAnalyzedReason: null,
+    }));
     const p = detectPractices(w, files, detectProject(w));
     expect(p.ci.providers).toEqual(["GitHub Actions"]);
-    expect(p.tests).toMatchObject({ testFiles: 1, sourceFiles: 1, testToSourceFileRatio: 1, coverageReport: "not-ingested" });
+    expect(p.tests).toMatchObject({
+      testFiles: 1,
+      sourceFiles: 1,
+      testToSourceFileRatio: 1,
+      coverageReport: "not-ingested",
+    });
     expect(p.tests.frameworks).toContain("Vitest");
-    expect(p.quality).toMatchObject({ linters: ["ESLint"], formatters: ["Prettier"], typeCheckers: ["TypeScript"], strictTypeScript: true });
-    expect(p.documentation.readme).toMatchObject({ path: "README.md", hasInstall: true, hasUsage: true });
-    expect(p.documentation.files).toMatchObject({ contributing: true, license: true, codeOfConduct: false });
+    expect(p.quality).toMatchObject({
+      linters: ["ESLint"],
+      formatters: ["Prettier"],
+      typeCheckers: ["TypeScript"],
+      strictTypeScript: true,
+    });
+    expect(p.documentation.readme).toMatchObject({
+      path: "README.md",
+      hasInstall: true,
+      hasUsage: true,
+    });
+    expect(p.documentation.files).toMatchObject({
+      contributing: true,
+      license: true,
+      codeOfConduct: false,
+    });
     expect(p.documentation.adrCount).toBe(1);
     expect(p.setup.envExample).toBe(true);
   });
@@ -105,11 +161,17 @@ describe("detectPractices", () => {
 
 describe("README sections", () => {
   it("recognizes setup instructions written as a run-locally heading or inline commands", () => {
-    const found = readmeSections(["Provenance", "Status", "Run it locally"], "See docs. Run `uv sync --all-packages` then `docker compose up --build`.");
+    const found = readmeSections(
+      ["Provenance", "Status", "Run it locally"],
+      "See docs. Run `uv sync --all-packages` then `docker compose up --build`.",
+    );
     for (const k of ["install", "overview", "status"]) expect(found).toContain(k);
   });
   it("does not invent sections that are not there", () => {
-    const s = readmeSections(["Notes"], "Some words about the project that has no setup details at all. ".repeat(3));
+    const s = readmeSections(
+      ["Notes"],
+      "Some words about the project that has no setup details at all. ".repeat(3),
+    );
     expect(s).not.toContain("install");
     expect(s).not.toContain("usage");
     expect(s).not.toContain("license");
@@ -119,8 +181,23 @@ describe("README sections", () => {
     for (const k of ["contributing", "license", "architecture", "testing"]) expect(s).toContain(k);
   });
   it("feeds the practices summary", () => {
-    const w = ws({ "README.md": "# Tool\n\nJobs, with receipts.\n\n## Run it locally\n\nInstall Docker and uv, then run `uv sync --all-packages`.\n", "src/a.py": "x = 1\n" });
-    const files = [...w.files].map((f) => ({ id: f.path, path: f.path, language: f.path.endsWith(".py") ? "python" : null, kind: classifyPath(f.path).kind, kindReason: "", bytes: 0, lines: null, codeLines: null, analyzed: true, notAnalyzedReason: null }));
+    const w = ws({
+      "README.md":
+        "# Tool\n\nJobs, with receipts.\n\n## Run it locally\n\nInstall Docker and uv, then run `uv sync --all-packages`.\n",
+      "src/a.py": "x = 1\n",
+    });
+    const files = [...w.files].map((f) => ({
+      id: f.path,
+      path: f.path,
+      language: f.path.endsWith(".py") ? "python" : null,
+      kind: classifyPath(f.path).kind,
+      kindReason: "",
+      bytes: 0,
+      lines: null,
+      codeLines: null,
+      analyzed: true,
+      notAnalyzedReason: null,
+    }));
     const p = detectPractices(w, files, detectProject(w), true);
     expect(p.documentation.readme.hasInstall).toBe(true);
     expect(p.documentation.readme.sections).toContain("install");

@@ -35,7 +35,13 @@ export type { PrAssessment, PrVerdict } from "./pr/guardian.js";
 export { computeTrend, trendToMarkdown, sparkline, sampleIndexes } from "./trend/trend.js";
 export type { TrendReport, TrendPoint } from "./trend/trend.js";
 export { analyzeDirectory, analyzeRef, readRulesFrom } from "./pipeline/snapshot.js";
-export { resolveRef, changedFiles, changedFilesWorkingTree, withWorktree, isSafeGitRef } from "./git/worktree.js";
+export {
+  resolveRef,
+  changedFiles,
+  changedFilesWorkingTree,
+  withWorktree,
+  isSafeGitRef,
+} from "./git/worktree.js";
 export { fetchGitHubActivity } from "./git/activity.js";
 export { commitQuality } from "./git/quality.js";
 export { compareVersions, nearestFix } from "./util/semver.js";
