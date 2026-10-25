@@ -8,6 +8,7 @@ viva or interview. One file per phase, plus a master file of cross-cutting colle
 | [00-master-college-qa.md](00-master-college-qa.md) | Before any presentation. Product, novelty, gaps, moat, technology choices |
 | [phase-0-foundation.md](phase-0-foundation.md) | To understand the repo, tooling, documentation and decisions |
 | [phase-1-engine-cli.md](phase-1-engine-cli.md) | To understand the engine, algorithms, security design and tests |
+| [phase-1-5-insight-upgrade.md](phase-1-5-insight-upgrade.md) | To understand risk, blast radius, PR guardian, trend, glossary and why they were added |
 | [phase-2-web-platform.md](phase-2-web-platform.md) | Created while building Phase 2 |
 | [phase-3-hardening-release.md](phase-3-hardening-release.md) | Created while building Phase 3 |
 

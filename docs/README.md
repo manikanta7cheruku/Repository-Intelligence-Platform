@@ -18,7 +18,8 @@ Read in this order.
 | 12 | `roadmap/` | MVP plan and the prioritized backlog |
 | 13 | `registers/decision-register.md` | Requirements, assumptions, decisions, risks, evidence |
 | 14 | `learning/` | What, why and where for each phase, plus college question banks |
-| 15 | `reference/` | CLI, rules and analyzer references |
+| 15 | `reference/` | CLI, rules, analyzers and report schema references |
+| 15b | `prompts/` | Copy-paste prompts and the handoff guide for Phase 2 and 3 |
 | 16 | `academic/` | Empty until the project is complete |
 
 ## Writing rules
