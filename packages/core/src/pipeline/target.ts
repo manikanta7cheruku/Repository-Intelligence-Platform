@@ -96,9 +96,13 @@ export async function acquireTarget(target: string, opts: AcquireOptions): Promi
         `The repository is larger than the analysis budget, so only part of it was analyzed (${skippedNote.join("; ")}).`,
       );
     }
+    workspace.skipped = result.skippedFiles;
     for (const x of result.skipped)
-      if (x.reason.startsWith("binary") || x.reason.startsWith("file over"))
-        workspace.excluded.push({ reason: x.reason, count: x.count });
+      if (x.reason.startsWith("inside "))
+        workspace.excluded.push({
+          reason: `directory excluded: ${x.reason.slice(7)}`,
+          count: x.count,
+        });
     let historyRoot: string | null = null;
     if (opts.withHistory) {
       const cloneDir = join(tmp, "history");

@@ -130,4 +130,8 @@ The rate limit is per server instance. The contrast ratios are computed, not aud
 
 **36. Why is the GitHub token important?** Without a token GitHub allows 60 API requests per hour per address. Each analysis needs about 7, so a few analyses use it up. With a token the limit is 5,000 per hour.
 
+**37. How do you know the analysis is accurate?** By comparing it with answers produced another way. For one real repository the Python import graph was recomputed with Python's own `ast` module (717 of 717 edges equal, same cycles), JavaScript and TypeScript imports with a separate extractor (224 of 224 and 153 of 153), blast radius with an own reachability search, commit and churn numbers with `git`, pull requests with `gh`, vulnerabilities with direct OSV queries. The audit found and fixed eight real problems (`docs/evaluation/results/p2-accuracy-audit.md`).
+
+**38. What does the audit not prove?** That RIP is right on repository layouts it was not run on, that JavaScript complexity is right (no independent implementation), and that the score weights are good. It proves the measurements on three repositories.
+
 **32. What would you do next?** Deploy and record the real limits, run the accessibility audit, add Playwright journeys, measure the graph at the caps, then decide whether the worker is needed.

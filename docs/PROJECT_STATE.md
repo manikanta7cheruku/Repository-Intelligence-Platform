@@ -32,6 +32,8 @@ Update this file at the end of every working session. A new AI chat can resume f
 
 - Data accuracy pass after the owner's real use (2026-10-25): exact commit, contributor and pull request totals, streaming archive download, parallel advisory lookups, fixture folders excluded from languages, schema 0.4.0. See `docs/phases/phase-2-web-platform.md` for the results on seven repositories.
 
+- Accuracy audit against independent ground truth (2026-10-25, `docs/evaluation/results/p2-accuracy-audit.md`): Python import graph now equals an AST based check exactly (717 of 717 edges, same cycles), duplicate advisories merged, README install detection, repeated workflow actions, skipped files counted in totals, `license.py` classified as code, score proof panel redesigned.
+
 ## Not yet verified (owner tasks: DOTEST.md)
 
 - Visual check of the HTML report and diagrams in a browser, and hand-checking blast radius and two OSV advisories.

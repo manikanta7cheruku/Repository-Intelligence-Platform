@@ -34,6 +34,12 @@ describe("classifyPath", () => {
     expect(kind("packages/core/dist/index.js")).toBe("generated");
     expect(kind("types/index.d.ts")).toBe("generated");
     expect(kind("vendor/lib/a.js")).toBe("vendored");
+    // A source file that is named like a community file is still source code.
+    expect(kind("license.py")).toBe("source");
+    expect(kind("src/security.ts")).toBe("source");
+    expect(kind("LICENSE")).toBe("docs");
+    expect(kind("LICENSE.txt")).toBe("docs");
+    expect(kind("SECURITY.md")).toBe("docs");
     expect(kind("README.md")).toBe("docs");
     expect(kind("docs/guide.md")).toBe("docs");
     expect(kind("package.json")).toBe("config");
@@ -166,6 +172,24 @@ describe("README sections", () => {
       "See docs. Run `uv sync --all-packages` then `docker compose up --build`.",
     );
     for (const k of ["install", "overview", "status"]) expect(found).toContain(k);
+  });
+  it("recognizes an install section that is not called install, by its heading or by what it says", () => {
+    const byHeading = readmeSections(["Seven", "Get Seven"], "Tell people things.");
+    expect(byHeading).toContain("install");
+    const byContent = readmeSections(
+      ["Seven", "Try it"],
+      [
+        "# Seven",
+        "An app.",
+        "",
+        "## Try it",
+        "Download the latest installer and run it. The setup wizard does the rest.",
+        "",
+        "## License",
+        "MIT",
+      ].join("\n"),
+    );
+    expect(byContent).toContain("install");
   });
   it("does not invent sections that are not there", () => {
     const s = readmeSections(

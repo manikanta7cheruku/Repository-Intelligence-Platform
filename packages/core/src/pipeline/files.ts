@@ -62,6 +62,22 @@ export function classifyFiles(
       notAnalyzedReason,
     });
   }
+  // Files that were not unpacked still belong to the repository: count them and say why they were not analyzed.
+  for (const sk of ws.skipped ?? []) {
+    const c = classifyPath(sk.path);
+    files.push({
+      id: fileIdFor(sk.path),
+      path: sk.path,
+      language: c.language,
+      kind: c.kind,
+      kindReason: c.reason,
+      bytes: sk.bytes,
+      lines: null,
+      codeLines: null,
+      analyzed: false,
+      notAnalyzedReason: c.kind === "binary" ? null : sk.reason,
+    });
+  }
   files.sort((a, b) => a.path.localeCompare(b.path));
   return { files, texts };
 }

@@ -24,6 +24,8 @@ export interface StreamResult extends ExtractResult {
   scannedBytes: number;
   downloadedBytes: number;
   skippedBytes: number;
+  /** Files left out of the unpacked tree that still belong to the repository. Capped at 100,000 entries. */
+  skippedFiles: { path: string; bytes: number; reason: string }[];
 }
 
 type Mode = "keep" | "skip" | "meta-pax" | "meta-long" | "meta-ignore";
@@ -62,6 +64,10 @@ export async function extractTarGzStream(
     skippedBytes += bytes;
   };
   let skippedBytes = 0;
+  const skippedFiles: { path: string; bytes: number; reason: string }[] = [];
+  const noteSkipped = (path: string, bytes: number, reason: string) => {
+    if (skippedFiles.length < 100_000) skippedFiles.push({ path, bytes, reason });
+  };
   let files = 0;
   let keptBytes = 0;
   let scanned = 0;
@@ -143,20 +149,24 @@ export async function extractTarGzStream(
     }
     if (isBinaryExt(rel)) {
       skip("binary or media file (not analyzed)", size);
+      noteSkipped(rel, size, "binary or media file");
       return true;
     }
     if (size > limits.maxFileBytes) {
       skip("file over the per-file size limit", size);
+      noteSkipped(rel, size, "file exceeds the per-file size budget");
       return true;
     }
     if (files >= limits.maxFiles) {
       truncated = true;
       skip("file count budget reached", size);
+      noteSkipped(rel, size, "not analyzed: file count budget reached");
       return true;
     }
     if (keptBytes + size > limits.maxKeptBytes) {
       truncated = true;
       skip("analysis size budget reached", size);
+      noteSkipped(rel, size, "not analyzed: size budget reached");
       return true;
     }
     entryRel = rel;
@@ -231,5 +241,6 @@ export async function extractTarGzStream(
     scannedBytes: scanned,
     downloadedBytes: downloaded,
     skippedBytes,
+    skippedFiles,
   };
 }

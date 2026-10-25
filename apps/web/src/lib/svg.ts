@@ -80,6 +80,8 @@ export function chartCss(p: Palette): string {
 .d-dot.hot{fill:${p.danger};fill-opacity:.85}
 .d-line{fill:none;stroke:${p.text};stroke-width:1.5}
 .d-marker{fill:${p.text};stroke:${p.bg};stroke-width:2}
+.d-anchor{fill:${p.line}}
+.d-drop{stroke:${p.line};stroke-width:1;stroke-dasharray:3 3}
 .d-bar{fill:${p.text}}
 .d-bar-bg{fill:${p.surface}}
 `;

@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { openLocalWorkspace } from "../acquire/local.js";
 import { resolveConfig } from "../config/config.js";
 import type { FileKind } from "../ir/types.js";
-import { extractPackages, type OsvFetch, queryOsv } from "./osv.js";
+import { extractPackages, groupAdvisories, type OsvFetch, queryOsv } from "./osv.js";
 import { runGitleaks, scanSecretsBuiltin } from "./secrets.js";
 import { checkWorkflows } from "./workflows.js";
 
@@ -269,5 +269,50 @@ describe("queryOsv advisory details", () => {
     expect(r.summary.assessed).toBe(true);
     expect(r.summary.vulnerabilities).toBe(40);
     expect(r.summary.reason).toMatch(/2 advisories could not be fetched/);
+  });
+});
+
+describe("groupAdvisories", () => {
+  it("counts one vulnerability once when several records list each other as aliases", () => {
+    const aliases: Record<string, string[]> = {
+      "PYSEC-2026-1": ["CVE-2026-1", "GHSA-aaaa"],
+      "GHSA-aaaa": ["CVE-2026-1", "PYSEC-2026-1"],
+      "GHSA-bbbb": ["CVE-2026-2"],
+      "CVE-2026-2": [],
+    };
+    const g = groupAdvisories(Object.keys(aliases), (id) => aliases[id] ?? []);
+    expect(g.map((x) => x.id)).toEqual(["GHSA-aaaa", "GHSA-bbbb"]);
+    expect(g[0]?.aliases).toEqual(["CVE-2026-1", "PYSEC-2026-1"]);
+    expect(g[1]?.aliases).toEqual(["CVE-2026-2"]);
+  });
+  it("merges groups that a later record connects, and keeps unrelated advisories apart", () => {
+    const aliases: Record<string, string[]> = { A1: ["X"], B1: ["Y"], C1: ["X", "Y"], D1: [] };
+    const g = groupAdvisories(Object.keys(aliases), (id) => aliases[id] ?? []);
+    expect(g).toHaveLength(2);
+  });
+});
+
+describe("workflow findings", () => {
+  it("reports an action used in several places once, with every line", () => {
+    const ws = make({
+      ".github/workflows/ci.yml": [
+        "name: x",
+        "on: push",
+        "permissions: read-all",
+        "jobs:",
+        "  a:",
+        "    steps:",
+        "      - uses: actions/checkout@v4",
+        "      - uses: actions/setup-node@v4",
+        "  b:",
+        "    steps:",
+        "      - uses: actions/checkout@v4",
+      ].join("\n"),
+    });
+    const r = checkWorkflows(ws);
+    const checkout = r.findings.find((f) => f.title.includes("actions/checkout"));
+    expect(r.findings.filter((f) => f.title.includes("not pinned"))).toHaveLength(2);
+    expect(checkout?.locations.map((l) => l.startLine)).toEqual([7, 11]);
+    expect(checkout?.explanation).toMatch(/in 2 places/);
   });
 });

@@ -62,8 +62,11 @@ describe("resolution", () => {
     ).toEqual([
       "import:import pkg.b:resolved:pkg/b.py",
       "import:from pkg import b:resolved:pkg/b.py",
+      "import:from pkg import b:resolved:pkg/__init__.py",
       "import:from . import b:resolved:pkg/b.py",
+      "import:from . import b:resolved:pkg/__init__.py",
       "import:from .sub import c:resolved:pkg/sub/c.py",
+      "import:from .sub import c:resolved:pkg/sub/__init__.py",
       "import:from .sub.c import f:resolved:pkg/sub/c.py",
     ]);
   });
@@ -99,5 +102,32 @@ describe("symbols and complexity", () => {
     const byName = Object.fromEntries(r.functions.map((f) => [f.name, f.complexity]));
     expect(byName).toEqual({ "A.m": 3, top: 2, inner: 2 });
     expect(r.functions.every((f) => f.approximate)).toBe(true);
+  });
+});
+
+describe("package imports", () => {
+  it("treats a directory without __init__.py as a namespace package whose modules can be imported by name", () => {
+    expect(
+      view("from utils import helper\nimport utils.other\n", ["utils/helper.py", "utils/other.py"]),
+    ).toEqual([
+      "import:from utils import helper:resolved:utils/helper.py",
+      "import:import utils.other:resolved:utils/other.py",
+    ]);
+  });
+  it("adds the package __init__.py as a dependency, because importing from a package runs it", () => {
+    const paths = ["lib2/__init__.py", "lib2/sub.py", "lib2/other.py"];
+    expect(view("from lib2 import sub\n", paths, "app.py")).toEqual([
+      "import:from lib2 import sub:resolved:lib2/sub.py",
+      "import:from lib2 import sub:resolved:lib2/__init__.py",
+    ]);
+    expect(view("from . import other\n", paths, "lib2/sub.py")).toEqual([
+      "import:from . import other:resolved:lib2/other.py",
+      "import:from . import other:resolved:lib2/__init__.py",
+    ]);
+  });
+  it("does not make a package depend on itself", () => {
+    const paths = ["pkg3/__init__.py", "pkg3/sub.py"];
+    const deps = view("from . import sub\n", paths, "pkg3/__init__.py");
+    expect(deps).toEqual(["import:from . import sub:resolved:pkg3/sub.py"]);
   });
 });

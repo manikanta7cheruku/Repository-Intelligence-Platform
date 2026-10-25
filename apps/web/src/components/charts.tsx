@@ -226,48 +226,4 @@ export function HotspotScatter({
   );
 }
 
-/** Shows how a raw value maps to a score on the input's curve, with the raw value marked. */
-export function CurveSpark({
-  curve,
-  raw,
-  label,
-}: {
-  curve: [number, number][];
-  raw: number | null;
-  label: string;
-}) {
-  const W = 132;
-  const H = 40;
-  const xs = curve.map((c) => c[0]);
-  const lo = Math.min(...xs);
-  const hi = Math.max(...xs, raw ?? -Infinity);
-  const span = hi - lo || 1;
-  const px = (v: number) => 4 + ((v - lo) / span) * (W - 8);
-  const py = (s: number) => H - 4 - (s / 100) * (H - 8);
-  const pts = [...curve, [hi, curve[curve.length - 1]?.[1] ?? 0] as [number, number]];
-  const d = pts.map((c, i) => `${i === 0 ? "M" : "L"}${px(c[0])},${py(c[1])}`).join(" ");
-  let my: number | null = null;
-  if (raw !== null) {
-    for (let i = 0; i < curve.length - 1; i++) {
-      const a = curve[i] as [number, number];
-      const b = curve[i + 1] as [number, number];
-      if (raw >= a[0] && raw <= b[0]) {
-        my = a[1] + ((raw - a[0]) / (b[0] - a[0] || 1)) * (b[1] - a[1]);
-        break;
-      }
-    }
-    if (my === null) my = raw < lo ? (curve[0]?.[1] ?? 0) : (curve[curve.length - 1]?.[1] ?? 0);
-  }
-  return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="spark" role="img" aria-label={label}>
-      <style>{chartCss(SCREEN_PALETTE)}</style>
-      <line className="c-grid" x1={4} x2={W - 4} y1={py(50)} y2={py(50)} />
-      <path className="d-line" d={d} />
-      {raw !== null && my !== null ? (
-        <circle className="d-marker" cx={px(raw)} cy={py(my)} r={4} />
-      ) : null}
-    </svg>
-  );
-}
-
 export const exportPalette = EXPORT_PALETTE;

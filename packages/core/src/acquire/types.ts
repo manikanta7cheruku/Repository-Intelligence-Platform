@@ -14,6 +14,11 @@ export interface Workspace {
   read(path: string): string | null;
   has(path: string): boolean;
   excluded: { reason: string; count: number }[];
+  /**
+   * Files that exist in the repository but were not unpacked (binary or media files, files over the size limit, files past a budget).
+   * They are counted and listed as not analyzed, so totals match the repository.
+   */
+  skipped?: { path: string; bytes: number; reason: string }[];
   truncated: boolean;
   limitations: string[];
 }
