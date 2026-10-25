@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://repolens.dev/schema/report-0.1.0.json",
+  "$id": "https://repolens.dev/schema/report-0.2.0.json",
   "title": "RepoLens report",
   "description": "Evidence-based repository analysis report. Missing values are null with a reason, never zero.",
   "type": "object",
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "pattern": "^0\\.1\\.[0-9]+$"
+      "pattern": "^0\\.2\\.[0-9]+$"
     },
     "status": {
       "type": "string",
@@ -56,6 +56,22 @@
         },
         "truncated": {
           "type": "boolean"
+        },
+        "codeFiles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "analyzedCodeFiles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "productionFiles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "testFiles": {
+          "type": "integer",
+          "minimum": 0
         }
       },
       "required": [
@@ -66,7 +82,11 @@
         "totalFiles",
         "analyzedFiles",
         "totalBytes",
-        "truncated"
+        "truncated",
+        "codeFiles",
+        "analyzedCodeFiles",
+        "productionFiles",
+        "testFiles"
       ],
       "additionalProperties": false
     },
@@ -1000,6 +1020,11 @@
             "minimum": 0,
             "maximum": 1
           },
+          "weightCoverage": {
+            "type": ["number", "null"],
+            "minimum": 0,
+            "maximum": 1
+          },
           "reason": {
             "type": ["string", "null"]
           },
@@ -1010,6 +1035,11 @@
               "properties": {
                 "name": {
                   "type": "string"
+                },
+                "impact": {
+                  "type": ["number", "null"],
+                  "minimum": 0,
+                  "maximum": 100
                 },
                 "raw": {
                   "type": ["number", "null"]
@@ -1027,12 +1057,21 @@
                   "type": "string"
                 }
               },
-              "required": ["name", "raw", "normalized", "weight", "available", "note"],
+              "required": ["name", "impact", "raw", "normalized", "weight", "available", "note"],
               "additionalProperties": false
             }
           }
         },
-        "required": ["dimension", "state", "value", "confidence", "coverage", "reason", "inputs"],
+        "required": [
+          "dimension",
+          "state",
+          "value",
+          "confidence",
+          "coverage",
+          "weightCoverage",
+          "reason",
+          "inputs"
+        ],
         "additionalProperties": false
       }
     },
@@ -1078,7 +1117,7 @@
             },
             "coverageReport": {
               "type": "string",
-              "enum": ["not-ingested"]
+              "enum": ["ingested", "not-ingested"]
             }
           },
           "required": [
@@ -1141,9 +1180,26 @@
                 },
                 "hasUsage": {
                   "type": ["boolean", "null"]
+                },
+                "sections": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "links": {
+                  "type": "integer"
                 }
               },
-              "required": ["path", "words", "headings", "hasInstall", "hasUsage"],
+              "required": [
+                "path",
+                "words",
+                "headings",
+                "hasInstall",
+                "hasUsage",
+                "sections",
+                "links"
+              ],
               "additionalProperties": false
             },
             "files": {
@@ -1215,6 +1271,67 @@
         },
         "reason": {
           "type": ["string", "null"]
+        },
+        "source": {
+          "type": ["string", "null"],
+          "enum": ["git", "github-api", null]
+        },
+        "commitQuality": {
+          "type": ["object", "null"],
+          "properties": {
+            "sampled": {
+              "type": "integer"
+            },
+            "conventionalShare": {
+              "type": "number"
+            },
+            "descriptiveShare": {
+              "type": "number"
+            },
+            "genericShare": {
+              "type": "number"
+            },
+            "avgSubjectLength": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "sampled",
+            "conventionalShare",
+            "descriptiveShare",
+            "genericShare",
+            "avgSubjectLength"
+          ],
+          "additionalProperties": false
+        },
+        "pullRequests": {
+          "type": ["object", "null"],
+          "properties": {
+            "sampled": {
+              "type": "integer"
+            },
+            "merged": {
+              "type": "integer"
+            },
+            "medianHoursToMerge": {
+              "type": ["number", "null"]
+            }
+          },
+          "required": ["sampled", "merged", "medianHoursToMerge"],
+          "additionalProperties": false
+        },
+        "releases": {
+          "type": ["object", "null"],
+          "properties": {
+            "count": {
+              "type": "integer"
+            },
+            "latestDate": {
+              "type": ["string", "null"]
+            }
+          },
+          "required": ["count", "latestDate"],
+          "additionalProperties": false
         },
         "shallow": {
           "type": ["boolean", "null"]
@@ -1317,6 +1434,10 @@
       "required": [
         "available",
         "reason",
+        "source",
+        "commitQuality",
+        "pullRequests",
+        "releases",
         "shallow",
         "commitsAnalyzed",
         "window",
@@ -1453,6 +1574,195 @@
       "required": ["evaluated", "source", "rules", "violations", "baseline"],
       "additionalProperties": false
     },
+    "executiveSummary": {
+      "type": "object",
+      "properties": {
+        "headline": {
+          "type": "string"
+        },
+        "overview": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "strengths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "concerns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "nextSteps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["headline", "overview", "strengths", "concerns", "nextSteps"],
+      "additionalProperties": false
+    },
+    "testCoverage": {
+      "type": "object",
+      "properties": {
+        "ingested": {
+          "type": "boolean"
+        },
+        "source": {
+          "type": ["string", "null"]
+        },
+        "format": {
+          "type": ["string", "null"],
+          "enum": ["lcov", "istanbul-summary", "cobertura", null]
+        },
+        "lineRate": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "filesMatched": {
+          "type": ["integer", "null"]
+        },
+        "reason": {
+          "type": ["string", "null"]
+        }
+      },
+      "required": ["ingested", "source", "format", "lineRate", "filesMatched", "reason"],
+      "additionalProperties": false
+    },
+    "risk": {
+      "type": "object",
+      "properties": {
+        "assessed": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": ["string", "null"]
+        },
+        "method": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "moduleId": {
+                "type": ["string", "null"]
+              },
+              "risk": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "confidence": {
+                "type": "string",
+                "enum": ["high", "medium", "low"]
+              },
+              "factors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": ["number", "null"]
+                    },
+                    "percentile": {
+                      "type": ["number", "null"],
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "note": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["name", "value", "percentile", "note"],
+                  "additionalProperties": false
+                }
+              },
+              "drivers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "explanation": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "moduleId",
+              "risk",
+              "confidence",
+              "factors",
+              "drivers",
+              "explanation"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["assessed", "reason", "method", "files"],
+      "additionalProperties": false
+    },
+    "blastRadius": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "directDependents": {
+            "type": "integer"
+          },
+          "transitiveDependents": {
+            "type": "integer"
+          },
+          "runtimeTransitive": {
+            "type": "integer"
+          },
+          "modulesAffected": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "entrypointsAffected": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "maxDepth": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "directDependents",
+          "transitiveDependents",
+          "runtimeTransitive",
+          "modulesAffected",
+          "entrypointsAffected",
+          "maxDepth"
+        ],
+        "additionalProperties": false
+      }
+    },
     "methodology": {
       "type": "object",
       "properties": {
@@ -1467,9 +1777,12 @@
         },
         "scoringVersion": {
           "type": "string"
+        },
+        "glossaryVersion": {
+          "type": "string"
         }
       },
-      "required": ["profile", "profileHash", "configHash", "scoringVersion"],
+      "required": ["profile", "profileHash", "configHash", "scoringVersion", "glossaryVersion"],
       "additionalProperties": false
     },
     "reproducibility": {
@@ -1542,6 +1855,10 @@
     "history",
     "security",
     "rules",
+    "executiveSummary",
+    "testCoverage",
+    "risk",
+    "blastRadius",
     "methodology",
     "reproducibility",
     "limitations"

@@ -35,7 +35,9 @@ const hostile = async (): Promise<Report> => {
     join(d, ".github/workflows/x.yml"),
     'name: x\non: push\njobs:\n  a:\n    steps:\n      - uses: evil/<script>alert(1)</script>@v1\n      - uses: "x/y|z"@v1\n',
   );
-  writeFileSync(join(d, "src", "a-hostile-c-d-e-f.ts"), "export const a = 1;\n");
+  // Windows forbids < > | in file names, so keep the hostile characters it allows there.
+  const hostileName = process.platform === "win32" ? "a'c&d.ts" : "a<b>c'd&e|f.ts";
+  writeFileSync(join(d, "src", hostileName), "export const a = 1;\n");
   writeFileSync(join(d, "package.json"), '{ "name": "<img src=x onerror=alert(1)>" }');
   return gen(d);
 };
@@ -66,14 +68,18 @@ describe("Markdown report", () => {
   it("escapes table separators and contains every required section", async () => {
     const md = toMarkdown(await hostile());
     for (const h of [
-      "## Summary",
+      "## Executive summary",
+      "## Scores",
+      "### How to improve each score",
       "## Scope and coverage",
       "## Architecture",
+      "## Risk and blast radius",
       "## Code quality",
       "## Security",
       "## Git history",
       "## Findings",
       "## Methodology",
+      "## Glossary",
       "## Limitations",
       "## Reproducibility",
     ])
@@ -96,7 +102,8 @@ describe("Markdown report", () => {
     const r = await gen(join(FIXTURES, "ts-cycle"));
     const md = toMarkdown(r);
     const f = r.findings.find((x) => x.ruleId === "arch.cycle.file");
-    expect(md).toContain(`#### ${f?.id}`);
+    expect(md).toContain(`#### ${f?.title}`);
+    expect(md).toContain(`Id: ${f?.id}`);
     expect(md).toContain("Remediation:");
     expect(md).toContain("Evidence: graph-path");
   });

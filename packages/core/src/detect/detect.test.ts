@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { openLocalWorkspace } from "../acquire/local.js";
 import { resolveConfig } from "../config/config.js";
-import { detectPractices } from "../practices/detect.js";
+import { detectPractices, readmeSections } from "../practices/detect.js";
 import { classifyPath, looksGenerated } from "./classify.js";
 import { languageOf } from "./languages.js";
 import { detectProject } from "./manifests.js";
@@ -156,5 +156,51 @@ describe("detectPractices", () => {
     const p = detectPractices(w, [], detectProject(w));
     expect(p.tests.testToSourceFileRatio).toBeNull();
     expect(p.quality.strictTypeScript).toBeNull();
+  });
+});
+
+describe("README sections", () => {
+  it("recognizes setup instructions written as a run-locally heading or inline commands", () => {
+    const found = readmeSections(
+      ["Provenance", "Status", "Run it locally"],
+      "See docs. Run `uv sync --all-packages` then `docker compose up --build`.",
+    );
+    for (const k of ["install", "overview", "status"]) expect(found).toContain(k);
+  });
+  it("does not invent sections that are not there", () => {
+    const s = readmeSections(
+      ["Notes"],
+      "Some words about the project that has no setup details at all. ".repeat(3),
+    );
+    expect(s).not.toContain("install");
+    expect(s).not.toContain("usage");
+    expect(s).not.toContain("license");
+  });
+  it("detects contributing, license, architecture and testing headings", () => {
+    const s = readmeSections(["Contributing", "License", "Architecture", "Running tests"], "");
+    for (const k of ["contributing", "license", "architecture", "testing"]) expect(s).toContain(k);
+  });
+  it("feeds the practices summary", () => {
+    const w = ws({
+      "README.md":
+        "# Tool\n\nJobs, with receipts.\n\n## Run it locally\n\nInstall Docker and uv, then run `uv sync --all-packages`.\n",
+      "src/a.py": "x = 1\n",
+    });
+    const files = [...w.files].map((f) => ({
+      id: f.path,
+      path: f.path,
+      language: f.path.endsWith(".py") ? "python" : null,
+      kind: classifyPath(f.path).kind,
+      kindReason: "",
+      bytes: 0,
+      lines: null,
+      codeLines: null,
+      analyzed: true,
+      notAnalyzedReason: null,
+    }));
+    const p = detectPractices(w, files, detectProject(w), true);
+    expect(p.documentation.readme.hasInstall).toBe(true);
+    expect(p.documentation.readme.sections).toContain("install");
+    expect(p.tests.coverageReport).toBe("ingested");
   });
 });

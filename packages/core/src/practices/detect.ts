@@ -6,10 +6,39 @@ import { basename, dirname } from "../util/paths.js";
 
 const hasPath = (ws: Workspace, re: RegExp): boolean => ws.files.some((f) => re.test(f.path));
 
+const SECTION_HEADINGS: [string, RegExp][] = [
+  ["overview", /overview|about|introduction|what is|summary|^[a-z0-9 ._-]{2,40}$/i],
+  [
+    "install",
+    /install|setup|set up|getting started|quick ?start|run (it )?locally|locally|local (dev|development|setup)|development|prerequisites|requirements|build|run it|how to run/i,
+  ],
+  ["usage", /usage|how to use|example|quick ?start|getting started|commands|\bcli\b|\bapi\b/i],
+  ["contributing", /contribut|development guide|pull request/i],
+  ["license", /licen[sc]e/i],
+  ["testing", /test|\bci\b/i],
+  ["architecture", /architecture|design|how it works|structure|docs|documentation/i],
+  ["status", /status|roadmap|changelog|releases/i],
+];
+const INSTALL_COMMAND =
+  /\b(npm|pnpm|yarn|bun|pip3?|uv|poetry|pipenv|cargo|go|docker[ -]compose|docker|make|bundle|composer|gradle|mvn)\s+(install|i|add|sync|build|run|up|get|compose|start|test)\b/i;
+
+/** README section kinds from headings, plus install commands anywhere in the text (fenced or inline). */
+export function readmeSections(headings: string[], text: string): string[] {
+  const found = new Set<string>();
+  for (const [kind, re] of SECTION_HEADINGS) {
+    if (kind === "overview") continue;
+    if (headings.some((h) => re.test(h))) found.add(kind);
+  }
+  if (INSTALL_COMMAND.test(text)) found.add("install");
+  if (headings.length > 0 || text.trim().split(/\s+/).length > 30) found.add("overview");
+  return [...found].sort();
+}
+
 export function detectPractices(
   ws: Workspace,
   files: FileRecord[],
   detection: DetectionSummary,
+  coverageIngested = false,
 ): PracticesSummary {
   const paths = ws.files.map((f) => f.path);
   const providers = new Set<string>();
@@ -105,6 +134,8 @@ export function detectPractices(
     headings: [],
     hasInstall: null,
     hasUsage: null,
+    sections: [],
+    links: 0,
   };
   if (readmePath) {
     const text = ws.read(readmePath) ?? "";
@@ -113,14 +144,15 @@ export function detectPractices(
       .filter((l) => /^#{1,6}\s+\S/.test(l))
       .map((l) => l.replace(/^#+\s+/, "").trim())
       .slice(0, 40);
+    const sections = readmeSections(headings, text);
     readme = {
       path: readmePath,
       words: text.split(/\s+/).filter(Boolean).length,
       headings,
-      hasInstall:
-        headings.some((h) => /install|setup|getting started|build/i.test(h)) ||
-        /```[\s\S]*(npm|pnpm|yarn|pip|cargo|go) (install|i|add|build)/i.test(text),
-      hasUsage: headings.some((h) => /usage|quick ?start|example|how to/i.test(h)),
+      hasInstall: sections.includes("install"),
+      hasUsage: sections.includes("usage"),
+      sections,
+      links: (text.match(/\]\((?:https?:\/\/|\.{0,2}\/|#|[\w./-]+\.md)/g) ?? []).length,
     };
   }
   const adrFiles = paths.filter(
@@ -142,7 +174,7 @@ export function detectPractices(
       sourceFiles,
       testToSourceFileRatio:
         sourceFiles === 0 ? null : Math.round((testFiles / sourceFiles) * 1000) / 1000,
-      coverageReport: "not-ingested",
+      coverageReport: coverageIngested ? "ingested" : "not-ingested",
     },
     quality: {
       linters: [...linters].sort(),

@@ -3,13 +3,15 @@ import type { Workspace } from "../acquire/types.js";
 import { DEFAULT_ANALYZERS } from "../analyzers/registry.js";
 import type { AnalyzerPlugin, FileAnalysis } from "../analyzers/types.js";
 import { type AnalysisConfig, configHash } from "../config/config.js";
-import { classifyPath, looksGenerated } from "../detect/classify.js";
 import { languageOf } from "../detect/languages.js";
 import { detectProject } from "../detect/manifests.js";
 import { generateFindings } from "../findings/generate.js";
 import { sortFindings } from "../findings/make.js";
+import { fetchGitHubActivity, type JsonFetch } from "../git/activity.js";
 import { collectHistory, type RepoHead, readHead, unavailable } from "../git/history.js";
+import { GLOSSARY_VERSION } from "../glossary/glossary.js";
 import { buildGraph, moduleOf } from "../graph/build.js";
+import { computeBlastRadius } from "../graph/impact.js";
 import type {
   CoverageRecord,
   Dependency,
@@ -25,9 +27,12 @@ import type {
   SupportLevel,
 } from "../ir/types.js";
 import { REPORT_SCHEMA_VERSION } from "../ir/types.js";
+import { ingestCoverage } from "../metrics/coverage.js";
 import { detectDuplication } from "../metrics/duplication.js";
 import { countLines } from "../metrics/loc.js";
 import { detectPractices } from "../practices/detect.js";
+import { buildExecutiveSummary } from "../report/summary.js";
+import { computeRisk } from "../risk/risk.js";
 import { applyBaseline, evaluateRules, parseBaseline, parseRules } from "../rules/engine.js";
 import { DEFAULT_PROFILE, profileHash } from "../scoring/profile.js";
 import { buildRecommendations } from "../scoring/recommend.js";
@@ -35,8 +40,9 @@ import { computeScores } from "../scoring/score.js";
 import { extractPackages, type OsvFetch, queryOsv } from "../security/osv.js";
 import { runGitleaks, scanSecretsBuiltin } from "../security/secrets.js";
 import { checkWorkflows } from "../security/workflows.js";
-import { fileIdFor, sha256, stableStringify } from "../util/hash.js";
+import { sha256, stableStringify } from "../util/hash.js";
 import { dirname } from "../util/paths.js";
+import { classifyFiles } from "./files.js";
 
 export const TOOL_VERSION = "0.1.0";
 
@@ -66,6 +72,16 @@ export interface AnalyzeOptions {
   onProgress?: (stage: Stage, detail?: string) => void;
   signal?: AbortSignal;
   osvFetch?: OsvFetch;
+  /** Supplied coverage report text (lcov, Istanbul summary or Cobertura XML). */
+  coverage?: { name: string; text: string } | null;
+  /** For GitHub targets without a clone: fetch commit, pull request and release signals from the API. */
+  activity?: {
+    owner: string;
+    repo: string;
+    ref: string | null;
+    token?: string | undefined;
+    fetchImpl?: JsonFetch | undefined;
+  } | null;
   now?: () => Date;
 }
 
@@ -98,59 +114,7 @@ export async function analyze(opts: AnalyzeOptions): Promise<Report> {
   try {
     // 1. Files and detection
     progress("detecting", `${ws.files.length} files`);
-    const files: FileRecord[] = [];
-    const texts = new Map<string, string>();
-    for (const f of ws.files) {
-      const c = classifyPath(f.path);
-      let { kind, reason } = c;
-      const language = c.language;
-      let lines: number | null = null;
-      let codeLines: number | null = null;
-      let notAnalyzedReason: string | null = null;
-      if (kind === "other" && language === null) {
-        const text = ws.read(f.path);
-        if (text?.slice(0, 8000).includes("\0")) {
-          kind = "binary";
-          reason = "contains NUL bytes";
-        }
-      }
-      if (
-        language !== null &&
-        (kind === "source" || kind === "test" || kind === "generated" || kind === "vendored")
-      ) {
-        const text = ws.read(f.path);
-        if (text === null) {
-          notAnalyzedReason =
-            f.bytes > config.budgets.maxFileBytes
-              ? "file exceeds the per-file size budget"
-              : "file could not be read";
-        } else {
-          if (kind === "source" && looksGenerated(text)) {
-            kind = "generated";
-            reason = "generated code marker in file header";
-          }
-          const counts = countLines(text, language);
-          lines = counts.lines;
-          codeLines = counts.code;
-          if (kind === "source" || kind === "test") texts.set(f.path, text);
-        }
-      }
-      if (kind === "test" && !config.includeTests)
-        notAnalyzedReason = "tests excluded by configuration";
-      files.push({
-        id: fileIdFor(f.path),
-        path: f.path,
-        language,
-        kind,
-        kindReason: reason,
-        bytes: f.bytes,
-        lines,
-        codeLines,
-        analyzed: false,
-        notAnalyzedReason,
-      });
-    }
-    files.sort((a, b) => a.path.localeCompare(b.path));
+    const { files, texts } = classifyFiles(ws, config);
     const detection = detectProject(ws);
 
     // 2. Language analyzers (isolated: one failure never aborts the run)
@@ -193,7 +157,7 @@ export async function analyze(opts: AnalyzeOptions): Promise<Report> {
           analyses.set(fa.path, fa);
           const rec = byPath.get(fa.path);
           if (rec) {
-            const unreadable = fa.parseError?.startsWith("file unreadable") ?? false;
+            const unreadable = fa.parseError?.startsWith("file unreadable");
             rec.analyzed = !unreadable;
             if (unreadable) rec.notAnalyzedReason = fa.parseError;
           }
@@ -370,11 +334,21 @@ export async function analyze(opts: AnalyzeOptions): Promise<Report> {
     progress("history");
     let history: HistorySummary;
     let head: RepoHead | null = null;
+    const fileStats = new Map<string, { commits: number; churn: number }>();
     const histRoot = opts.historyRoot === undefined ? null : opts.historyRoot;
     if (!config.history.enabled) history = unavailable("Disabled by configuration");
-    else if (histRoot === null)
+    else if (histRoot === null && opts.activity && !config.security.offline) {
+      history = await fetchGitHubActivity(opts.activity, {
+        token: opts.activity.token,
+        fetchImpl: opts.activity.fetchImpl,
+        signal,
+        authors: config.history.authors,
+      });
+    } else if (histRoot === null)
       history = unavailable(
-        "No local Git history for this source. Use a local clone or enable history for remote analysis.",
+        config.security.offline && opts.activity
+          ? "Offline mode: GitHub history needs network access. Analyze a local clone for full history."
+          : "No local Git history for this source. Use a local clone, or use a GitHub URL online to get a sample from the GitHub API.",
       );
     else {
       head = await readHead(histRoot, signal);
@@ -402,7 +376,7 @@ export async function analyze(opts: AnalyzeOptions): Promise<Report> {
             authors: config.history.authors,
             hotspotLimit: config.history.hotspotLimit,
           },
-          { files: complexityByPath, moduleOf: moduleLookup },
+          { files: complexityByPath, moduleOf: moduleLookup, fileStatsSink: fileStats },
           signal,
         );
       }
@@ -493,7 +467,8 @@ export async function analyze(opts: AnalyzeOptions): Promise<Report> {
 
     // 8. Practices
     progress("practices");
-    const practices = detectPractices(ws, files, detection);
+    const cov = ingestCoverage(ws, allPaths, opts.coverage ?? null);
+    const practices = detectPractices(ws, files, detection, cov.summary.ingested);
 
     // 9. Findings, scores, recommendations
     progress("scoring");
@@ -512,6 +487,30 @@ export async function analyze(opts: AnalyzeOptions): Promise<Report> {
       })
       .sort((a, b) => b.codeLines - a.codeLines || a.language.localeCompare(b.language));
 
+    const testDirect = new Set<string>();
+    for (const f of files) {
+      if (f.kind !== "test") continue;
+      for (const d of analyses.get(f.path)?.dependencies ?? [])
+        if (
+          d.resolution === "resolved" &&
+          d.toPath &&
+          graphSet.has(d.toPath) &&
+          d.kind !== "type-only"
+        )
+          testDirect.add(d.toPath);
+    }
+    const entrypointPaths = detection.entrypoints.map((e) => e.path);
+    const blastRadius = computeBlastRadius(graph, entrypointPaths, 20);
+    const risk = computeRisk({
+      graph,
+      fileMetrics: fileMetrics.filter((m) => graphSet.has(m.path)),
+      entrypoints: entrypointPaths,
+      fileStats:
+        history.available && history.source === "git" && fileStats.size > 0 ? fileStats : null,
+      testDirect,
+      hasTests: files.some((f) => f.kind === "test"),
+      coverage: cov.summary.ingested ? cov.perFile : null,
+    });
     const generated = generateFindings({
       config,
       files,
@@ -524,6 +523,8 @@ export async function analyze(opts: AnalyzeOptions): Promise<Report> {
       languages,
       parseErrors,
       truncated: ws.truncated,
+      risk,
+      testCoverage: cov.summary,
     });
     let all = sortFindings([...generated, ...ruleFindings, ...securityFindings]);
     let ruleViolations = ruleFindings.length;
@@ -548,6 +549,12 @@ export async function analyze(opts: AnalyzeOptions): Promise<Report> {
       languages: languages.map((l) => l.language),
       truncated: ws.truncated,
       maxCommits: config.history.maxCommits,
+      coverageRate: cov.summary.lineRate,
+      languageLevels: languages.map((l) => ({
+        language: l.language,
+        codeLines: l.codeLines,
+        supportLevel: l.supportLevel,
+      })),
     });
     const recommendations = buildRecommendations(all);
 
@@ -555,6 +562,11 @@ export async function analyze(opts: AnalyzeOptions): Promise<Report> {
     progress("reporting");
     for (const l of coverage)
       for (const x of l.limitations) if (!limitations.includes(x)) limitations.push(x);
+    if (languages.filter((l) => l.supportLevel >= 2).length >= 2)
+      limitations.push(
+        "Dependencies between different languages (for example a web client calling an API) are not modeled. Each language is analyzed separately.",
+      );
+    if (risk.assessed) limitations.push(risk.method);
     const unsupported = languages
       .filter((l) => l.supportLevel === 1 && l.codeLines > 0)
       .map((l) => l.language);
@@ -578,6 +590,14 @@ export async function analyze(opts: AnalyzeOptions): Promise<Report> {
         analyzedFiles: files.filter((f) => f.analyzed).length,
         totalBytes: files.reduce((s, f) => s + f.bytes, 0),
         truncated: ws.truncated,
+        codeFiles: files.filter(
+          (f) => f.language !== null && (f.kind === "source" || f.kind === "test"),
+        ).length,
+        analyzedCodeFiles: files.filter(
+          (f) => f.language !== null && (f.kind === "source" || f.kind === "test") && f.analyzed,
+        ).length,
+        productionFiles: files.filter((f) => f.language !== null && f.kind === "source").length,
+        testFiles: files.filter((f) => f.language !== null && f.kind === "test").length,
       },
       scope: { languages, excluded: excludedList, budgets: { ...config.budgets } },
       detection,
@@ -593,6 +613,10 @@ export async function analyze(opts: AnalyzeOptions): Promise<Report> {
       practices,
       history,
       security,
+      executiveSummary: { headline: "", overview: [], strengths: [], concerns: [], nextSteps: [] },
+      testCoverage: cov.summary,
+      risk,
+      blastRadius,
       rules: {
         evaluated: ruleSet !== null,
         source: opts.rules?.name ?? null,
@@ -610,6 +634,7 @@ export async function analyze(opts: AnalyzeOptions): Promise<Report> {
         profileHash: profileHash(DEFAULT_PROFILE),
         configHash: configHash(config),
         scoringVersion: DEFAULT_PROFILE.version,
+        glossaryVersion: GLOSSARY_VERSION,
       },
       reproducibility: {
         toolVersion: TOOL_VERSION,
@@ -626,6 +651,7 @@ export async function analyze(opts: AnalyzeOptions): Promise<Report> {
       },
       limitations,
     };
+    report.executiveSummary = buildExecutiveSummary(report);
     report.reproducibility.finishedAt = now().toISOString();
     report.reproducibility.contentHash = contentHashOf(report);
     return report;

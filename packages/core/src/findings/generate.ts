@@ -8,6 +8,8 @@ import type {
   HistorySummary,
   Metrics,
   PracticesSummary,
+  RiskSummary,
+  TestCoverageSummary,
 } from "../ir/types.js";
 import { makeFinding } from "./make.js";
 
@@ -23,6 +25,8 @@ export interface FindingInputs {
   languages: { language: string; codeLines: number; supportLevel: number }[];
   parseErrors: { path: string; message: string }[];
   truncated: boolean;
+  risk: RiskSummary;
+  testCoverage: TestCoverageSummary;
 }
 
 export const THRESHOLDS = {
@@ -32,6 +36,10 @@ export const THRESHOLDS = {
   duplicationLow: 0.05,
   hotspotScore: 50,
   singleAuthorShare: 0.8,
+  highRisk: 65,
+  lowCoverage: 0.5,
+  shortReadmeWords: 100,
+  genericCommitShare: 0.3,
   unresolvedRatio: 0.05,
 } as const;
 
@@ -449,6 +457,18 @@ export function generateFindings(inp: FindingInputs): Finding[] {
         "Add a README that explains purpose, install, and usage.",
         "documentation",
       );
+    else if (
+      practices.documentation.readme.words !== null &&
+      practices.documentation.readme.words < THRESHOLDS.shortReadmeWords
+    )
+      practice(
+        "readme-short",
+        "README is very short",
+        "low",
+        `The README has only ${practices.documentation.readme.words} words, which is rarely enough to explain purpose, setup and usage.`,
+        "Add what the project does, how to run it and a usage example.",
+        "documentation",
+      );
     else if (practices.documentation.readme.hasInstall === false)
       practice(
         "readme-no-install",
@@ -471,6 +491,80 @@ export function generateFindings(inp: FindingInputs): Finding[] {
       );
   }
 
+  if (
+    inp.testCoverage.ingested &&
+    inp.testCoverage.lineRate !== null &&
+    inp.testCoverage.lineRate < THRESHOLDS.lowCoverage
+  ) {
+    practice(
+      "low-coverage",
+      `Test coverage is ${Math.round(inp.testCoverage.lineRate * 1000) / 10} percent`,
+      "low",
+      `The coverage report ${inp.testCoverage.source} shows that fewer than half of the instrumented lines run in tests. Low coverage proves gaps, although high coverage would not prove tests are good.`,
+      "Add tests for the files at the top of the risk list first.",
+    );
+  }
+  if (inp.risk.assessed) {
+    for (const r of inp.risk.files
+      .filter((x) => x.risk >= THRESHOLDS.highRisk && x.confidence !== "low")
+      .slice(0, 5)) {
+      out.push(
+        makeFinding({
+          prefix: "RISK",
+          key: r.path,
+          ruleId: "risk.high-risk-file",
+          category: "quality",
+          title: `${r.path} ranks high on the risk index (${r.risk} of 100)`,
+          severity: r.risk >= 80 ? "medium" : "low",
+          confidence: r.confidence,
+          explanation: `${r.explanation} The risk index blends complexity, how many files depend on the file, how often it changes and how well tests reach it. It ranks where a change is most costly, it does not predict bugs.`,
+          evidence: [
+            {
+              kind: "metric",
+              refs: [r.path],
+              note: r.factors
+                .filter((f) => f.value !== null)
+                .map((f) => `${f.name}=${f.value}`)
+                .join(", "),
+            },
+          ],
+          locations: [{ path: r.path, startLine: null, endLine: null }],
+          remediation:
+            "Reduce the dominant driver: simplify the file, add tests around it, or reduce how many files depend on it.",
+          limitations: [inp.risk.method],
+          tags: ["risk-index"],
+        }),
+      );
+    }
+  }
+  if (
+    history.available &&
+    history.commitQuality &&
+    history.commitQuality.sampled >= 20 &&
+    history.commitQuality.genericShare >= THRESHOLDS.genericCommitShare
+  ) {
+    out.push(
+      makeFinding({
+        prefix: "HIST-COMMITS",
+        key: "generic",
+        ruleId: "history.generic-commits",
+        category: "history",
+        title: `${Math.round(history.commitQuality.genericShare * 100)} percent of commit messages are generic`,
+        severity: "info",
+        confidence: "medium",
+        explanation:
+          "Messages such as fix, update or wip say little about what changed or why, which makes history harder to use for debugging and release notes. This is a habit signal, not a statement about code quality.",
+        evidence: [
+          { kind: "metric", refs: [], note: `${history.commitQuality.sampled} commits sampled` },
+        ],
+        locations: [],
+        remediation:
+          "Write messages that say what changed and why. Conventional Commits is one convention that helps.",
+        limitations: history.limitations,
+        tags: ["commit-quality"],
+      }),
+    );
+  }
   if (
     history.available &&
     history.topAuthorShare !== null &&

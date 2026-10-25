@@ -24,6 +24,8 @@ An item can be Confirmed without being Validated (approved, validation still pen
 | D-14 | Four-phase delivery for a sole developer, academic docs last | Confirmed 2026-10-19 | n/a | docs/phases | Owner |
 | D-15 | Dependency-light core: hand-written schema validator and YAML subset instead of Zod and a YAML library (ADR 0015, amends ADR 0005) | Pending explicit owner confirmation (built with Phase 1) | Validated by 165 tests | docs/evaluation/results/phase-1.md | Owner |
 | D-16 | Module inference rule and production-only graph (ADR 0016) | Pending explicit owner confirmation | Validated on fixtures and self-analysis, usability check in Phase 3 | fixtures, ADR 0016 | Owner |
+| D-18 | One glossary and schema 0.2.0 for all explanations (ADR 0017) | Pending explicit owner confirmation | Validated by tests, usability check in Phase 3 | glossary tests | Owner |
+| D-19 | Transparent risk index, rule-based PR verdict, evenly sampled trend (ADR 0018) | Pending explicit owner confirmation | Unit and Git tests pass, calibration in Phase 3 | tests | Owner |
 | D-17 | Python analyzer is a lexical Level 2 parser, not Tree-sitter (deviation from ADR 0004 note) | Pending explicit owner confirmation | Validated on 2 fixtures | fixtures/py-* | Owner |
 
 ## Requirements traceability
@@ -61,4 +63,5 @@ satisfies when its GitHub issue is created.
 | E-01 | Vercel limits verified from vendor docs | research/verified-facts.md |
 | E-02 | Fixture accuracy, 11 fixtures, precision and recall 1.0 | evaluation/results/phase-1.md |
 | E-03 | 165 tests passing, TypeScript 6.0.3 strict typecheck | evaluation/results (this delivery), run `pnpm check` to reproduce |
+| E-05 | Phase 1.5: 237 tests, 12 fixtures (blast radius ground truth), real Git tests for pr and trend | packages/core/src/**/*.test.ts |
 | E-04 | Sandbox smoke benchmark | evaluation/results/sandbox-smoke.md |

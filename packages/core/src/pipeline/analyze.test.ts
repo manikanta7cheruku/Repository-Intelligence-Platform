@@ -218,7 +218,7 @@ describe("security integration", () => {
       packagesChecked: 1,
     });
     expect(r.findings.find((f) => f.ruleId === "security.osv")?.severity).toBe("critical");
-    expect(r.recommendations[0]?.title).toMatch(/vulnerable/);
+    expect(r.recommendations[0]?.title).toMatch(/Upgrade lodash/);
     const clean: OsvFetch = () =>
       Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ results: [{}] }) });
     const cleanRun = await analyze({

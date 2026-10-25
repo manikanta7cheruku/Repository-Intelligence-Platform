@@ -15,6 +15,7 @@ performance. Real repositories are measured separately (docs/evaluation).
 | ts-cycle | Runtime file cycle, type-only cycle, module cycle without file cycle |
 | ts-violation | Layer violation, forbidden external, module cycle |
 | ts-aliases | tsconfig paths, index files, re-exports, dynamic import, require, JSON import |
+| ts-blast-radius | Known direct and transitive dependents, modules and entrypoints reached by a change |
 | ts-monorepo | Workspace packages resolved without node_modules |
 | ts-unresolved | Broken relative import, broken alias, syntax error |
 | py-package | Python absolute and relative imports, TYPE_CHECKING, docstring false positives |

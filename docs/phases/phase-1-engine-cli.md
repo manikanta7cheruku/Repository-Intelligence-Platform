@@ -125,26 +125,6 @@ in section 5. Help me with the step I am on (I will paste command output or erro
 keep docs/PROJECT_STATE.md and docs/learning/phase-1-engine-cli.md accurate, and do not claim anything that was not run.
 ```
 
-## 8. Prompt: start Phase 2 (paste when the Phase 1 exit criteria are all Done)
+## 8. Next step after Phase 1
 
-```text
-Project: RepoLens, open-source repository intelligence platform. I am the sole developer.
-Read first: CLAUDE.md, docs/PROJECT_STATE.md, docs/phases/phase-2-web-platform.md, docs/product/PRD.md, docs/product/use-cases.md,
-docs/ux/*, docs/architecture/*, docs/security/threat-model.md, docs/registers/decision-register.md, all ADRs, docs/reference/*,
-docs/learning/phase-1-engine-cli.md and the results in docs/evaluation/results.
-
-What we did before: Phase 0 built the repo, CI, documentation, ADRs, threat model and UX direction. Phase 1 built and verified packages/core and
-packages/cli: safe acquisition, JS/TS (Level 3) and Python (Level 2) analyzers, dependency graph with Tarjan cycles and modules, metrics, rules with
-baselines and diff, Git history, OSV and secret and workflow checks, practices, scoring with coverage and confidence, JSON (schema 0.1.0), Markdown and
-HTML reports, 165 tests, fixture accuracy results, and self-analysis in CI. The report schema is versioned and is the only contract the web app may use.
-The live checks and real-repository benchmarks were completed by me (results are in docs/evaluation/results).
-
-What we do now (Phase 2, Web platform): build apps/web, the API, the worker and the database to the Phase 2 exit criteria. Start with gate P2-01 (graph
-rendering benchmark with 1,000 and 5,000 node fixtures) and show me the numbers before choosing the graph library (ADR 0012). Build the design system from
-docs/ux/design-tokens.md before any page. The UI must follow docs/ux: dense, calm, evidence first, accessible, no fake metrics, no em dashes.
-
-Also create docs/learning/phase-2-web-platform.md as you build (what, why, where, algorithms, mistakes, gaps, and 30 college questions with answers), update
-docs/PRD status and docs/use-cases status for the web column, and use the git flow in docs/workflow/WORKFLOW.md (branch per backlog item).
-Work item by item through P2-02 onward. Plan briefly, implement, test, run pnpm check, update PROJECT_STATE, and tell me exactly what to run and verify.
-Ask at most one question at a time with a proposed default.
-```
+Phase 1.5 (insight upgrade) comes before Phase 2. Follow `docs/phases/phase-1-5-insight-upgrade.md`. The Phase 2 prompt is `docs/prompts/phase-2-prompt.md`.

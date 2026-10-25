@@ -80,7 +80,12 @@ describe("queryOsv", () => {
         id: "GHSA-1111",
         summary: "Prototype pollution",
         database_specific: { severity: "HIGH" },
-        affected: [{ ranges: [{ events: [{ introduced: "0" }, { fixed: "4.17.21" }] }] }],
+        affected: [
+          {
+            package: { name: "lodash", ecosystem: "npm" },
+            ranges: [{ events: [{ introduced: "0" }, { fixed: "4.17.21" }] }],
+          },
+        ],
       });
     };
     const r = await queryOsv(pkgs, { fetchImpl });
@@ -88,7 +93,7 @@ describe("queryOsv", () => {
     const f = r.findings[0];
     expect(f?.severity).toBe("high");
     expect(f?.classification).toBe("confirmed");
-    expect(f?.remediation).toContain("4.17.21");
+    expect(f?.remediation).toContain("from 4.17.20 to 4.17.21");
     expect(f?.limitations.join(" ")).toMatch(/reachable/);
   });
   it("is not assessed, never zero, when OSV is unreachable", async () => {
@@ -206,7 +211,8 @@ describe("checkWorkflows", () => {
         "  a:",
         "    steps:",
         "      - uses: third/party@v2",
-        "      - run: echo \u0024{{ github.head_ref }}",
+        // biome-ignore lint/suspicious/noTemplateCurlyInString: GitHub Actions expression, not a JS template
+        "      - run: echo ${{ github.head_ref }}",
       ].join("\n"),
     });
     const { findings } = checkWorkflows(ws);

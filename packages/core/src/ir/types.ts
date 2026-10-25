@@ -2,7 +2,7 @@
  * Intermediate representation and report model (schema 0.1.0).
  * Rule: a value that was not computed is `null` with a reason, never 0.
  */
-export const REPORT_SCHEMA_VERSION = "0.1.0";
+export const REPORT_SCHEMA_VERSION = "0.2.0";
 
 export type Severity = "critical" | "high" | "medium" | "low" | "info";
 export type Confidence = "high" | "medium" | "low";
@@ -183,6 +183,8 @@ export interface ExternalDependencyRecord {
 
 export interface SubMetricInput {
   name: string;
+  /** Maximum points this dimension could gain if this input reached 100. Null when unavailable. */
+  impact: number | null;
   raw: number | null;
   normalized: number | null;
   weight: number;
@@ -202,6 +204,8 @@ export interface ScoreRecord {
   value: number | null;
   confidence: Confidence | null;
   coverage: number | null;
+  /** Share of the dimension weight that had data (0 to 1). */
+  weightCoverage: number | null;
   reason: string | null;
   inputs: SubMetricInput[];
 }
@@ -233,7 +237,7 @@ export interface PracticesSummary {
     testFiles: number;
     sourceFiles: number;
     testToSourceFileRatio: number | null;
-    coverageReport: "not-ingested";
+    coverageReport: "ingested" | "not-ingested";
   };
   quality: {
     linters: string[];
@@ -248,6 +252,9 @@ export interface PracticesSummary {
       headings: string[];
       hasInstall: boolean | null;
       hasUsage: boolean | null;
+      /** Detected section kinds: overview, install, usage, contributing, license, testing, architecture, status. */
+      sections: string[];
+      links: number;
     };
     files: {
       contributing: boolean;
@@ -274,6 +281,10 @@ export interface HistoryHotspot {
 export interface HistorySummary {
   available: boolean;
   reason: string | null;
+  source: "git" | "github-api" | null;
+  commitQuality: CommitQuality | null;
+  pullRequests: PullRequestSummary | null;
+  releases: ReleaseSummary | null;
   shallow: boolean | null;
   commitsAnalyzed: number | null;
   window: { first: string | null; last: string | null };
@@ -348,6 +359,82 @@ export interface RepositoryInfo {
   analyzedFiles: number;
   totalBytes: number;
   truncated: boolean;
+  /** Source and test files in a recognized programming language. */
+  codeFiles: number;
+  /** Code files that a language analyzer processed. */
+  analyzedCodeFiles: number;
+  productionFiles: number;
+  testFiles: number;
+}
+
+export interface ExecutiveSummary {
+  headline: string;
+  overview: string[];
+  strengths: string[];
+  concerns: string[];
+  nextSteps: string[];
+}
+
+export interface CommitQuality {
+  sampled: number;
+  conventionalShare: number;
+  descriptiveShare: number;
+  genericShare: number;
+  avgSubjectLength: number;
+}
+
+export interface PullRequestSummary {
+  sampled: number;
+  merged: number;
+  medianHoursToMerge: number | null;
+}
+
+export interface ReleaseSummary {
+  count: number;
+  latestDate: string | null;
+}
+
+export interface TestCoverageSummary {
+  ingested: boolean;
+  source: string | null;
+  format: "lcov" | "istanbul-summary" | "cobertura" | null;
+  lineRate: number | null;
+  filesMatched: number | null;
+  reason: string | null;
+}
+
+export interface RiskFactor {
+  name: string;
+  value: number | null;
+  percentile: number | null;
+  note: string;
+}
+
+export interface RiskFile {
+  path: string;
+  moduleId: string | null;
+  risk: number;
+  confidence: Confidence;
+  factors: RiskFactor[];
+  drivers: string[];
+  explanation: string;
+}
+
+export interface RiskSummary {
+  assessed: boolean;
+  reason: string | null;
+  method: string;
+  files: RiskFile[];
+}
+
+export interface BlastRadiusEntry {
+  path: string;
+  directDependents: number;
+  transitiveDependents: number;
+  runtimeTransitive: number;
+  modulesAffected: string[];
+  entrypointsAffected: string[];
+  maxDepth: number;
 }
 
 export interface Report {
@@ -375,11 +462,21 @@ export interface Report {
   findings: Finding[];
   recommendations: Recommendation[];
   scores: ScoreRecord[];
+  executiveSummary: ExecutiveSummary;
+  testCoverage: TestCoverageSummary;
+  risk: RiskSummary;
+  blastRadius: BlastRadiusEntry[];
   practices: PracticesSummary;
   history: HistorySummary;
   security: SecuritySummary;
   rules: RulesSummary;
-  methodology: { profile: string; profileHash: string; configHash: string; scoringVersion: string };
+  methodology: {
+    profile: string;
+    profileHash: string;
+    configHash: string;
+    scoringVersion: string;
+    glossaryVersion: string;
+  };
   reproducibility: {
     toolVersion: string;
     schemaVersion: string;

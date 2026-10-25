@@ -2,8 +2,7 @@ import { builtinModules } from "node:module";
 import ts from "typescript";
 import type { Workspace } from "../acquire/types.js";
 import { type PackageJson, readPackageJson } from "../detect/manifests.js";
-// biome-ignore lint/suspicious/noShadowRestrictedNames: Symbol is the domain model type.
-import type { Dependency, DependencyKind, Symbol } from "../ir/types.js";
+import type { Symbol as AnalyzedSymbol, Dependency, DependencyKind } from "../ir/types.js";
 import { basename, dirname, joinPosix } from "../util/paths.js";
 import {
   type AnalyzerContext,
@@ -378,6 +377,11 @@ function functionName(fn: ts.FunctionLikeDeclaration, sf: ts.SourceFile): string
   if (p && ts.isVariableDeclaration(p) && ts.isIdentifier(p.name)) return p.name.text;
   if (p && ts.isPropertyAssignment(p)) return p.name.getText(sf);
   if (p && ts.isPropertyDeclaration(p)) return p.name.getText(sf);
+  if (p && ts.isCallExpression(p) && p.arguments.includes(fn as ts.Expression)) {
+    const callee = p.expression.getText(sf).replace(/\s+/g, " ");
+    return `${callee.length > 40 ? `${callee.slice(0, 37)}...` : callee}() callback`;
+  }
+  if (p && ts.isExportAssignment(p)) return "default export";
   return "<anonymous>";
 }
 
@@ -487,8 +491,12 @@ export function analyzeJsTsFile(path: string, text: string, resolver: JsResolver
 
   const topLevel = (stmt: ts.Statement) => {
     const exported = hasExportModifier(stmt);
-    const push = (name: string, kind: Omit<Symbol, "fileId">["kind"], node: ts.Node, ex: boolean) =>
-      symbols.push({ name, kind, exported: ex, line: line(node), endLine: endLine(node) });
+    const push = (
+      name: string,
+      kind: Omit<AnalyzedSymbol, "fileId">["kind"],
+      node: ts.Node,
+      ex: boolean,
+    ) => symbols.push({ name, kind, exported: ex, line: line(node), endLine: endLine(node) });
     if (ts.isFunctionDeclaration(stmt))
       push(
         stmt.name?.text ?? (hasDefaultModifier(stmt) ? "default" : "<anonymous>"),

@@ -8,7 +8,7 @@ const FIXTURES = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..",
 describe("fixture accuracy (regression gate)", () => {
   it("matches the hand-written ground truth for every fixture", async () => {
     const results = await evaluateAll(FIXTURES);
-    expect(results.length).toBeGreaterThanOrEqual(11);
+    expect(results.length).toBeGreaterThanOrEqual(12);
     const failures = results.flatMap((r) => r.failures.map((f) => `${r.name}: ${f}`));
     expect(failures).toEqual([]);
     for (const [category, v] of Object.entries(aggregate(results))) {

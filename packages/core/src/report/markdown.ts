@@ -1,4 +1,14 @@
-import type { Finding, Report, ScoreRecord } from "../ir/types.js";
+import { GLOSSARY_INDEX } from "../glossary/glossary.js";
+import type { Finding, Report } from "../ir/types.js";
+import {
+  dimLabel,
+  glossaryIdsFor,
+  improvements,
+  inputLabel,
+  missingInputs,
+  pctText,
+} from "./common.js";
+import { toMermaid } from "./diagram.js";
 
 /** Neutralizes HTML in untrusted text so Markdown viewers cannot render injected markup. */
 const safe = (v: string): string =>
@@ -7,19 +17,11 @@ const cell = (v: string | number | null | undefined): string =>
   safe(v === null || v === undefined || v === "" ? "n/a" : String(v))
     .replace(/\|/g, "\\|")
     .replace(/\r?\n/g, " ");
-const pct = (v: number | null): string => (v === null ? "n/a" : `${Math.round(v * 1000) / 10}%`);
-const DIM_LABEL: Record<ScoreRecord["dimension"], string> = {
-  architecture: "Architecture",
-  maintainability: "Maintainability",
-  "security-hygiene": "Security hygiene (signals only)",
-  "testing-ci": "Testing and CI",
-  documentation: "Documentation",
-  "maintenance-activity": "Maintenance activity",
-};
 const table = (head: string[], rows: (string | number | null | undefined)[][]): string =>
   rows.length === 0
     ? "_None._\n"
     : `| ${head.join(" | ")} |\n|${head.map(() => "---").join("|")}|\n${rows.map((r) => `| ${r.map(cell).join(" | ")} |`).join("\n")}\n`;
+const bullets = (xs: string[]): string[] => xs.map((x) => `- ${safe(x)}`);
 
 function findingBlock(f: Finding): string {
   const loc = safe(
@@ -34,8 +36,8 @@ function findingBlock(f: Finding): string {
       .join("; "),
   );
   return [
-    `#### ${f.id}: ${safe(f.title)}`,
-    `Severity: ${f.severity} | Confidence: ${f.confidence} | Origin: ${f.origin}${f.classification ? ` | Classification: ${f.classification}` : ""}`,
+    `#### ${safe(f.title)}`,
+    `Id: ${f.id} | Severity: ${f.severity} | Confidence: ${f.confidence} | Origin: ${f.origin}${f.classification ? ` | Classification: ${f.classification}` : ""}`,
     "",
     safe(f.explanation),
     "",
@@ -64,33 +66,77 @@ export function toMarkdown(r: Report, opts: { maxFindings?: number } = {}): stri
         ["Source", `${r.repository.source.type}: ${r.repository.source.location}`],
         ["Ref", r.repository.source.ref],
         ["Commit", r.repository.commitSha],
-        ["Files analyzed", `${r.repository.analyzedFiles} of ${r.repository.totalFiles}`],
+        [
+          "Files",
+          `${r.repository.totalFiles} total, ${r.repository.codeFiles} code files (${r.repository.productionFiles} production, ${r.repository.testFiles} test), ${r.repository.analyzedCodeFiles} code files analyzed`,
+        ],
         ["Schema", r.schemaVersion],
         ["Tool", r.reproducibility.toolVersion],
       ],
     ),
   );
+
   out.push(
-    "## Summary",
+    "## Executive summary",
     "",
-    "### Scores",
+    `**${safe(r.executiveSummary.headline)}**`,
     "",
-    "Scores summarize named sub-metrics. Open the methodology section for formulas. Not assessed means the inputs were missing, not that the value is zero.",
+    ...bullets(r.executiveSummary.overview),
+    "",
+  );
+  if (r.executiveSummary.strengths.length > 0)
+    out.push("What looks good:", "", ...bullets(r.executiveSummary.strengths), "");
+  if (r.executiveSummary.concerns.length > 0)
+    out.push("What needs attention:", "", ...bullets(r.executiveSummary.concerns), "");
+  if (r.executiveSummary.nextSteps.length > 0)
+    out.push(
+      "Suggested next steps:",
+      "",
+      ...r.executiveSummary.nextSteps.map((s, i) => `${i + 1}. ${safe(s)}`),
+      "",
+    );
+
+  out.push(
+    "## Scores",
+    "",
+    'Each score summarizes named inputs through published curves. Confidence says how much of the code the analysis covered. "Inputs used" is the share of the score\'s building blocks that had data. Not assessed means the inputs were missing, not that the value is zero.',
     "",
   );
   out.push(
     table(
-      ["Dimension", "Score", "State", "Confidence", "Coverage", "Reason"],
+      ["Dimension", "Score", "State", "Confidence", "Coverage", "Inputs used", "Reason"],
       r.scores.map((s) => [
-        DIM_LABEL[s.dimension],
+        dimLabel(s.dimension),
         s.value,
         s.state,
         s.confidence,
-        pct(s.coverage),
+        pctText(s.coverage),
+        pctText(s.weightCoverage),
         s.reason,
       ]),
     ),
   );
+  const imp = improvements(r);
+  if (imp.length > 0) {
+    out.push("### How to improve each score", "");
+    out.push(
+      table(
+        ["Dimension", "Input", "Now (0 to 100)", "Points to gain", "What to do"],
+        imp.map((i) => [
+          dimLabel(i.dimension),
+          i.label,
+          i.currentScore,
+          `up to ${i.gain}`,
+          i.advice,
+        ]),
+      ),
+    );
+  }
+  for (const s of r.scores.filter((x) => x.state === "not-assessed"))
+    out.push(
+      `- ${dimLabel(s.dimension)} is not assessed. To enable it: ${safe(missingInputs(s).join("; "))}.`,
+    );
+  out.push("");
   out.push("### Top recommendations", "");
   out.push(
     table(
@@ -98,6 +144,7 @@ export function toMarkdown(r: Report, opts: { maxFindings?: number } = {}): stri
       r.recommendations.slice(0, 8).map((x) => [x.rank, x.title, x.effort, x.findingIds.length]),
     ),
   );
+
   out.push("## Scope and coverage", "");
   out.push(
     table(
@@ -107,19 +154,19 @@ export function toMarkdown(r: Report, opts: { maxFindings?: number } = {}): stri
         l.files,
         l.codeLines,
         l.supportLevel,
-        l.analyzerId,
+        l.analyzerId ?? "none (detection only)",
       ]),
     ),
   );
   out.push(
     table(
-      ["Analyzer", "Language", "Eligible", "Analyzed", "Coverage"],
+      ["Analyzer", "Language", "Eligible files", "Analyzed", "Coverage"],
       r.coverage.map((c) => [
         c.analyzerId,
         c.language,
         c.filesEligible,
         c.filesAnalyzed,
-        pct(c.ratio),
+        c.supportLevel === 1 ? "n/a (detection only)" : pctText(c.ratio),
       ]),
     ),
   );
@@ -137,11 +184,13 @@ export function toMarkdown(r: Report, opts: { maxFindings?: number } = {}): stri
       ],
     ),
   );
+
   out.push("## Architecture", "");
   out.push(
-    `Observed from ${r.graph.nodes.length} source files and ${r.graph.edges.length} dependency edges. Import resolution: ${r.graph.resolution.resolved} resolved, ${r.graph.resolution.unresolved} unresolved, ${r.graph.resolution.external} external, ratio ${pct(r.graph.resolution.ratio)}. Module boundaries are inferred from directories.`,
+    `Observed from ${r.graph.nodes.length} source files and ${r.graph.edges.length} dependency edges. Import resolution: ${r.graph.resolution.resolved} resolved, ${r.graph.resolution.unresolved} unresolved, ${r.graph.resolution.external} external, ratio ${pctText(r.graph.resolution.ratio)}. Module boundaries are inferred from directories.`,
     "",
   );
+  if (r.graph.modules.length > 0) out.push("```mermaid", toMermaid(r).trimEnd(), "```", "");
   out.push(
     table(
       ["Module", "Files", "Code lines", "Fan-in", "Fan-out", "Instability"],
@@ -153,7 +202,7 @@ export function toMarkdown(r: Report, opts: { maxFindings?: number } = {}): stri
     .map(([id, level]) => ({ level, path: r.graph.modules.find((m) => m.id === id)?.path ?? id }))
     .sort((a, b) => b.level - a.level || a.path.localeCompare(b.path));
   out.push(
-    "Inferred dependency levels (0 depends on no other module; higher levels depend on lower ones). Confidence is low or medium because levels are derived from the graph, not from documentation.",
+    "Inferred dependency levels (0 depends on no other module, higher levels depend on lower ones). Confidence is low or medium because levels are derived from the graph, not from documentation.",
     "",
   );
   out.push(
@@ -162,17 +211,65 @@ export function toMarkdown(r: Report, opts: { maxFindings?: number } = {}): stri
       byLevel.map((l) => [l.level, l.path]),
     ),
   );
+  out.push("### Circular dependencies", "");
+  out.push(
+    r.graph.cycles.length === 0
+      ? "None found.\n"
+      : table(
+          ["Scope", "Size", "Type-only", "Members"],
+          r.graph.cycles.map((c) => [
+            c.scope,
+            c.size,
+            c.typeOnly ? "yes" : "no",
+            c.members.slice(0, 8).join(", "),
+          ]),
+        ),
+  );
+
+  out.push("## Risk and blast radius", "");
+  if (r.risk.assessed) {
+    out.push(safe(r.risk.method), "");
+    out.push(
+      table(
+        ["File", "Risk (0 to 100)", "Confidence", "Why"],
+        r.risk.files
+          .slice(0, 10)
+          .map((f) => [
+            f.path,
+            f.risk,
+            f.confidence,
+            f.drivers.join("; ") || "blend of moderate signals",
+          ]),
+      ),
+    );
+  } else out.push(`Risk index not assessed: ${safe(r.risk.reason ?? "")}`, "");
+  out.push(
+    "Blast radius: what could be affected if a file changes (files that import it directly or indirectly, plus the modules and entrypoints they belong to).",
+    "",
+  );
   out.push(
     table(
-      ["Scope", "Size", "Type-only", "Members"],
-      r.graph.cycles.map((c) => [
-        c.scope,
-        c.size,
-        c.typeOnly ? "yes" : "no",
-        c.members.slice(0, 8).join(", "),
-      ]),
+      [
+        "File",
+        "Direct dependents",
+        "All dependents",
+        "Modules affected",
+        "Entrypoints affected",
+        "Depth",
+      ],
+      r.blastRadius
+        .slice(0, 10)
+        .map((b) => [
+          b.path,
+          b.directDependents,
+          b.transitiveDependents,
+          b.modulesAffected.length,
+          b.entrypointsAffected.length,
+          b.maxDepth,
+        ]),
     ),
   );
+
   out.push("## Code quality", "");
   out.push(
     `Totals: ${r.metrics.totals.codeLines} code lines, ${r.metrics.totals.commentLines} comment lines, ${r.metrics.totals.blankLines} blank lines. Functions measured: ${r.metrics.functionCount}.`,
@@ -181,8 +278,8 @@ export function toMarkdown(r: Report, opts: { maxFindings?: number } = {}): stri
   const dup = r.metrics.duplication;
   out.push(
     dup.assessed
-      ? `Duplication: ${pct(dup.ratio)} (${dup.duplicatedLines} of ${dup.totalLines} normalized lines).`
-      : `Duplication: not assessed (${dup.reason}).`,
+      ? `Duplication: ${pctText(dup.ratio)} (${dup.duplicatedLines} of ${dup.totalLines} normalized lines).`
+      : `Duplication: not assessed (${safe(dup.reason ?? "")}).`,
     "",
   );
   out.push(
@@ -198,7 +295,8 @@ export function toMarkdown(r: Report, opts: { maxFindings?: number } = {}): stri
         ]),
     ),
   );
-  out.push("## Security", "", r.security.statement, "");
+
+  out.push("## Security", "", safe(r.security.statement), "");
   out.push(
     table(
       ["Check", "Assessed", "Result or reason"],
@@ -207,7 +305,7 @@ export function toMarkdown(r: Report, opts: { maxFindings?: number } = {}): stri
           "Dependency vulnerabilities (OSV)",
           r.security.dependencies.assessed ? "yes" : "no",
           r.security.dependencies.assessed
-            ? `${r.security.dependencies.vulnerabilities} found in ${r.security.dependencies.packagesChecked} packages`
+            ? `${r.security.dependencies.vulnerabilities} advisories across ${r.security.dependencies.packagesChecked} packages checked`
             : r.security.dependencies.reason,
         ],
         ...r.security.secrets.map((s) => [
@@ -225,6 +323,7 @@ export function toMarkdown(r: Report, opts: { maxFindings?: number } = {}): stri
       ],
     ),
   );
+
   out.push("## Testing, CI and documentation", "");
   const p = r.practices;
   out.push(
@@ -233,73 +332,113 @@ export function toMarkdown(r: Report, opts: { maxFindings?: number } = {}): stri
       [
         ["CI", p.ci.providers.join(", ")],
         ["Test frameworks", p.tests.frameworks.join(", ")],
-        ["Test files / source files", `${p.tests.testFiles} / ${p.tests.sourceFiles}`],
+        ["Test files and source files", `${p.tests.testFiles} test, ${p.tests.sourceFiles} source`],
+        [
+          "Test coverage",
+          r.testCoverage.ingested
+            ? `${pctText(r.testCoverage.lineRate)} from ${r.testCoverage.source} (${r.testCoverage.filesMatched} files matched)`
+            : `not ingested: ${r.testCoverage.reason}`,
+        ],
         ["Linters", p.quality.linters.join(", ")],
         ["Formatters", p.quality.formatters.join(", ")],
         ["Type checkers", p.quality.typeCheckers.join(", ")],
-        ["README", p.documentation.readme.path ? `${p.documentation.readme.words} words` : "none"],
+        [
+          "README",
+          p.documentation.readme.path
+            ? `${p.documentation.readme.words} words, sections: ${p.documentation.readme.sections.join(", ") || "none"}`
+            : "none",
+        ],
         ["Decision records", p.documentation.adrCount],
       ],
     ),
   );
-  out.push(
-    "Coverage reports are not ingested in this version, so test effectiveness is not assessed.",
-    "",
-  );
+
   out.push("## Git history", "");
   if (r.history.available) {
+    const h = r.history;
     out.push(
-      `${r.history.commitsAnalyzed} commits analyzed${r.history.shallow ? " (shallow clone)" : ""}.`,
+      `${h.commitsAnalyzed} commits analyzed (${h.source === "github-api" ? "sample from the GitHub API" : "local Git"})${h.shallow ? ", shallow clone" : ""}.`,
       "",
     );
-    out.push(
-      table(
-        ["Hotspot", "Commits", "Churn", "Complexity", "Score"],
-        r.history.hotspots.map((h) => [h.path, h.commits, h.churn, h.complexity, h.score]),
-      ),
-    );
+    if (h.commitQuality)
+      out.push(
+        `Commit messages (signal, not a verdict): ${pctText(h.commitQuality.conventionalShare)} follow Conventional Commits, ${pctText(h.commitQuality.descriptiveShare)} are descriptive, ${pctText(h.commitQuality.genericShare)} are generic.`,
+        "",
+      );
+    if (h.pullRequests)
+      out.push(
+        `Pull requests (recent sample of ${h.pullRequests.sampled} closed): ${h.pullRequests.merged} merged, median time to merge ${h.pullRequests.medianHoursToMerge === null ? "n/a" : `${h.pullRequests.medianHoursToMerge} hours`}.`,
+        "",
+      );
+    if (h.releases)
+      out.push(
+        `Releases: ${h.releases.count}${h.releases.latestDate ? `, latest ${h.releases.latestDate.slice(0, 10)}` : ""}.`,
+        "",
+      );
+    if (h.hotspots.length > 0)
+      out.push(
+        table(
+          ["Hotspot", "Commits", "Churn", "Complexity", "Score"],
+          h.hotspots.map((x) => [x.path, x.commits, x.churn, x.complexity, x.score]),
+        ),
+      );
     out.push(
       table(
         ["Contributor", "Commits", "Share"],
-        r.history.contributors.slice(0, 8).map((c) => [c.name, c.commits, pct(c.share)]),
+        h.contributors.slice(0, 8).map((c) => [c.name, c.commits, pctText(c.share)]),
       ),
     );
-  } else out.push(`Not assessed: ${r.history.reason}`, "");
+  } else out.push(`Not assessed: ${safe(r.history.reason ?? "")}`, "");
+
   out.push("## Architecture rules", "");
   out.push(
     r.rules.evaluated
       ? `Rules from ${r.rules.source}: ${r.rules.violations} violations${r.rules.baseline ? `, ${r.rules.baseline.suppressed} suppressed by baseline` : ""}.`
-      : "No rules file supplied, so conformance was not evaluated.",
+      : "No rules file supplied, so conformance was not evaluated. Add repolens.rules.yaml to enable it.",
     "",
   );
+
   out.push("## Findings", "");
   out.push(
     `${r.findings.length} findings.${r.findings.length > max ? ` Showing the first ${max}.` : ""}`,
     "",
   );
   for (const f of r.findings.slice(0, max)) out.push(findingBlock(f));
+
   out.push(
     "## Methodology",
     "",
-    `Scoring profile ${r.methodology.profile} version ${r.methodology.scoringVersion} (hash ${r.methodology.profileHash}). Configuration hash ${r.methodology.configHash}.`,
+    `Scoring profile ${r.methodology.profile} version ${r.methodology.scoringVersion} (hash ${r.methodology.profileHash}). Configuration hash ${r.methodology.configHash}. Glossary version ${r.methodology.glossaryVersion}.`,
     "",
   );
   for (const s of r.scores) {
-    out.push(`### ${DIM_LABEL[s.dimension]}`, "");
+    out.push(`### ${dimLabel(s.dimension)}`, "");
     out.push(
       table(
-        ["Input", "Raw", "Score", "Weight", "Available", "Note"],
+        ["Input", "Raw", "Score", "Weight", "Points to gain", "Available", "Note"],
         s.inputs.map((i) => [
-          i.name,
+          inputLabel(i.name),
           i.raw,
           i.normalized,
           i.weight,
+          i.impact,
           i.available ? "yes" : "no",
           i.note,
         ]),
       ),
     );
   }
+
+  out.push("## Glossary", "");
+  out.push(
+    table(
+      ["Term", "Meaning", "Why it matters"],
+      glossaryIdsFor(r)
+        .map((id) => GLOSSARY_INDEX.get(id))
+        .filter((g): g is NonNullable<typeof g> => g !== undefined)
+        .map((g) => [g.label, g.plain, g.why]),
+    ),
+  );
   out.push("## Limitations", "");
   for (const l of r.limitations) out.push(`- ${safe(l)}`);
   out.push("", "## Reproducibility", "");
@@ -308,6 +447,7 @@ export function toMarkdown(r: Report, opts: { maxFindings?: number } = {}): stri
       ["Field", "Value"],
       [
         ["Content hash", r.reproducibility.contentHash],
+        ["Input digest", r.reproducibility.inputDigest],
         ["Commit", r.reproducibility.commitSha],
         ["Started", r.reproducibility.startedAt],
         ["Finished", r.reproducibility.finishedAt],

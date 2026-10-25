@@ -20,6 +20,10 @@ export interface Expected {
   syntaxErrorFiles?: string[];
   workflowFindings?: Record<string, number>;
   dynamicUnresolvedAtLeast?: number;
+  blast?: Record<
+    string,
+    { direct: number; transitive: number; modules: number; entrypoints: string[]; depth: number }
+  >;
 }
 
 export interface Counts {
@@ -157,6 +161,23 @@ export async function evaluateFixture(dir: string, name: string): Promise<Fixtur
         JSON.stringify(expected.workflowFindings, Object.keys(expected.workflowFindings).sort()),
       `expected ${JSON.stringify(expected.workflowFindings)}, got ${JSON.stringify(wf)}`,
     );
+  }
+  if (expected.blast) {
+    for (const [path, want] of Object.entries(expected.blast)) {
+      const got = report.blastRadius.find((b) => b.path === path);
+      const ok =
+        got !== undefined &&
+        got.directDependents === want.direct &&
+        got.transitiveDependents === want.transitive &&
+        got.modulesAffected.length === want.modules &&
+        got.maxDepth === want.depth &&
+        JSON.stringify(got.entrypointsAffected) === JSON.stringify(want.entrypoints);
+      check(
+        "blastRadius",
+        ok,
+        `${path}: expected ${JSON.stringify(want)}, got ${JSON.stringify(got)}`,
+      );
+    }
   }
   if (expected.dynamicUnresolvedAtLeast)
     check(

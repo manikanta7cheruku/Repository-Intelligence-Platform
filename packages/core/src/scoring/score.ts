@@ -29,6 +29,8 @@ export interface ScoreInputs {
   languages: string[];
   truncated: boolean;
   maxCommits: number;
+  coverageRate: number | null;
+  languageLevels: { language: string; codeLines: number; supportLevel: number }[];
 }
 
 type Raw = { raw: number | null; note: string };
@@ -150,8 +152,11 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
   raws["security-hygiene"] = {
     "vulnerable-dependency-weight": i.security.dependencies.assessed
       ? {
-          raw: osv.reduce((s, f) => s + weightOf(f.severity), 0),
-          note: `${osv.length} known vulnerabilities`,
+          raw: osv.reduce(
+            (s, f) => s + weightOf(f.severity) * (f.tags.includes("dev") ? 0.4 : 1),
+            0,
+          ),
+          note: `${osv.length} known vulnerabilities (${osv.filter((f) => f.tags.includes("dev")).length} in development-only packages, counted at 40 percent)`,
         }
       : { raw: null, note: i.security.dependencies.reason ?? "Not assessed" },
     "secret-findings": secretsAssessed
@@ -201,13 +206,25 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
           note: p.quality.typeCheckers.join(", ") || "none detected",
         }
       : { raw: null, note: "Not applicable to the detected languages" },
+    "line-coverage":
+      i.coverageRate !== null
+        ? {
+            raw: i.coverageRate,
+            note: `${Math.round(i.coverageRate * 1000) / 10} percent of lines covered (from the ingested report)`,
+          }
+        : { raw: null, note: "No coverage report ingested" },
   };
 
   const d = p.documentation;
   const readmeScore =
     d.readme.path === null ? 0 : 50 + (d.readme.hasInstall ? 25 : 0) + (d.readme.hasUsage ? 25 : 0);
   raws.documentation = {
-    "readme-completeness": { raw: readmeScore, note: d.readme.path ?? "no README" },
+    "readme-completeness": {
+      raw: readmeScore,
+      note: d.readme.path
+        ? `${d.readme.path}: sections found: ${d.readme.sections.join(", ") || "none"}`
+        : "no README",
+    },
     "community-files": {
       raw: [
         d.files.license,
@@ -216,7 +233,29 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
         d.files.security,
         d.files.changelog,
       ].filter(Boolean).length,
-      note: "license, contributing, code of conduct, security, changelog",
+      note: `present: ${
+        Object.entries({
+          license: d.files.license,
+          contributing: d.files.contributing,
+          "code of conduct": d.files.codeOfConduct,
+          "security policy": d.files.security,
+          changelog: d.files.changelog,
+        })
+          .filter(([, v]) => v)
+          .map(([k]) => k)
+          .join(", ") || "none"
+      }; missing: ${
+        Object.entries({
+          license: d.files.license,
+          contributing: d.files.contributing,
+          "code of conduct": d.files.codeOfConduct,
+          "security policy": d.files.security,
+          changelog: d.files.changelog,
+        })
+          .filter(([, v]) => !v)
+          .map(([k]) => k)
+          .join(", ") || "none"
+      }`,
     },
     "docs-and-decisions": {
       raw: (d.docsDirectory ? 1 : 0) + (d.adrCount > 0 ? 1 : 0),
@@ -260,19 +299,29 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
     secretsAssessed,
     i.security.workflows.assessed,
   ];
+  // Level 2 analyzers read imports lexically, so graph conclusions about them are weaker than for Level 3.
+  const analyzedLangs = i.languageLevels.filter((l) => l.supportLevel >= 2);
+  const langLines = analyzedLangs.reduce((a, l) => a + l.codeLines, 0);
+  const levelFactor =
+    langLines === 0
+      ? 1
+      : analyzedLangs.reduce((a, l) => a + l.codeLines * (l.supportLevel >= 3 ? 1 : 0.75), 0) /
+        langLines;
   const coverageFor: Record<string, number | null> = {
-    architecture: covered === null ? null : Math.min(covered, resolution ?? 1),
+    architecture: covered === null ? null : Math.min(covered, resolution ?? 1, levelFactor),
     maintainability: covered,
     "security-hygiene": securityChecks.filter(Boolean).length / securityChecks.length,
     "testing-ci": i.truncated ? 0.8 : 1,
     documentation: i.truncated ? 0.8 : 1,
     "maintenance-activity": !h.available
       ? null
-      : h.shallow
-        ? 0.5
-        : (h.commitsAnalyzed ?? 0) >= i.maxCommits
-          ? 0.8
-          : 1,
+      : h.source === "github-api"
+        ? 0.6
+        : h.shallow
+          ? 0.5
+          : (h.commitsAnalyzed ?? 0) >= i.maxCommits
+            ? 0.8
+            : 1,
   };
 
   const order = [
@@ -291,6 +340,7 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
       const available = r.raw !== null;
       return {
         name: def.name,
+        impact: null as number | null,
         raw: r.raw === null ? null : round(r.raw),
         normalized: r.raw === null ? null : round(applyCurve(def.curve, r.raw), 1),
         weight: def.weight,
@@ -299,6 +349,10 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
       };
     });
     const availWeight = inputs.filter((x) => x.available).reduce((s, x) => s + x.weight, 0);
+    for (const x of inputs)
+      if (x.available)
+        x.impact = round(((100 - (x.normalized as number)) * x.weight) / availWeight, 1);
+    const weightCoverage = total === 0 ? null : round(availWeight / total);
     const cov = coverageFor[dimension] ?? null;
     if (availWeight < total * i.profile.minAvailableWeight || cov === null) {
       const missing = inputs.filter((x) => !x.available).map((x) => `${x.name} (${x.note})`);
@@ -308,6 +362,7 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
         value: null,
         confidence: null,
         coverage: cov === null ? null : round(cov),
+        weightCoverage,
         reason:
           cov === null && availWeight >= total * i.profile.minAvailableWeight
             ? "No analyzable source files"
@@ -325,6 +380,7 @@ export function computeScores(i: ScoreInputs): ScoreRecord[] {
       value: Math.round(value),
       confidence: confidenceOf(cov),
       coverage: round(cov),
+      weightCoverage,
       reason: null,
       inputs,
     };

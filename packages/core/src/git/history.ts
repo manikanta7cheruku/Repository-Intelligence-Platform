@@ -2,6 +2,7 @@ import { execFile } from "node:child_process";
 import { devNull } from "node:os";
 import { promisify } from "node:util";
 import type { HistoryHotspot, HistorySummary } from "../ir/types.js";
+import { commitQuality } from "./quality.js";
 
 const run = promisify(execFile);
 
@@ -93,6 +94,8 @@ export interface HistoryInputs {
   /** File paths present in the analysis, with max complexity when available. */
   files: Map<string, number | null>;
   moduleOf: (path: string) => { id: string; path: string } | null;
+  /** Receives commits and churn for every file in the analysis. Used by the risk index. */
+  fileStatsSink?: Map<string, { commits: number; churn: number }>;
 }
 
 interface FileStat {
@@ -105,6 +108,10 @@ export function unavailable(reason: string): HistorySummary {
   return {
     available: false,
     reason,
+    source: null,
+    commitQuality: null,
+    pullRequests: null,
+    releases: null,
     shallow: null,
     commitsAnalyzed: null,
     window: { first: null, last: null },
@@ -122,10 +129,15 @@ const percentile = (sorted: number[], v: number): number => {
   return (below + 0.5 * equal) / sorted.length;
 };
 
-export function parseLog(
-  output: string,
-): { author: string; date: string; files: { path: string; churn: number }[] }[] {
-  const commits: { author: string; date: string; files: { path: string; churn: number }[] }[] = [];
+export interface ParsedCommit {
+  author: string;
+  date: string;
+  subject: string;
+  files: { path: string; churn: number }[];
+}
+
+export function parseLog(output: string): ParsedCommit[] {
+  const commits: ParsedCommit[] = [];
   for (const chunk of output.split("\x1e")) {
     if (chunk.trim() === "") continue;
     const lines = chunk.split("\n");
@@ -141,6 +153,7 @@ export function parseLog(
     commits.push({
       author: (header[1] as string).trim() || "unknown",
       date: header[2] as string,
+      subject: (header[3] ?? "").trim(),
       files,
     });
   }
@@ -162,7 +175,7 @@ export async function collectHistory(
         "--no-renames",
         "--numstat",
         `-n${opts.maxCommits}`,
-        "--format=%x1e%H%x1f%aN%x1f%aI",
+        "--format=%x1e%H%x1f%aN%x1f%aI%x1f%s",
         "--",
         ".",
       ],
@@ -206,6 +219,9 @@ export async function collectHistory(
   }));
 
   const candidates = [...stats.entries()].filter(([p]) => inputs.files.has(p));
+  if (inputs.fileStatsSink)
+    for (const [p, st] of candidates)
+      inputs.fileStatsSink.set(p, { commits: st.commits, churn: st.churn });
   const commitCounts = candidates.map(([, s]) => s.commits).sort((a, b) => a - b);
   const complexities = [...inputs.files.values()]
     .filter((v): v is number => v !== null)
@@ -275,6 +291,10 @@ export async function collectHistory(
   return {
     available: true,
     reason: null,
+    source: "git",
+    commitQuality: commitQuality(commits.map((c) => c.subject)),
+    pullRequests: null,
+    releases: null,
     shallow: head.shallow,
     commitsAnalyzed: total,
     window: {

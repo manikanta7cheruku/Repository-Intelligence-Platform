@@ -43,6 +43,7 @@ const finding = (
   severity: Finding["severity"],
   confidence: Finding["confidence"] = "high",
   category: Finding["category"] = "quality",
+  tags: string[] = [],
 ): Finding => ({
   id,
   title: id,
@@ -57,21 +58,31 @@ const finding = (
   locations: [],
   remediation: "",
   limitations: [],
-  tags: [],
+  tags,
 });
 
 describe("buildRecommendations", () => {
   it("groups by rule, ranks by severity times confidence, and skips info and analysis findings", () => {
     const recs = buildRecommendations([
-      finding("RL-A-1", "security.osv", "critical", "high", "security"),
-      finding("RL-A-2", "security.osv", "high", "high", "security"),
+      finding("RL-A-1", "security.osv", "critical", "high", "security", [
+        "package:lodash",
+        "prod",
+        "fix:4.17.21",
+        "jump:patch",
+      ]),
+      finding("RL-A-2", "security.osv", "high", "high", "security", [
+        "package:lodash",
+        "prod",
+        "fix:4.17.19",
+        "jump:patch",
+      ]),
       finding("RL-B-1", "arch.cycle.file", "medium"),
       finding("RL-C-1", "quality.large-file", "low"),
       finding("RL-D-1", "arch.unreachable-files", "info"),
       finding("RL-E-1", "analysis.truncated", "medium", "high", "analysis"),
     ]);
     expect(recs.map((r) => r.title)).toEqual([
-      "Upgrade 2 vulnerable dependencies",
+      "Upgrade lodash to 4.17.21 (fixes 2 advisories)",
       "Break 1 circular dependency between files",
       "Split 1 very large file",
     ]);

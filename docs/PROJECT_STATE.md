@@ -6,44 +6,49 @@ Update this file at the end of every working session. A new AI chat can resume f
 
 - Project: RepoLens (working name, rename allowed before first release)
 - Owner and sole developer: (your name)
-- Current phase: **Phase 1, Engine and CLI** (built, verified without network, owner live verification open)
-- Last updated: 2026-10-21
+- Current phase: **Phase 1.5, Insight upgrade** (built and tested without network access, owner verification via DOTEST.md open)
+- Last updated: 2026-10-25
 - Academic deadline: (fill in, see docs/roadmap/mvp-plan.md)
 - Weekly hours available: (fill in)
-- Branch flow: feature branches merge into `phase/1-engine-cli`, then one PR into `main` (rebase and merge)
+- Branch flow: integration branch per delivery (`phase/1-5-insight-upgrade`), feature branches merged with `--no-ff`, one PR, rebase and merge
 
 ## Done
 
-- Phase 0 complete (repo, CI, documentation, ADRs 0001 to 0014, threat model, UX direction, decision register).
-- Phase 1 code complete: `packages/core` (about 5,600 lines) and `packages/cli`, 165 tests passing in the build environment, 11 fixtures with ground truth
-  (precision and recall 1.0 on all categories), self-analysis with 0 rule violations, ADR 0015 and 0016, PRD and use cases, reference docs, learning files for phases 0 and 1.
-- Verified: TypeScript 6.0.3 strict typecheck, Node 22 test run, fixture accuracy, schema validation of all generated reports, sandbox smoke benchmark.
+- Phase 0 complete. Phase 1 complete and merged by the owner (engine and CLI, owner ran it on a real repository, Provenance, and reviewed the report).
+- Phase 1.5 code complete: report fixes 1 to 12 from the Provenance review, glossary with five answers per term, executive summary, explainable scoring (inputs used, points to gain),
+  risk index, blast radius (`impact`), pull request guardian (`pr`), trend (`trend`), coverage ingestion, commit quality and GitHub API activity, diagram exports (`graph`), schema 0.2.0,
+  ADR 0017 and 0018, docs and learning files, Phase 2 and Phase 3 prompts, handoff guide.
+- Verified on the owner's Windows machine (2026-10-25, Node 24.10.0, pnpm 10): `pnpm check` passes (Biome lint, build, typecheck, 237 tests in 33 files), `pnpm eval` has no failures, `pnpm analyze:self` exits 0.
+  Smoke run of `analyze`, `impact`, `graph`, `trend` and `pr` on this repository worked; `pr --base "--upload-pack=x"` and a lookalike GitHub host are refused. Live network items in DOTEST.md (sections 2, 3, 9 to 11) are still unverified.
+- Fixes made while verifying: lint warnings (optional chains, one test-only suppression), formatter drift, a Windows-invalid hostile file name in report tests (now `a'c&d.ts` on win32), and two files over the 700-line self-rule (`pipeline/files.ts` and `cli/help.ts` extracted). Test count is 237, not the 238 reported by the earlier shim.
+- Academic docs added: `docs/academic/how-the-engine-reads-and-analyzes-code.md` and `docs/academic/viva-questions.md`.
 
-## Not yet verified (owner tasks, see docs/phases/phase-1-engine-cli.md section 4 and 5)
+## Not yet verified (owner tasks: DOTEST.md)
 
-- First real `pnpm install`, `pnpm format`, `pnpm check` (Biome and Vitest were not available in the build environment).
-- Live GitHub download, live OSV lookups, Gitleaks binary, `--with-history` clone.
-- Gate P1-01 comparison with Madge and dependency-cruiser on 3 real repositories.
-- P1-18 benchmark on 5 public repositories.
+- `pnpm install`, `pnpm format`, `pnpm check` with the real Biome and Vitest after merging Phase 1.5.
+- Provenance before and after (DOTEST sections 2 and 3), blast radius, diagrams, rules, PR guardian, trend on a real repository (sections 4 to 8).
+- Coverage ingestion with a real coverage report, Gitleaks binary, GitHub rate limit behavior (sections 9 to 11).
+- Gate P1-01 (comparison with Madge and dependency-cruiser) and P1-18 (5 repository benchmark) from Phase 1 if not done yet.
 
 ## In progress
 
-- Phase 1 owner checklist (apply with git flow, check, push PR, live verification).
+- DOTEST verification and recording results in `docs/evaluation/results/p15-provenance.md`.
 
 ## Next
 
-- Finish the Phase 1 exit criteria, then paste the "start Phase 2" prompt from `docs/phases/phase-1-engine-cli.md` section 8.
+- Merge Phase 1.5, then start Phase 2 with `docs/prompts/phase-2-prompt.md` (see `docs/prompts/HANDOFF.md`).
 
 ## Open questions for the owner
 
 1. Academic deadline and weekly hours.
 2. Final product name (working name RepoLens).
-3. Worker hosting choice (ADR 0011, decided at the start of Phase 2).
-4. Confirm ADR 0015 (hand-written schema validator and YAML subset instead of Zod and a YAML library) and the Python lexical parser deviation noted in ADR 0004.
+3. Worker hosting choice (ADR 0011, decided at the start of Phase 2 after verifying current free-tier terms).
+4. Confirm ADR 0015, 0016, 0017 and 0018.
+5. Whether to enable GitHub OAuth for the optional "star from the site" flow (Phase 2).
 
-## Known risks right now
+## Known risks and debts
 
 - Solo delivery of a large scope: keep the MVP boundary in `product/product-spec.md`.
+- Risk index weights and PR verdict thresholds are provisional. Calibration is a Phase 3 work package.
+- The tool flags our own largest functions (pipeline orchestrator, score engine, findings generator). Refactoring is Phase 3 (P3-09).
 - Competitor and license facts beyond Vercel are still Unverified (`research/verification-checklist.md`).
-- Scores use provisional curves. Calibration on real repositories happens in Phase 3.
-- Some of our own functions are highly complex (flagged by our own tool). Refactor in a later phase.

@@ -3,19 +3,25 @@ import { parseJsonSafe } from "../detect/manifests.js";
 import type { DependencySecuritySummary, Finding, Severity } from "../ir/types.js";
 import { shortHash } from "../util/hash.js";
 import { basename } from "../util/paths.js";
+import { nearestFix } from "../util/semver.js";
 
 export interface PackageRef {
   ecosystem: "npm" | "PyPI";
   name: string;
   version: string;
   source: string;
+  /** True when the lockfile marks the package as development-only. Null when the lockfile does not say. */
+  dev: boolean | null;
 }
 
 type LockParser = (text: string, source: string) => PackageRef[];
 
 const npmLock: LockParser = (text, source) => {
   const doc = parseJsonSafe<{
-    packages?: Record<string, { version?: string; link?: boolean }>;
+    packages?: Record<
+      string,
+      { version?: string; link?: boolean; dev?: boolean; devOptional?: boolean }
+    >;
     dependencies?: Record<string, unknown>;
   }>(text);
   const out: PackageRef[] = [];
@@ -30,14 +36,19 @@ const npmLock: LockParser = (text, source) => {
         name: key.slice(idx + "node_modules/".length),
         version: v.version,
         source,
+        dev: v.dev === true || v.devOptional === true,
       });
     }
   } else if (doc.dependencies) {
     const walk = (deps: Record<string, unknown>): void => {
       for (const [name, raw] of Object.entries(deps)) {
-        const d = raw as { version?: string; dependencies?: Record<string, unknown> };
+        const d = raw as {
+          version?: string;
+          dev?: boolean;
+          dependencies?: Record<string, unknown>;
+        };
         if (d.version && /^\d/.test(d.version))
-          out.push({ ecosystem: "npm", name, version: d.version, source });
+          out.push({ ecosystem: "npm", name, version: d.version, source, dev: d.dev === true });
         if (d.dependencies) walk(d.dependencies);
       }
     };
@@ -63,7 +74,7 @@ const yarnLock: LockParser = (text, source) => {
     const m = /^\s+version:?\s+"?([^"\s]+)"?/.exec(line);
     if (m && names.length > 0) {
       for (const n of new Set(names))
-        out.push({ ecosystem: "npm", name: n, version: m[1] as string, source });
+        out.push({ ecosystem: "npm", name: n, version: m[1] as string, source, dev: null });
       names = [];
     }
   }
@@ -85,11 +96,24 @@ const pnpmLock: LockParser = (text, source) => {
     if (!inPackages) continue;
     let m = /^ {2}'?\/?((?:@[^/@'\s]+\/)?[^@(':\s/]+)@([^(':\s]+)/.exec(line);
     if (m) {
-      out.push({ ecosystem: "npm", name: m[1] as string, version: m[2] as string, source });
+      out.push({
+        ecosystem: "npm",
+        name: m[1] as string,
+        version: m[2] as string,
+        source,
+        dev: null,
+      });
       continue;
     }
     m = /^ {2}'?\/((?:@[^/]+\/)?[^/]+)\/(\d[^/:(_']*)/.exec(line);
-    if (m) out.push({ ecosystem: "npm", name: m[1] as string, version: m[2] as string, source });
+    if (m)
+      out.push({
+        ecosystem: "npm",
+        name: m[1] as string,
+        version: m[2] as string,
+        source,
+        dev: null,
+      });
   }
   return out;
 };
@@ -105,6 +129,7 @@ const requirements: LockParser = (text, source) => {
         name: (m[1] as string).toLowerCase().replace(/_/g, "-"),
         version: m[2] as string,
         source,
+        dev: null,
       });
   }
   return out;
@@ -121,6 +146,7 @@ const poetryLock: LockParser = (text, source) => {
         name: (n[1] as string).toLowerCase(),
         version: v[1] as string,
         source,
+        dev: null,
       });
   }
   return out;
@@ -169,7 +195,10 @@ interface OsvVuln {
   summary?: string;
   aliases?: string[];
   database_specific?: { severity?: string };
-  affected?: { ranges?: { events?: { fixed?: string }[] }[] }[];
+  affected?: {
+    package?: { name?: string; ecosystem?: string };
+    ranges?: { events?: { fixed?: string }[] }[];
+  }[];
 }
 
 const SEV: Record<string, Severity> = {
@@ -233,24 +262,44 @@ export async function queryOsv(
         `Details were fetched for ${maxDetails} of ${uniqueIds.length} advisories. The rest use default severity.`,
       );
     const findings: Finding[] = [];
+    const norm = (n: string | undefined) => (n ?? "").toLowerCase().replace(/_/g, "-");
     for (const h of hits) {
       for (const id of h.ids) {
         const d = details.get(id);
         const sev = d?.database_specific?.severity
           ? SEV[d.database_specific.severity.toUpperCase()]
           : undefined;
+        const mine = (d?.affected ?? []).filter((a) => norm(a.package?.name) === norm(h.pkg.name));
+        const others = [
+          ...new Set(
+            (d?.affected ?? [])
+              .map((a) => a.package?.name)
+              .filter((n): n is string => !!n && norm(n) !== norm(h.pkg.name)),
+          ),
+        ].sort();
         const fixed = [
           ...new Set(
-            (d?.affected ?? []).flatMap((a) =>
+            mine.flatMap((a) =>
               (a.ranges ?? []).flatMap((r) =>
                 (r.events ?? []).map((e) => e.fixed).filter((x): x is string => !!x),
               ),
             ),
           ),
-        ].sort();
+        ];
+        const fix = nearestFix(h.pkg.version, fixed);
+        const aliases = (d?.aliases ?? []).filter((a) => a !== id).sort();
+        const summary = d?.summary ?? "Advisory listed by OSV.";
+        const devNote =
+          h.pkg.dev === true
+            ? " This is a development-only dependency (not shipped to users), so it counts less in the score."
+            : "";
+        const otherNote =
+          others.length > 0 && mine.length === 0
+            ? ` OSV lists other affected packages (${others.join(", ")}). The match was made for ${h.pkg.name}@${h.pkg.version}, so verify that the advisory applies to your usage.`
+            : "";
         findings.push({
           id: `RL-SEC-OSV-${shortHash(`${id}|${h.pkg.ecosystem}|${h.pkg.name}|${h.pkg.version}`, 8)}`,
-          title: `Known vulnerability ${id} in ${h.pkg.name}@${h.pkg.version}`,
+          title: `${h.pkg.name}@${h.pkg.version} has a known vulnerability: ${summary.length > 90 ? `${summary.slice(0, 87)}...` : summary}`,
           category: "security",
           ruleId: "security.osv",
           severity: sev ?? "medium",
@@ -258,23 +307,30 @@ export async function queryOsv(
           origin: "observed",
           classification: "confirmed",
           explanation:
-            `${d?.summary ?? "Advisory listed by OSV."} The installed version listed in ${h.pkg.source} is affected. ${sev ? "" : "Severity was not provided, so medium is a placeholder."}`.trim(),
+            `${summary} Advisory ${id}${aliases.length > 0 ? ` (also ${aliases.slice(0, 4).join(", ")})` : ""}. The version listed in ${h.pkg.source} is affected.${devNote}${sev ? "" : " Severity was not provided, so medium is a placeholder."}${otherNote}`.trim(),
           evidence: [
             {
               kind: "tool-output",
-              refs: [id, `${h.pkg.name}@${h.pkg.version}`],
+              refs: [id, ...aliases.slice(0, 3), `${h.pkg.name}@${h.pkg.version}`],
               note: "OSV.dev match on package, ecosystem and version",
             },
           ],
           locations: [{ path: h.pkg.source, startLine: null, endLine: null }],
-          remediation:
-            fixed.length > 0
-              ? `Upgrade ${h.pkg.name} to a fixed version (advisory lists: ${fixed.join(", ")}).`
-              : `Check the advisory ${id} for a fixed version or mitigation.`,
+          remediation: fix
+            ? `Upgrade ${h.pkg.name} from ${h.pkg.version} to ${fix.version} (a ${fix.jump} update${fix.jump === "major" ? " that may need code changes" : ""}).`
+            : fixed.length > 0
+              ? `No fixed version above ${h.pkg.version} is listed for ${h.pkg.name}. Check advisory ${id}.`
+              : `No fixed version is listed for ${h.pkg.name}. Check advisory ${id} for mitigations.`,
           limitations: [
             "The version match is confirmed. Whether the vulnerable code is reachable in this project is not assessed.",
           ],
-          tags: ["dependency", h.pkg.ecosystem],
+          tags: [
+            "dependency",
+            h.pkg.ecosystem,
+            `package:${h.pkg.name}`,
+            h.pkg.dev === true ? "dev" : h.pkg.dev === false ? "prod" : "scope-unknown",
+            ...(fix ? [`jump:${fix.jump}`, `fix:${fix.version}`] : []),
+          ],
         });
       }
     }

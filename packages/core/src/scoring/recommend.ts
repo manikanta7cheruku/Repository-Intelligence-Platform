@@ -1,4 +1,5 @@
 import type { Confidence, Finding, Recommendation, Severity } from "../ir/types.js";
+import { compareVersions } from "../util/semver.js";
 
 const SEV_W: Record<Severity, number> = { critical: 100, high: 60, medium: 30, low: 10, info: 2 };
 const CONF_W: Record<Confidence, number> = { high: 1, medium: 0.7, low: 0.4 };
@@ -7,10 +8,6 @@ const TEMPLATES: Record<
   string,
   { title: (n: number) => string; effort: "low" | "medium" | "high" }
 > = {
-  "security.osv": {
-    title: (n) => `Upgrade ${n} vulnerable ${n === 1 ? "dependency" : "dependencies"}`,
-    effort: "low",
-  },
   "arch.cycle.file": {
     title: (n) => `Break ${n} circular ${n === 1 ? "dependency" : "dependencies"} between files`,
     effort: "medium",
@@ -45,6 +42,25 @@ const TEMPLATES: Record<
   "practice.no-license": { title: () => "Add a license", effort: "low" },
   "practice.no-readme": { title: () => "Add a README", effort: "low" },
   "practice.no-lockfile": { title: () => "Commit a dependency lockfile", effort: "low" },
+  "arch.high-fan-out": {
+    title: (n) =>
+      `Reduce dependencies of ${n} ${n === 1 ? "file that imports" : "files that import"} many others`,
+    effort: "medium",
+  },
+  "risk.high-risk-file": {
+    title: (n) =>
+      `Reduce risk in ${n} high-risk ${n === 1 ? "file" : "files"} (simplify and add tests)`,
+    effort: "high",
+  },
+  "practice.low-coverage": {
+    title: () => "Raise test coverage on the riskiest files",
+    effort: "high",
+  },
+  "practice.readme-short": { title: () => "Expand the README", effort: "low" },
+  "history.generic-commits": {
+    title: () => "Write more descriptive commit messages",
+    effort: "low",
+  },
   "history.hotspot": {
     title: (n) => `Refactor ${n} change-prone complex ${n === 1 ? "file" : "files"}`,
     effort: "high",
@@ -55,18 +71,47 @@ export function buildRecommendations(findings: Finding[], limit = 12): Recommend
   const groups = new Map<string, Finding[]>();
   for (const f of findings) {
     if (f.severity === "info" || f.category === "analysis") continue;
-    const key = f.ruleId.startsWith("security.secret.")
-      ? "security.secret"
-      : f.ruleId.startsWith("rule.")
-        ? f.ruleId
-        : f.ruleId;
+    const pkg = f.tags.find((t) => t.startsWith("package:"));
+    const key =
+      f.ruleId === "security.osv" && pkg
+        ? `security.osv|${pkg.slice(8)}`
+        : f.ruleId.startsWith("security.secret.")
+          ? "security.secret"
+          : f.ruleId;
     (groups.get(key) ?? groups.set(key, []).get(key))?.push(f);
   }
   const recs = [...groups.entries()].map(([key, list]) => {
     const top = Math.max(...list.map((f) => SEV_W[f.severity] * CONF_W[f.confidence]));
-    const priority = Math.round((top + 5 * Math.log(list.length)) * 10) / 10;
+    const devOnly = list.every((f) => f.tags.includes("dev"));
+    const priority = Math.round((top + 5 * Math.log(list.length)) * (devOnly ? 5 : 10)) / 10;
+    let osv: { title: (n: number) => string; effort: "low" | "medium" | "high" } | null = null;
+    if (key.startsWith("security.osv|")) {
+      const name = key.slice(13);
+      const fixes = list.flatMap((f) =>
+        f.tags
+          .filter((t) => t.startsWith("fix:"))
+          .map((t) => ({
+            v: t.slice(4),
+            jump: (f.tags.find((x) => x.startsWith("jump:")) ?? "jump:patch").slice(5),
+          })),
+      );
+      const best = fixes.sort((a, b) => compareVersions(b.v, a.v))[0];
+      const dev = list.every((f) => f.tags.includes("dev"));
+      osv = {
+        title: (n) =>
+          `Upgrade ${name}${best ? ` to ${best.v}` : ""} (fixes ${n} ${n === 1 ? "advisory" : "advisories"}${dev ? ", development tool only" : ""}${best?.jump === "major" ? ", major update" : ""})`,
+        effort: best
+          ? best.jump === "major"
+            ? "high"
+            : best.jump === "minor"
+              ? "medium"
+              : "low"
+          : "medium",
+      };
+    }
     const tpl =
-      key === "security.secret"
+      osv ??
+      (key === "security.secret"
         ? {
             title: (n: number) =>
               `Revoke and remove ${n} possible committed ${n === 1 ? "secret" : "secrets"}`,
@@ -78,7 +123,7 @@ export function buildRecommendations(findings: Finding[], limit = 12): Recommend
                 `Fix ${n} violation${n === 1 ? "" : "s"} of architecture rule ${key.slice(5)}`,
               effort: "medium" as const,
             }
-          : TEMPLATES[key];
+          : TEMPLATES[key]);
     return {
       key,
       priority,

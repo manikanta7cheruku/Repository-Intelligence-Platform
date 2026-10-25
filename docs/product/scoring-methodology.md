@@ -61,9 +61,9 @@ Mapped to High (at least 0.85), Medium (0.6 to 0.85), Low (under 0.6). Threshold
 - Never show a gauge or color for Not assessed. Use a neutral state with the reason.
 - Color is never the only signal. Pair with text and icon.
 
-## Implemented profile: default version 1.0.0
+## Implemented profile: default version 1.1.0
 
-Generated from `packages/core/src/scoring/profile.ts` (profile hash 0fdffd04761968b9). A dimension is **not assessed** when less than 50 percent of its weight is available. Origin says whether a threshold is a widely used convention or a provisional choice that Phase 3 must calibrate on real repositories.
+Generated from `packages/core/src/scoring/profile.ts` (profile hash 80e78573e2168d1e). A dimension is **not assessed** when less than 50 percent of its weight is available. Origin says whether a threshold is a widely used convention or a provisional choice that Phase 3 must calibrate on real repositories. Every input also has a glossary entry (`repolens glossary <input>`) with the meaning, the reason it matters and how to improve it.
 
 ### architecture
 
@@ -97,10 +97,11 @@ Generated from `packages/core/src/scoring/profile.ts` (profile hash 0fdffd047619
 
 | Sub-metric | Weight | Curve (raw value to score) | Origin | Meaning |
 |---|---|---|---|---|
-| test-to-source-file-ratio | 0.35 | 0 to 0, 0.1 to 50, 0.3 to 90, 0.6 to 100 | provisional | Test files per source file. File presence is not test effectiveness |
-| ci-present | 0.25 | 0 to 0, 1 to 100 | convention | A CI configuration exists |
-| lint-or-format | 0.2 | 0 to 0, 1 to 70, 2 to 100 | convention | Linter and formatter configuration present |
-| type-checking | 0.2 | 0 to 0, 1 to 100 | convention | A type checker is configured |
+| test-to-source-file-ratio | 0.25 | 0 to 0, 0.1 to 50, 0.3 to 90, 0.6 to 100 | provisional | Test files per source file. File presence is not test effectiveness |
+| ci-present | 0.2 | 0 to 0, 1 to 100 | convention | A CI configuration exists |
+| lint-or-format | 0.15 | 0 to 0, 1 to 70, 2 to 100 | convention | Linter and formatter configuration present |
+| type-checking | 0.15 | 0 to 0, 1 to 100 | convention | A type checker is configured |
+| line-coverage | 0.25 | 0 to 0, 0.3 to 40, 0.6 to 75, 0.8 to 95, 1 to 100 | provisional | Line coverage from an ingested coverage report (LCOV, Istanbul summary, Cobertura) |
 
 ### documentation
 
@@ -118,23 +119,33 @@ Generated from `packages/core/src/scoring/profile.ts` (profile hash 0fdffd047619
 | author-concentration | 0.5 | 0.3 to 100, 0.6 to 70, 0.9 to 30, 1 to 10 | provisional | Share of commits by the top author (continuity signal) |
 | commits-per-month | 0.5 | 0 to 0, 1 to 30, 4 to 70, 10 to 100 | provisional | Commit density over the analyzed window (activity signal) |
 
+### Explainability fields (schema 0.2.0)
+
+- **Inputs used** (`weightCoverage`): available weight divided by total weight of the dimension.
+- **Points to gain** (`impact` per input): `(100 - input score) x weight / available weight`, the most the dimension could rise if that input reached 100.
+- **Development-only dependencies:** advisories for packages the lockfile marks as dev count at 40 percent in the vulnerability input.
+
 ### Coverage and confidence as implemented
 
 | Dimension | Coverage used for confidence |
 |---|---|
-| architecture | minimum of structural coverage (analyzed source files divided by source files) and the import resolution ratio |
+| architecture | minimum of structural coverage (analyzed source files divided by source files), the import resolution ratio, and a language level factor (code-line weighted: level 3 counts 1.0, level 2 counts 0.75) |
 | maintainability | structural coverage |
 | security-hygiene | share of the three checks (OSV, secrets, workflows) that ran |
 | testing-ci, documentation | 1, or 0.8 when the analysis was truncated (these are file presence facts) |
-| maintenance-activity | 0.5 for shallow clones, 0.8 when the commit limit was reached, otherwise 1 |
+| maintenance-activity | 0.6 for a GitHub API sample, 0.5 for shallow clones, 0.8 when the commit limit was reached, otherwise 1 |
 
 Confidence: high at 0.85 or more, medium at 0.6 or more, otherwise low. Thresholds are provisional.
+
+### Risk index (not a score dimension)
+
+Per file, weighted mean of the available factors: complexity percentile 0.30, dependents percentile 0.25, change frequency percentile 0.25, test linkage or low coverage 0.20 (test linkage is 0 when a test imports the file, 0.5 when only reached indirectly, 1 when unreachable from tests, or 1 minus measured line coverage). Percentile is the share of files strictly below the value, so ties at zero score zero. At least two factors are required. Confidence is high with four factors, medium with three, low with two. It ranks files by cost of change. It does not predict defects.
 
 ### Known weaknesses of these scores
 
 - Curves are provisional. They rank repositories sensibly on the fixtures but have not been calibrated on a large sample.
-- Test presence is not test quality. Coverage reports are not ingested yet.
-- Python complexity is approximate and lowers confidence in maintainability for Python-heavy repositories only through the finding confidence, not the score.
+- Test presence is not test quality. Measured coverage is used only when a report is available.
+- Python complexity is approximate. Python graphs are lexical (support level 2), which lowers architecture confidence.
 - Security hygiene is a set of signals. A high score does not mean a repository is secure.
 - No overall score exists on purpose.
 

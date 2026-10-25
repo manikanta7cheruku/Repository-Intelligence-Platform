@@ -70,22 +70,30 @@ const dependency = obj({
 });
 const scoreInput = obj({
   name: str(),
+  impact: nul(num({ minimum: 0, maximum: 100 })),
   raw: nul(num()),
   normalized: nul(num()),
   weight: num(),
   available: bool(),
   note: str(),
 });
+const confidenceEnum = confidence;
+const riskFactor = obj({
+  name: str(),
+  value: nul(num()),
+  percentile: nul(num({ minimum: 0, maximum: 1 })),
+  note: str(),
+});
 const toolRun = obj({ assessed: bool(), reason: nul(str()), tool: str(), findings: nul(int()) });
 
 export const reportSchema: S = {
   $schema: "https://json-schema.org/draft/2020-12/schema",
-  $id: "https://repolens.dev/schema/report-0.1.0.json",
+  $id: "https://repolens.dev/schema/report-0.2.0.json",
   title: "RepoLens report",
   description:
     "Evidence-based repository analysis report. Missing values are null with a reason, never zero.",
   ...obj({
-    schemaVersion: str({ pattern: "^0\\.1\\.[0-9]+$" }),
+    schemaVersion: str({ pattern: "^0\\.2\\.[0-9]+$" }),
     status: en(["complete", "partial", "failed"]),
     repository: obj({
       source: obj({ type: en(["local", "github"]), location: str(), ref: nul(str()) }),
@@ -96,6 +104,10 @@ export const reportSchema: S = {
       analyzedFiles: int({ minimum: 0 }),
       totalBytes: int({ minimum: 0 }),
       truncated: bool(),
+      codeFiles: int({ minimum: 0 }),
+      analyzedCodeFiles: int({ minimum: 0 }),
+      productionFiles: int({ minimum: 0 }),
+      testFiles: int({ minimum: 0 }),
     }),
     scope: obj({
       languages: arr(
@@ -265,6 +277,7 @@ export const reportSchema: S = {
         value: nul(num({ minimum: 0, maximum: 100 })),
         confidence: nul(confidence),
         coverage: nul(num({ minimum: 0, maximum: 1 })),
+        weightCoverage: nul(num({ minimum: 0, maximum: 1 })),
         reason: nul(str()),
         inputs: arr(scoreInput),
       }),
@@ -276,7 +289,7 @@ export const reportSchema: S = {
         testFiles: int(),
         sourceFiles: int(),
         testToSourceFileRatio: nul(num()),
-        coverageReport: en(["not-ingested"]),
+        coverageReport: en(["ingested", "not-ingested"]),
       }),
       quality: obj({
         linters: arr(str()),
@@ -291,6 +304,8 @@ export const reportSchema: S = {
           headings: arr(str()),
           hasInstall: nul(bool()),
           hasUsage: nul(bool()),
+          sections: arr(str()),
+          links: int(),
         }),
         files: obj({
           contributing: bool(),
@@ -313,6 +328,18 @@ export const reportSchema: S = {
     history: obj({
       available: bool(),
       reason: nul(str()),
+      source: nul(en(["git", "github-api"])),
+      commitQuality: nul(
+        obj({
+          sampled: int(),
+          conventionalShare: num(),
+          descriptiveShare: num(),
+          genericShare: num(),
+          avgSubjectLength: num(),
+        }),
+      ),
+      pullRequests: nul(obj({ sampled: int(), merged: int(), medianHoursToMerge: nul(num()) })),
+      releases: nul(obj({ count: int(), latestDate: nul(str()) })),
       shallow: nul(bool()),
       commitsAnalyzed: nul(int()),
       window: obj({ first: nul(str()), last: nul(str()) }),
@@ -351,11 +378,54 @@ export const reportSchema: S = {
       violations: nul(int()),
       baseline: nul(obj({ source: nul(str()), suppressed: int() })),
     }),
+    executiveSummary: obj({
+      headline: str(),
+      overview: arr(str()),
+      strengths: arr(str()),
+      concerns: arr(str()),
+      nextSteps: arr(str()),
+    }),
+    testCoverage: obj({
+      ingested: bool(),
+      source: nul(str()),
+      format: nul(en(["lcov", "istanbul-summary", "cobertura"])),
+      lineRate: nul(num({ minimum: 0, maximum: 1 })),
+      filesMatched: nul(int()),
+      reason: nul(str()),
+    }),
+    risk: obj({
+      assessed: bool(),
+      reason: nul(str()),
+      method: str(),
+      files: arr(
+        obj({
+          path: str(),
+          moduleId: nul(str()),
+          risk: num({ minimum: 0, maximum: 100 }),
+          confidence: confidenceEnum,
+          factors: arr(riskFactor),
+          drivers: arr(str()),
+          explanation: str(),
+        }),
+      ),
+    }),
+    blastRadius: arr(
+      obj({
+        path: str(),
+        directDependents: int(),
+        transitiveDependents: int(),
+        runtimeTransitive: int(),
+        modulesAffected: arr(str()),
+        entrypointsAffected: arr(str()),
+        maxDepth: int(),
+      }),
+    ),
     methodology: obj({
       profile: str(),
       profileHash: str(),
       configHash: str(),
       scoringVersion: str(),
+      glossaryVersion: str(),
     }),
     reproducibility: obj({
       toolVersion: str(),

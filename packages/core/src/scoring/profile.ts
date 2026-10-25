@@ -21,7 +21,7 @@ export interface ScoringProfile {
 /** Thresholds are provisional conventions. They are documented in docs/product/scoring-methodology.md. */
 export const DEFAULT_PROFILE: ScoringProfile = {
   name: "default",
-  version: "1.0.0",
+  version: "1.1.0",
   minAvailableWeight: 0.5,
   dimensions: {
     architecture: [
@@ -185,7 +185,7 @@ export const DEFAULT_PROFILE: ScoringProfile = {
     "testing-ci": [
       {
         name: "test-to-source-file-ratio",
-        weight: 0.35,
+        weight: 0.25,
         curve: [
           [0, 0],
           [0.1, 50],
@@ -197,7 +197,7 @@ export const DEFAULT_PROFILE: ScoringProfile = {
       },
       {
         name: "ci-present",
-        weight: 0.25,
+        weight: 0.2,
         curve: [
           [0, 0],
           [1, 100],
@@ -207,7 +207,7 @@ export const DEFAULT_PROFILE: ScoringProfile = {
       },
       {
         name: "lint-or-format",
-        weight: 0.2,
+        weight: 0.15,
         curve: [
           [0, 0],
           [1, 70],
@@ -218,13 +218,27 @@ export const DEFAULT_PROFILE: ScoringProfile = {
       },
       {
         name: "type-checking",
-        weight: 0.2,
+        weight: 0.15,
         curve: [
           [0, 0],
           [1, 100],
         ],
         origin: "convention",
         description: "A type checker is configured",
+      },
+      {
+        name: "line-coverage",
+        weight: 0.25,
+        curve: [
+          [0, 0],
+          [0.3, 40],
+          [0.6, 75],
+          [0.8, 95],
+          [1, 100],
+        ],
+        origin: "provisional",
+        description:
+          "Line coverage from an ingested coverage report (LCOV, Istanbul summary, Cobertura)",
       },
     ],
     documentation: [
