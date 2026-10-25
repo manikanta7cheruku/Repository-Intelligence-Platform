@@ -76,6 +76,11 @@ const scoreInput = obj({
   weight: num(),
   available: bool(),
   note: str(),
+  description: str(),
+  curve: arr({ type: "array", items: num(), minItems: 2, maxItems: 2 }),
+  origin: en(["convention", "provisional"]),
+  contribution: nul(num({ minimum: 0, maximum: 100 })),
+  evidence: arr(str()),
 });
 const confidenceEnum = confidence;
 const riskFactor = obj({
@@ -93,7 +98,7 @@ export const reportSchema: S = {
   description:
     "Evidence-based repository analysis report. Missing values are null with a reason, never zero.",
   ...obj({
-    schemaVersion: str({ pattern: "^0\\.2\\.[0-9]+$" }),
+    schemaVersion: str({ pattern: "^0\\.3\\.[0-9]+$" }),
     status: en(["complete", "partial", "failed"]),
     repository: obj({
       source: obj({ type: en(["local", "github"]), location: str(), ref: nul(str()) }),
@@ -279,6 +284,7 @@ export const reportSchema: S = {
         coverage: nul(num({ minimum: 0, maximum: 1 })),
         weightCoverage: nul(num({ minimum: 0, maximum: 1 })),
         reason: nul(str()),
+        basis: str(),
         inputs: arr(scoreInput),
       }),
     ),

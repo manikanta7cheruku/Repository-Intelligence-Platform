@@ -53,7 +53,7 @@ describe("repolens CLI", () => {
     const r = await cli(["analyze", join(FIXTURES, "ts-layered-clean"), "--offline", "-o", "out"]);
     expect(r.code).toBe(EXIT.OK);
     const json = JSON.parse(readFileSync(join(r.cwd, "out", "report.json"), "utf8"));
-    expect(json.schemaVersion).toBe("0.2.0");
+    expect(json.schemaVersion).toBe("0.3.0");
     expect(existsSync(join(r.cwd, "out", "report.md"))).toBe(true);
     expect(existsSync(join(r.cwd, "out", "report.html"))).toBe(false);
     expect(r.out).toContain("RepoLens");

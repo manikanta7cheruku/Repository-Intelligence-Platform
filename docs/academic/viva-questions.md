@@ -78,3 +78,9 @@ Companion to `how-the-engine-reads-and-analyzes-code.md`. Answers are short on p
 **28. Is machine learning ever appropriate here?** Yes, as a later, optional layer: calibrating risk weights against real defect history, or ranking recommendations by what maintainers actually fix. That needs the calibration data planned for Phase 3, and it would be added as an opt-in, clearly labeled estimate, never replacing the deterministic facts. This is future work, not a claim about the current tool.
 
 **29. Does that make the tool "not intelligent"?** It is rule-based expert analysis: the knowledge is encoded in graph algorithms, thresholds and scoring formulas. The honest label is "static analysis with explainable heuristics", which is what the report states.
+
+## Score proof
+
+**30. Why is Architecture 100 for a repository? What is the proof?** Every score prints its derivation. In the Provenance report, Architecture 100 is the weighted average of four inputs: file-cycle-ratio (0 of 132 files in runtime cycles), module-cycle-ratio (0 of 14 modules), unresolved-import-ratio (0 of 319 internal imports) and high-fan-out-share (0 of 132 files above fan-out 20). A fifth input, rule violations, was unavailable because no rules file existed, so it is excluded and the report says "Inputs used 75 percent" and caps confidence at medium. Each input also shows the curve that turns the raw value into 0 to 100, whether that curve is a convention or provisional, the points it adds, and up to five files as evidence.
+
+**31. Are those curves scientific?** No. They are the author's provisional choices, labeled as such in every report. They are meant to be transparent and adjustable, and calibration against real repositories is Phase 3 work.

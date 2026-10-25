@@ -7,7 +7,7 @@
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "pattern": "^0\\.2\\.[0-9]+$"
+      "pattern": "^0\\.3\\.[0-9]+$"
     },
     "status": {
       "type": "string",
@@ -1028,6 +1028,9 @@
           "reason": {
             "type": ["string", "null"]
           },
+          "basis": {
+            "type": "string"
+          },
           "inputs": {
             "type": "array",
             "items": {
@@ -1055,9 +1058,51 @@
                 },
                 "note": {
                   "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "curve": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                  }
+                },
+                "origin": {
+                  "type": "string",
+                  "enum": ["convention", "provisional"]
+                },
+                "contribution": {
+                  "type": ["number", "null"],
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               },
-              "required": ["name", "impact", "raw", "normalized", "weight", "available", "note"],
+              "required": [
+                "name",
+                "impact",
+                "raw",
+                "normalized",
+                "weight",
+                "available",
+                "note",
+                "description",
+                "curve",
+                "origin",
+                "contribution",
+                "evidence"
+              ],
               "additionalProperties": false
             }
           }
@@ -1070,6 +1115,7 @@
           "coverage",
           "weightCoverage",
           "reason",
+          "basis",
           "inputs"
         ],
         "additionalProperties": false
