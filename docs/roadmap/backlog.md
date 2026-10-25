@@ -69,21 +69,21 @@ call graph for one language, per-snapshot security in trend, glossary translatio
 
 | ID | Item | Est | Acceptance |
 |---|---|---|---|
-| P2-01 | Gate spike: graph benchmark (1,000 and 5,000 nodes) | 6 | Numbers recorded, ADR 0012 accepted |
-| P2-02 | Next.js app, design system, tokens, app shell, theme | 14 | Components match tokens, contrast checks pass |
-| P2-03 | Postgres schema, migrations, docker compose | 6 | Local up with one command, migration rollback notes |
-| P2-04 | API: submit, status, report, cancel, validation, basic rate limit | 10 | Contract tests, SSRF safe URL validation |
-| P2-05 | Worker: pg-boss, lifecycle, budgets, cancellation, cleanup | 12 | End to end job on a 50k LOC repository |
-| P2-06 | Landing, Analyze and configuration screens | 8 | All states implemented |
-| P2-07 | Progress screen with real stages and cancel | 5 | Live region announcements, partial states |
-| P2-08 | Overview page answering the five questions | 10 | UX acceptance for overview |
-| P2-09 | Architecture explorer: graph, table, grouping, search, filters, drill-down | 20 | 1,000 node fixture smooth, keyboard usable |
-| P2-10 | Quality, Security, Practices pages and finding detail | 14 | Evidence and limitations on every finding |
-| P2-11 | Evolution page: hotspots, churn, ownership, limits | 8 | Shallow clone state shown |
-| P2-12 | Rules page: validate, violations, baseline status | 8 | Valid and invalid YAML tested |
-| P2-13 | Export UI: Markdown, JSON, HTML | 4 | Files match CLI output |
-| P2-14 | History and comparison | 10 | Deltas computed from reports only |
-| P2-15 | Polish: states, responsive, accessibility pass, Playwright journey | 12 | Axe clean, Lighthouse 95 or higher |
+| P2-01 | Gate spike: graph benchmark (1,000 and 5,000 nodes) **[Partial: layout timing only, ADR 0020]** | 6 | Numbers recorded, ADR 0012 accepted |
+| P2-02 | Next.js app, design system, tokens, app shell, theme **[Built]** | 14 | Components match tokens, contrast checks pass |
+| P2-03 | Postgres schema, migrations, docker compose **[Cut for the first release, ADR 0019]** | 6 | Local up with one command, migration rollback notes |
+| P2-04 | API: submit, status, report, cancel, validation, basic rate limit **[Built as one streaming route]** | 10 | Contract tests, SSRF safe URL validation |
+| P2-05 | Worker: pg-boss, lifecycle, budgets, cancellation, cleanup **[Cut for the first release, ADR 0019]** | 12 | End to end job on a 50k LOC repository |
+| P2-06 | Landing, Analyze and configuration screens **[Built]** | 8 | All states implemented |
+| P2-07 | Progress screen with real stages and cancel **[Built]** | 5 | Live region announcements, partial states |
+| P2-08 | Overview page answering the five questions **[Built]** | 10 | UX acceptance for overview |
+| P2-09 | Architecture explorer: graph, table, grouping, search, filters, drill-down **[Built]** | 20 | 1,000 node fixture smooth, keyboard usable |
+| P2-10 | Quality, Security, Practices pages and finding detail **[Built]** | 14 | Evidence and limitations on every finding |
+| P2-11 | Evolution page: hotspots, churn, ownership, limits **[Built]** | 8 | Shallow clone state shown |
+| P2-12 | Rules page: validate, violations, baseline status **[Built]** | 8 | Valid and invalid YAML tested |
+| P2-13 | Export UI: Markdown, JSON, HTML **[Built]** | 4 | Files match CLI output |
+| P2-14 | History and comparison **[Built]** | 10 | Deltas computed from reports only |
+| P2-15 | Polish: states, responsive, accessibility pass, Playwright journey **[Open: axe, Lighthouse, Playwright, real phone]** | 12 | Axe clean, Lighthouse 95 or higher |
 
 ## Phase 3: Hardening and release
 

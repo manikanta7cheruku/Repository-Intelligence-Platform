@@ -4,7 +4,7 @@ An open-source repository intelligence platform. It analyzes GitHub repositories
 and produces explainable, evidence-based engineering reports: architecture, dependencies, code
 quality, security signals, testing and CI practices, documentation, and Git history.
 
-Status: Phase 1.5 (insight upgrade) built. The web app arrives in Phase 2. See `docs/PROJECT_STATE.md` and `DOTEST.md`.
+Status: Phase 2 first release built (web application, stateless). See `docs/PROJECT_STATE.md`, `docs/phases/phase-2-web-platform.md` and `DOTEST.md`.
 
 ## Principles
 
@@ -20,7 +20,7 @@ Status: Phase 1.5 (insight upgrade) built. The web app arrives in Phase 2. See `
 |---|---|
 | `packages/core` | Engine, intermediate representation, graph, rules, report schema |
 | `packages/cli` | Command line interface |
-| `apps/web` | Web application (created in Phase 2) |
+| `apps/web` | Web application (Next.js): analyze a GitHub URL or open a report, interactive graphs, exports, glossary |
 | `scripts` | Benchmark and comparison helpers |
 | `fixtures` | Hand-built repositories with known ground truth |
 | `docs` | Plan, specification, architecture, ADRs, security, UX, phases, prompts |

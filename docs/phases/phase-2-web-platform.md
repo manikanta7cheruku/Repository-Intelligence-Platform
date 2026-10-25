@@ -1,58 +1,82 @@
 # Phase 2: Web platform
 
-Estimated owner effort: 100 to 140 hours. Backlog items: P2-01 to P2-15.
+Status: **first release built and verified locally (2026-10-25). Deployment to Vercel, real phone review, automated accessibility audit and Playwright journeys are open.**
+Plan and review of the original prompt: `docs/phases/phase-2-plan-v2.md`. Design system: `docs/ux/web-design-system.md`. Reference: `docs/reference/web-app.md`.
+Decisions: ADR 0019 (stateless web), ADR 0020 (graph rendering), ADR 0021 (export pipeline), all Proposed until the owner accepts them.
 
 ## Goal
 
-A production-quality web application on top of the Phase 1 engine: submit a public repository,
-watch real progress, explore a professional report with an architecture explorer, export it, and
-compare analyses.
+A professional web application on top of the engine: analyze a public GitHub repository or open a local `report.json`, read a briefing with a proof for every score,
+explore structure and change impact on interactive graphs, and download every chart and diagram. Mobile responsive, light and dark, keyboard friendly.
 
-## Scope
+## What was built
 
-In (see the full list of 20 screens and features in docs/prompts/phase-2-prompt.md): Next.js app on Vercel, Postgres (managed free tier), pg-boss queue, a Node worker container
-running the same core, design system, all MVP screens, job budgets, cancellation, rate limiting
-basics, report storage in Postgres JSONB, export, history, repository comparison.
+| Area | Delivered | Where |
+|---|---|---|
+| App | Next.js 16 (App Router), React 19, TypeScript strict, plain CSS with tokens, no UI framework | `apps/web` |
+| Contract | The web reads only report JSON 0.3.0 and the glossary through `@repolens/core/browser` (pure modules). Hosted analysis uses `@repolens/core/server` | `packages/core/src/browser.ts`, `server.ts` |
+| Start page | GitHub URL form with real streamed stages and cancel, open a local report (drag and drop), reports saved in the browser, live sample report | `app/page.tsx`, `components/analyze-form.tsx` |
+| Report sections | Briefing (scores with proof panels, reliability), Priorities, Structure (Map and Ledger), Impact, Risk, Quality, Security, Practices, History, Rules, Compare, Export | `components/sections/*` |
+| Graphs | Layered interactive map: pan, zoom, search, cycle filter, hover and focus highlight of dependents and dependencies, module to file drill-down, keyboard navigation, ledger alternative | `components/layered-graph.tsx`, `lib/layout.ts` |
+| Charts | Complexity distribution, hotspot scatter, language bar, curve sparklines in score proofs | `components/charts.tsx` |
+| Downloads | Export menu on every chart and graph: SVG, PNG at 2x, PDF (print dialog), JSON, Mermaid and DOT for graphs. Light variant with title, legend, repository, commit, date and tool | `components/export-menu.tsx`, `lib/svg.ts` |
+| Explanations | Glossary terms explained on hover, focus and tap, searchable Glossary page with deep links, "not assessed" always shows its reason | `components/ui.tsx`, `glossary-view.tsx` |
+| Other pages | How it works (exportable pipeline diagram), Run it free, Privacy, Settings (theme, density, reduced motion, saved reports), command palette (Ctrl or Cmd K) | `app/*` |
+| API | `POST /api/analyze`: URL validation reused from the engine, body size limit, per-address rate limit (best effort per instance), time and size budgets, NDJSON progress stream, cancellation | `app/api/analyze/route.ts` |
+| Security | Strict Content-Security-Policy and headers, no raw HTML from reports (React escaping only), hostile export text escaped | `next.config.ts` |
+| Tests | 13 web tests: contract (sample validates, proof fields, glossary ids used in the UI exist, no em dashes), layout (cycles, overlap, determinism), export (light literal colors, escaping), API route (SSRF style URLs refused, bad bodies, rate limit) | `apps/web/src/lib/web.test.ts` |
 
-Out: accounts and organizations portfolio (post-MVP), private repository analysis on the hosted site,
-billing, teams, call-graph views.
+## Verified (commands run on 2026-10-25, Windows, Node 24.10.0)
 
-## Order of work
+- `pnpm check`: Biome (including `apps`), build (core, CLI, `next build`), typecheck, 253 tests pass.
+- End to end through the real route: analyzing `github.com/manikanta7cheruku/provenance` streamed all 11 stages in 5.3 s and the saved report opened in the browser.
+- Browser checks in the preview pane: Briefing and score proof, Structure map (29 modules, 92 edges), module drill-down data, SVG and PNG export (valid light SVG, PNG blob created), command palette,
+  Impact graph, Risk scatter, Glossary deep link, mobile layout at 390 px, CSP header present on the production build.
+- Layout speed (Node, synthetic graphs): 60 nodes 7 ms, 1,000 nodes 5 ms, 5,000 nodes 32 ms. This is layout only. Rendering of thousands of nodes was **not** measured because the interface caps the map at 60 modules,
+  70 files or 90 impact nodes by design.
 
-1. Gate: P2-01 graph benchmark, accept or revise ADR 0012.
-2. Foundation: P2-02 design system and app shell, P2-03 database, P2-04 API, P2-05 worker.
-3. Screens in this order: submission and configuration (P2-06), progress (P2-07), overview (P2-08),
-   architecture explorer (P2-09), findings (P2-10), Git evolution (P2-11), rules (P2-12),
-   export (P2-13), history and comparison (P2-14), polish and states (P2-15).
-4. After every screen: keyboard check, responsive check, state check (loading, empty, error, partial).
+## Not done or not verified (honest list)
+
+- **Not deployed.** Vercel limits (function duration, memory, bundle size, non-commercial terms) are unverified. `maxDuration` is set to a conservative 60 s. The engine's function bundle size on Vercel is unmeasured.
+- **No automated accessibility audit.** axe and Lighthouse were not run. Keyboard paths and ARIA roles were implemented and spot checked by reading the DOM, not by a screen reader.
+- **No real phone review.** Mobile was checked in an emulated 390 px viewport only.
+- **No Playwright journeys and no visual regression tests** (tests are unit and contract level).
+- **Graph benchmark P2-01 is partial** (layout timing only). ADR 0012 stays open for any graph that needs more than the caps allow.
+- **Rate limiting is per server instance** and resets when it restarts. A shared store is needed for a hard limit.
+- **Hosted analysis has no file level history** (GitHub API sample only). Local reports have it.
+- Cut by the owner decision (stateless first release): saved server history, share links, accounts, YAML editor, OAuth star, PWA, worker and queue.
 
 ## Exit criteria
 
-- [ ] Public repository URL submitted on the site produces a full report through the worker
-- [ ] Progress reflects real job stages, supports cancel, and shows partial results on failure
-- [ ] Overview answers the five questions in `docs/ux/information-architecture.md` within one screen
-- [ ] Architecture explorer handles the 1,000 node fixture smoothly (documented frame rate) with grouping, search, filters, and a table alternative
-- [ ] Every finding page shows evidence, location, confidence, limitations, remediation
-- [ ] Reports export as Markdown, JSON, and HTML from the UI
-- [ ] Two analyses of the same repository can be compared, and two repositories can be compared
-- [ ] Rules page validates YAML and shows violations with evidence
-- [ ] Automated accessibility checks (axe) pass on all core pages, keyboard-only path completes the main journey
-- [ ] Lighthouse accessibility score 95 or higher on core pages (record the numbers)
-- [ ] Web only consumes the versioned report schema, verified by a contract test
-- [ ] Local `docker compose up` runs database and worker, documented in `docs/runbooks/local-dev.md`
-- [ ] `pnpm check` green in CI, end to end test of the main journey passes (Playwright)
+| Criterion | Status |
+|---|---|
+| Hosted flow for a public repository works end to end | Done locally, not deployed |
+| Local report mode works with no upload | Done |
+| Briefing with proof for every score | Done |
+| Interactive graphs with search, filter, drill-down, keyboard use | Done (map and impact), measured only for layout speed |
+| Every chart and diagram downloadable | Done (SVG, PNG, PDF through print, JSON, Mermaid, DOT) |
+| Every glossary term explained in place | Done for terms rendered with the Term component, full Glossary page |
+| Dark and light themes, mobile design | Done, owner review on a real phone open |
+| axe clean and Lighthouse accessibility 95 or higher | **Open** |
+| Playwright main journey in CI | **Open** |
+| `pnpm check` green in CI | Passing locally, CI run after merge |
+| Deployed on Vercel | **Open** |
 
-## Prompt: start Phase 2
+## Owner checklist
 
-Use `docs/prompts/phase-2-prompt.md` (full prompt) and `docs/prompts/HANDOFF.md` (what to attach). Phase 1.5 must be merged and DOTEST sections 1 to 8 verified first.
+1. Merge the Phase 2 pull request, then `pnpm install` and `pnpm check`.
+2. Run the site locally: `pnpm --filter @repolens/web exec next dev -p 3100` and open http://localhost:3100.
+3. Deploy: import the repository in Vercel, root directory `apps/web` (the repository already has `apps/web/vercel.json`). Check the current plan limits first and record the date.
+4. Open the site on your phone, test the bottom tabs, the evidence sheet and the map.
+5. Run Lighthouse (accessibility) on the Briefing, Structure and Glossary pages and save the numbers in `docs/evaluation/results/p2-accessibility.md`.
 
 ## Prompt: resume Phase 2 in a new chat
 
 ```text
-Project: RepoLens. I am the sole developer. Read CLAUDE.md, docs/PROJECT_STATE.md, docs/phases/phase-2-web-platform.md, docs/learning/phase-2-web-platform.md, docs/roadmap/backlog.md,
-docs/ux/*, docs/adr/* and the decision register. We are in Phase 2 (Web platform). PROJECT_STATE lists completed items. Continue with the next unfinished item following docs/ux strictly
-(no em dashes, not a template look, every term explained via the glossary). Plan briefly, implement, test, run pnpm check, update PROJECT_STATE, the phase file and the learning file,
-and tell me exactly what to verify visually and with the keyboard.
+Project: RIP (Repository Intelligence Platform), TypeScript monorepo. I am the sole developer. Read CLAUDE.md, docs/PROJECT_STATE.md, docs/phases/phase-2-web-platform.md,
+docs/phases/phase-2-plan-v2.md, docs/ux/web-design-system.md, docs/reference/web-app.md, docs/learning/phase-2-web-platform.md and ADRs 0019 to 0021.
+Phase 2 first release is built. Continue with the open items in the "Not done" list (deployment, accessibility audit, Playwright journeys, graph benchmark). No em dashes, no template look.
+Plan briefly, change little, run pnpm check, update PROJECT_STATE and the learning file, and tell me exactly what to verify.
 ```
 
 ## Prompt: start Phase 3

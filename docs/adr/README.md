@@ -22,5 +22,8 @@ Status words: Proposed, Accepted, Rejected, Deferred, Superseded. Accepted means
 | [0016](0016-module-inference-and-graph-scope.md) | Module inference rule and graph scope | Accepted |
 | [0017](0017-report-schema-0-2-and-glossary.md) | Report schema 0.2.0 and a single glossary | Accepted |
 | [0018](0018-risk-index-pr-guardian-trend.md) | Risk index, pull request guardian and trend | Accepted |
+| [0019](0019-stateless-web-first-release.md) | Stateless web application for the first release | Proposed |
+| [0020](0020-graph-rendering-custom-svg.md) | Custom layered SVG graph rendering | Proposed |
+| [0021](0021-client-side-export-pipeline.md) | Client-side export pipeline | Proposed |
 
 Template: [0000-template.md](0000-template.md)
