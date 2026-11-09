@@ -14,7 +14,7 @@
     "@repolens/core": "workspace:*",
     "d3-selection": "^3.0.0",
     "d3-zoom": "^3.0.0",
-    "next": "^16.4.3",
+    "next": "^16.4.5",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
