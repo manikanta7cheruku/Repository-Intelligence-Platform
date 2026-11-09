@@ -27,8 +27,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/core
       d3-selection:
-        specifier: ^3.0.0
-        version: 3.0.0
+        specifier: ^3.0.1
+        version: 3.0.1
       d3-zoom:
         specifier: ^3.0.0
         version: 3.0.0
@@ -732,8 +732,8 @@ packages:
     resolution: {integrity: sha512-3bYs1rOD33uo8aqJfKP3JWPAibgw8Zm2+L9vBKEHJ2Rg+viTR7o5Mmv5mZcieN+FRYaAOWX5SJATX6k1PWz72g==}
     engines: {node: '>=12'}
 
-  d3-selection@3.0.0:
-    resolution: {integrity: sha512-fmTRWbNMmsmWq6xJV8D19U/gw/bwrHfNXxrIN+HfZgnzqTHp9jOmKMhsTUjXOJnZOdZY9Q28y4yebKzqDKlxlQ==}
+  d3-selection@3.0.1:
+    resolution: {integrity: sha512-ODSf35vqCrlCfp7hrm0eZjvOosSXSYLjqvIlhMBV9q9VOx7EBJG6pc+uXBswEZNJgCGJ+qnKYcWutbZDIxe/Xg==}
     engines: {node: '>=12'}
 
   d3-timer@3.0.1:
@@ -1469,7 +1469,7 @@ snapshots:
   d3-drag@3.0.0:
     dependencies:
       d3-dispatch: 3.0.1
-      d3-selection: 3.0.0
+      d3-selection: 3.0.1
 
   d3-ease@3.0.1: {}
 
@@ -1477,17 +1477,17 @@ snapshots:
     dependencies:
       d3-color: 3.1.0
 
-  d3-selection@3.0.0: {}
+  d3-selection@3.0.1: {}
 
   d3-timer@3.0.1: {}
 
-  d3-transition@3.0.1(d3-selection@3.0.0):
+  d3-transition@3.0.1(d3-selection@3.0.1):
     dependencies:
       d3-color: 3.1.0
       d3-dispatch: 3.0.1
       d3-ease: 3.0.1
       d3-interpolate: 3.0.1
-      d3-selection: 3.0.0
+      d3-selection: 3.0.1
       d3-timer: 3.0.1
 
   d3-zoom@3.0.0:
@@ -1495,8 +1495,8 @@ snapshots:
       d3-dispatch: 3.0.1
       d3-drag: 3.0.0
       d3-interpolate: 3.0.1
-      d3-selection: 3.0.0
-      d3-transition: 3.0.1(d3-selection@3.0.0)
+      d3-selection: 3.0.1
+      d3-transition: 3.0.1(d3-selection@3.0.1)
 
   debug@4.4.3:
     dependencies:
